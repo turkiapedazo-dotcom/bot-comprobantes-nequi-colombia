@@ -169,8 +169,7 @@ async def nequicol_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
                     parse_mode='HTML'
                 )
             return
-        
-        ## Permitir todos los comprobantes tanto en grupo como en privado
+    # Permitir todos los comprobantes tanto en grupo como en privado
 keyboard = [
     ["💸 Nequi", "🔄 BRE-B"],
     ["📱 QR Comprobante", "🔑 LLAVES"],
@@ -181,12 +180,9 @@ keyboard = [
     ["❌ Cancelar"]
 ]
 mensaje_comandos = (
-    f"👋 Hola {user_name}!
-"
-    f"💎 Generador de Comprobantes
-"
-    f"📌 Selecciona una opción:
-"
+    f"👋 Hola {user_name}!\n"
+    f"💎 Generador de Comprobantes\n"
+    f"📌 Selecciona una opción:\n"
     f"ℹ️ Para conocer funciones de fechas y referencias manuales, pulsa /masinf"
 )
         
