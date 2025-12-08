@@ -169,22 +169,23 @@ async def nequicol_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
                     parse_mode='HTML'
                 )
             return
-    # Permitir todos los comprobantes tanto en grupo como en privado
-keyboard = [
-    ["💸 Nequi", "🔄 BRE-B"],
-    ["📱 QR Comprobante", "🔑 LLAVES"],
-    ["🏦 Nequi a Bancolombia"],
-    ["🏦 QR BC", "💳 BC a Nequi"],
-    ["🏛️ BC a BC", "🔵 DaviPlata"],
-    ["✅ Anulado"],
-    ["❌ Cancelar"]
-]
-mensaje_comandos = (
-    f"👋 Hola {user_name}!\n"
-    f"💎 Generador de Comprobantes\n"
-    f"📌 Selecciona una opción:\n"
-    f"ℹ️ Para conocer funciones de fechas y referencias manuales, pulsa /masinf"
-)
+        
+        # Todos los comprobantes disponibles en grupos y privado
+        keyboard = [
+            ["💸 Nequi", "🔄 BRE-B"],
+            ["📱 QR Comprobante", "🔑 LLAVES"],
+            ["🏦 Nequi a Bancolombia"],
+            ["🏦 QR BC", "💳 BC a Nequi"],
+            ["🏛️ BC a BC", "🔵 DaviPlata"],
+            ["✅ Anulado"],
+            ["❌ Cancelar"]
+        ]
+        mensaje_comandos = (
+            f"👋 Hola {user_name}!\n\n"
+            f"💎 Generador de Comprobantes\n"
+            f"📌 Selecciona una opción:\n\n"
+            f"ℹ️ Para conocer funciones de fechas y referencias manuales, pulsa /masinf"
+        )
         
         reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True, one_time_keyboard=True)
         
@@ -507,21 +508,8 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             "✅ Anulado": "comprobante_anulado"
         }
         
-        # En grupos: solo permitir Nequi, otros comprobantes deben usarse en privado
+        # Permitir todos los comprobantes en grupos y privado
         if text in button_mapping:
-            if chat_type in ['group', 'supergroup']:
-                # Si está en grupo y no es Nequi, mostrar mensaje explicativo
-                if text != "💸 Nequi":
-                    bot_username = context.bot.username or "el bot"
-                    await update.message.reply_text(
-                        f"📌 **En el grupo solo puedes generar comprobantes de Nequi**\n\n"
-                        f"💬 Para generar otros comprobantes (BRE-B, QR, Llaves, Bancolombia, etc.), "
-                        f"escríbeme al **privado** y allí tendrás acceso a todas las opciones.\n\n"
-                        f"👉 Abre el bot en privado para usar todas las funciones.",
-                        parse_mode='Markdown'
-                    )
-                    return
-            
             tipo = button_mapping[text]
             # Preservar flags de configuración (fecha_manual, referencia_manual) si existen
             fecha_manual_flag = user_data_store.get(user_id, {}).get("fecha_manual", False)
@@ -785,10 +773,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                         )
                     else:
                         await send_document(output_path_mov, "📄 Movimiento generado")
-                if chat_type in ['group', 'supergroup']:
-                    await update.message.reply_text(
-                        "💬 ¿Deseas generar más comprobantes? Contáctame al privado"
-                    )
                 limpiar_sesion_preservando_flags()
         # --- BRE-B ---
         elif tipo == "comprobante4":
@@ -880,10 +864,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                         )
                     else:
                         await send_document(output_path_mov2, "📄 Movimiento BRE-B generado")
-                if chat_type in ['group', 'supergroup']:
-                    await update.message.reply_text(
-                        "💬 ¿Deseas generar más comprobantes? Contáctame al privado"
-                    )
                 limpiar_sesion_preservando_flags()
         # --- QR COMPROBANTE ---
         elif tipo == "comprobante_qr":
@@ -969,10 +949,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                         )
                     else:
                         await send_document(output_path_movqr, "📄 Movimiento QR generado")
-                if chat_type in ['group', 'supergroup']:
-                    await update.message.reply_text(
-                        "💬 ¿Deseas generar más comprobantes? Contáctame al privado"
-                    )
                 limpiar_sesion_preservando_flags()
                       # --- LLAVES ---
         elif tipo == "comprobante_llave":
@@ -1065,10 +1041,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                         )
                     else:
                         await send_document(output_path_mov_llave, "📄 Movimiento Llaves generado")
-                if chat_type in ['group', 'supergroup']:
-                    await update.message.reply_text(
-                        "💬 ¿Deseas generar más comprobantes? Contáctame al privado"
-                    )
                 # limpiar sesión
                 limpiar_sesion_preservando_flags()
 
@@ -1153,10 +1125,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                         )
                     else:
                         await send_document(output_path_mov_bancol, "📄 Movimiento Bancolombia generado")
-                if chat_type in ['group', 'supergroup']:
-                    await update.message.reply_text(
-                        "💬 ¿Deseas generar más comprobantes? Contáctame al privado"
-                    )
                 limpiar_sesion_preservando_flags()
         
         # --- QR BC (Bancolombia QR) - Configuración original ---
@@ -1224,10 +1192,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 except Exception as e:
                     logger.error(f"Error generando QR BC: {str(e)}")
                     await update.message.reply_text("⚠️ Error al generar el comprobante QR BC.")
-                if chat_type in ['group', 'supergroup']:
-                    await update.message.reply_text(
-                        "💬 ¿Deseas generar más comprobantes? Contáctame al privado"
-                    )
                 # Preservar flags antes de eliminar sesión
                 fecha_flag = user_data_store.get(user_id, {}).get("fecha_manual", False)
                 referencia_flag = user_data_store.get(user_id, {}).get("referencia_manual", False)
@@ -1271,10 +1235,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                                 await send_document(output_mov, "📄 Movimiento BC a Nequi generado")
                         except Exception as e_mov:
                             logger.error(f"Error generando movimiento BC a Nequi: {str(e_mov)}")
-                        if chat_type in ['group', 'supergroup']:
-                            await update.message.reply_text(
-                                "💬 ¿Deseas generar más comprobantes? Contáctame al privado"
-                            )
                     else:
                         await update.message.reply_text("⚠️ Error al generar el comprobante BC a Nequi.")
                 except Exception as e:
@@ -1341,10 +1301,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 except Exception as e:
                     logger.error(f"Error generando BC a BC: {str(e)}")
                     await update.message.reply_text("⚠️ Error al generar el comprobante BC a BC.")
-                if chat_type in ['group', 'supergroup']:
-                    await update.message.reply_text(
-                        "💬 ¿Deseas generar más comprobantes? Contáctame al privado"
-                    )
                 # Preservar flags antes de eliminar sesión
                 fecha_flag = user_data_store.get(user_id, {}).get("fecha_manual", False)
                 referencia_flag = user_data_store.get(user_id, {}).get("referencia_manual", False)
@@ -1387,10 +1343,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                         data["valor"]
                     )
                     if output_path and await send_document(output_path, "✅ Comprobante DaviPlata generado"):
-                        if chat_type in ['group', 'supergroup']:
-                            await update.message.reply_text(
-                                "💬 ¿Deseas generar más comprobantes? Contáctame al privado"
-                            )
+                        pass
                     else:
                         await update.message.reply_text("⚠️ Error al generar el comprobante DaviPlata.")
                 except Exception as e:
@@ -1435,10 +1388,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 try:
                     output_path = generar_comprobante_anulado(data, COMPROBANTE_ANULADO_CONFIG)
                     if output_path and await send_document(output_path, "🚫 ANULADO"):
-                        if chat_type in ['group', 'supergroup']:
-                            await update.message.reply_text(
-                                "💬 ¿Deseas generar más comprobantes? Contáctame al privado"
-                            )
+                        pass
                     else:
                         await update.message.reply_text("⚠️ Error al generar el comprobante anulado.")
                 except Exception as e:
