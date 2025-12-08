@@ -170,38 +170,25 @@ async def nequicol_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
                 )
             return
         
-        # En grupos: solo Nequi. En privado: todos los comprobantes
-        if chat_type in ['group', 'supergroup']:
-            # Solo Nequi en grupos
-            keyboard = [
-                ["💸 Nequi"],
-                ["❌ Cancelar"]
-            ]
-            mensaje_comandos = (
-                f"👋 Hola {user_name}!\n\n"
-                f"💎 Generador de Comprobantes\n\n"
-                f"📌 **En el grupo solo puedes generar comprobantes de Nequi**\n\n"
-                f"💬 Para generar otros comprobantes (BRE-B, QR, Llaves, Bancolombia, etc.), "
-                f"escríbeme al **privado** @Nequicolombiafreebot y allí tendrás acceso a todas las opciones.\n\n"
-                f"ℹ️ Para conocer funciones de fechas y referencias manuales, pulsa /masinf"
-            )
-        else:
-            # Todos los comprobantes en privado
-            keyboard = [
-                ["💸 Nequi", "🔄 BRE-B"],
-                ["📱 QR Comprobante", "🔑 LLAVES"],
-                ["🏦 Nequi a Bancolombia"],
-                ["🏦 QR BC", "💳 BC a Nequi"],
-                ["🏛️ BC a BC", "🔵 DaviPlata"],
-                ["✅ Anulado"],
-                ["❌ Cancelar"]
-            ]
-            mensaje_comandos = (
-                f"👋 Hola {user_name}!\n\n"
-                f"💎 Generador de Comprobantes\n"
-                f"📌 Selecciona una opción:\n\n"
-                f"ℹ️ Para conocer funciones de fechas y referencias manuales, pulsa /masinf"
-            )
+        ## Permitir todos los comprobantes tanto en grupo como en privado
+keyboard = [
+    ["💸 Nequi", "🔄 BRE-B"],
+    ["📱 QR Comprobante", "🔑 LLAVES"],
+    ["🏦 Nequi a Bancolombia"],
+    ["🏦 QR BC", "💳 BC a Nequi"],
+    ["🏛️ BC a BC", "🔵 DaviPlata"],
+    ["✅ Anulado"],
+    ["❌ Cancelar"]
+]
+mensaje_comandos = (
+    f"👋 Hola {user_name}!
+"
+    f"💎 Generador de Comprobantes
+"
+    f"📌 Selecciona una opción:
+"
+    f"ℹ️ Para conocer funciones de fechas y referencias manuales, pulsa /masinf"
+)
         
         reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True, one_time_keyboard=True)
         
