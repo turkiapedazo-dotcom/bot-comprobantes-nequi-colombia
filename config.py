@@ -3,12 +3,12 @@ COMPROBANTE1_CONFIG = {
     "template": "img/plantilla_nequi.jpg",
     "output": "comprobante1_generado.png",
     "styles": {
-        "nombre": {"size": 80, "color": "#200021", "pos": (200, 2340)},
-        "valor1": {"size": 80, "color": "#200021", "pos": (200, 2680)},
-        "telefono": {"size": 80, "color": "#200021", "pos": (200, 3000)},
-        "fecha": {"size": 80, "color": "#200021", "pos": (200, 3320)},
-        "referencia": {"size": 80, "color": "#200021", "pos": (200, 3650)},
-        "disponible": {"size": 80, "color": "#200021", "pos": (200, 4010)},
+        "nombre": {"size": 95, "color": "#200021", "pos": (200, 2340)},
+        "valor1": {"size": 95, "color": "#200021", "pos": (200, 2680)},
+        "telefono": {"size": 95, "color": "#200021", "pos": (200, 3000)},
+        "fecha": {"size": 95, "color": "#200021", "pos": (200, 3320)},
+        "referencia": {"size": 95, "color": "#200021", "pos": (200, 3650)},
+        "disponible": {"size": 95, "color": "#200021", "pos": (200, 4010)},
     },
     "font": "fuentes/Manrope-Medium.ttf",
 }
