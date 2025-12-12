@@ -703,14 +703,14 @@ def generar_fecha_bc_qr() -> str:
 
 
 def formatear_nombre_ahorros(nombre: str) -> str:
-    """Formatea el nombre con mayúsculas iniciales: 'anthonella ferrer' -> 'Anthonella Ferrer'"""
+    """Devuelve el nombre tal como lo ingresó el usuario, sin modificar mayúsculas/minúsculas"""
     if not nombre:
         return ""
-    return nombre.title()
+    return nombre  # Sin modificar el formato original
 
 
 def generar_comprobante_ahorros(data, config):
-    """Genera comprobante de ahorros con formateo específico"""
+    """Genera comprobante de ahorros con formateo específico (lógica de BOTSITECOL)"""
     template_path = config["template"]
     output_path = f"gen_{uuid.uuid4().hex}.png"
     styles = config["styles"]
@@ -724,12 +724,49 @@ def generar_comprobante_ahorros(data, config):
     numero_cuenta_formateado = formatear_numero_cuenta_ahorros(data.get("numero_cuenta", ""))
     valor_formateado = formatear_valor_ahorros(str(data.get("valor", "")))
     fecha_formateada = generar_fecha_ahorros()
+    
+    # Formatear fecha_esquina (solo hora en formato 1:43)
+    now = datetime.now(pytz.timezone("America/Bogota"))
+    fecha_esquina = now.strftime("%I:%M").lstrip("0")
+    
+    # Formatear valor de transferencia con $ (ejemplo: $ 6.000)
+    valor_limpio = str(data.get("valor", "")).replace(".", "").replace(",", "").replace(" ", "")
+    try:
+        valor_int = int(valor_limpio)
+        valor_transferencia = f"$ {valor_int:,}".replace(",", ".")
+    except:
+        valor_transferencia = f"$ {data.get('valor', '0')}"
+    
+    # Formatear costo de transferencia (solo el número, sin etiqueta) - $ 1.000,00 o $ 0,00
+    costo = data.get("costo_transferencia", 0)
+    if costo and int(costo) > 0:
+        # Formatear con punto para miles y coma para decimales
+        costo_int = int(costo)
+        costo_formateado = f"$ {costo_int:,}".replace(",", "X").replace(".", ",").replace("X", ".") + ",00"
+    else:
+        costo_formateado = "$ 0,00"
+    
+    # Generar número de comprobante: 00000 + 5 dígitos aleatorios
+    comprobante_no = "00000" + "".join([str(random.randint(0, 9)) for _ in range(5)])
+    
+    # Formatear referencia de transferencia (siempre se genera, automática si el usuario dijo no)
+    referencia = data.get("referencia_transferencia")
+    if referencia:
+        # Formatear con * al inicio: *7423
+        referencia_formateada = f"*{referencia}"
+    else:
+        # Si no hay referencia, generar una automáticamente
+        referencia_formateada = f"*{''.join([str(random.randint(0, 9)) for _ in range(4)])}"
 
     datos = {
-        "nombre": nombre_formateado,
-        "numero_cuenta": numero_cuenta_formateado,
-        "valor": valor_formateado,
+        "fecha_esquina": fecha_esquina,
+        "comprobante_no": comprobante_no,
         "fecha": fecha_formateada,
+        "valor_transferencia": valor_transferencia,
+        "costo_transferencia": costo_formateado,
+        "nombre": nombre_formateado,
+        "referencia_transferencia": referencia_formateada,  # Siempre en (88, 2044)
+        "numero_cuenta": numero_cuenta_formateado,  # Siempre en (85, 1605)
     }
 
     # Dibujar cada campo con su fuente específica SIN OUTLINE
