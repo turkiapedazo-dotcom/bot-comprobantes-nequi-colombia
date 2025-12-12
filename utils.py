@@ -779,7 +779,26 @@ def generar_comprobante_ahorros(data, config):
             # Dibujar texto directamente sin outline
             draw.text(style["pos"], str(texto), font=font, fill=style["color"])
 
-    image.save(output_path, format='PNG', compress_level=1)
+    # Obtener el color de fondo gris de la plantilla (muestrear un área central)
+    # Tomar el color de un píxel en el centro de la imagen
+    width, height = image.size
+    center_x, center_y = width // 2, height // 2
+    bg_color = image.getpixel((center_x, center_y))
+    
+    # Si el color es muy oscuro (negro), buscar un color gris más claro en otra área
+    if sum(bg_color) < 100:  # Si es muy oscuro
+        # Buscar en un área más abajo donde suele estar el fondo gris
+        sample_y = min(height - 100, center_y + 200)
+        bg_color = image.getpixel((center_x, sample_y))
+    
+    # Crear una nueva imagen con el tamaño completo y el color de fondo gris
+    final_image = Image.new("RGB", (width, height), bg_color)
+    
+    # Pegar la imagen original sobre el fondo gris
+    final_image.paste(image, (0, 0))
+    
+    # Guardar la imagen final
+    final_image.save(output_path, format='PNG', compress_level=1)
     return output_path
 
 
