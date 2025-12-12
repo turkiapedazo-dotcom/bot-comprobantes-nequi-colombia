@@ -3,12 +3,12 @@ COMPROBANTE1_CONFIG = {
     "template": "img/plantilla_nequi.jpg",
     "output": "comprobante1_generado.png",
     "styles": {
-        "nombre": {"size": 95, "color": "#200021", "pos": (200, 2340)},
-        "valor1": {"size": 95, "color": "#200021", "pos": (200, 2680)},
-        "telefono": {"size": 95, "color": "#200021", "pos": (200, 3000)},
-        "fecha": {"size": 95, "color": "#200021", "pos": (200, 3320)},
-        "referencia": {"size": 95, "color": "#200021", "pos": (200, 3650)},
-        "disponible": {"size": 95, "color": "#200021", "pos": (200, 4010)},
+        "nombre": {"size": 80, "color": "#200021", "pos": (200, 2340)},
+        "valor1": {"size": 80, "color": "#200021", "pos": (200, 2680)},
+        "telefono": {"size": 80, "color": "#200021", "pos": (200, 3000)},
+        "fecha": {"size": 80, "color": "#200021", "pos": (200, 3320)},
+        "referencia": {"size": 80, "color": "#200021", "pos": (200, 3650)},
+        "disponible": {"size": 80, "color": "#200021", "pos": (200, 4010)},
     },
     "font": "fuentes/Manrope-Medium.ttf",
 }
@@ -198,15 +198,19 @@ MOVIMIENTO_LLAVE_CONFIG = {
 # CONFIGURACIONES BOT BANCOLOMBIA
 # ====================================================================
 
-# ✅ Configuración para comprobante de Ahorros (bancolombia.jpg) - del proyecto app
+# ✅ Configuración para comprobante de Ahorros (bc_a_bc.png) - del proyecto BOTSITECOL
 COMPROBANTE_AHORROS_CONFIG = {
-    "template": "img/bancolombia.jpg",
+    "template": "img/bc_a_bc.png",
     "output": "comprobante_ahorros_generado.png",
     "styles": {
-        "nombre": {"size": 58, "color": "#FFFFFF", "pos": (94, 1645), "font": "fuentes/cibfontsans_regular.ttf"},
-        "numero_cuenta": {"size": 46, "color": "#FFFFFF", "pos": (96, 1750), "font": "fuentes/opensans_semibold.ttf"},
-        "valor": {"size": 62, "color": "#FFFFFF", "pos": (135, 1095), "font": "fuentes/cibfontsans_regular.ttf"},
-        "fecha": {"size": 45, "color": "#FFFFFF", "pos": (344, 687), "font": "fuentes/opensans_semibold.ttf"},
+        "fecha_esquina": {"size": 36, "color": "#FFFFFF", "pos": (32, 33), "font": "fuentes/opensans_semibold.ttf"},
+        "comprobante_no": {"size": 35, "color": "#FFFFFF", "pos": (575, 572), "font": "fuentes/OpenSans-Regular.ttf"},
+        "fecha": {"size": 32, "color": "#FFFFFF", "pos": (318, 628), "font": "fuentes/OpenSans-Regular.ttf"},
+        "valor_transferencia": {"size": 48, "color": "#FFFFFF", "pos": (78, 1010), "font": "fuentes/cibfontsans_bold.ttf"},
+        "costo_transferencia": {"size": 48, "color": "#FFFFFF", "pos": (78, 1178), "font": "fuentes/cibfontsans_bold.ttf"},
+        "nombre": {"size": 48, "color": "#FFFFFF", "pos": (88, 1500), "font": "fuentes/cibfontsans_bold.ttf"},
+        "referencia_transferencia": {"size": 40, "color": "#FFFFFF", "pos": (88, 2044), "font": "fuentes/opensans_semibold.ttf"},
+        "numero_cuenta": {"size": 40, "color": "#FFFFFF", "pos": (85, 1605), "font": "fuentes/opensans_semibold.ttf"},
     },
     "font": "fuentes/cibfontsans_regular.ttf",
 }
