@@ -1251,7 +1251,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     if referencia_flag:
                         user_data_store[user_id]["referencia_manual"] = True
         
-        # --- BC a BC (Bancolombia a Bancolombia) - Usa configuración de Ahorros ---
+        # --- BC a BC (Bancolombia a Bancolombia) - Usa configuración de Ahorros (bc_a_bc.png) ---
         elif tipo == "bc_bc":
             if step == 0:
                 data["nombre"] = text
@@ -1276,14 +1276,77 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     await update.message.reply_text("⚠️ El valor mínimo es $1,000. Intenta de nuevo.")
                     return
                 data["valor"] = valor
-                # Verificar si necesita pedir fecha manual (para TODOS)
-                if await verificar_fecha_manual():
+                data["step"] = 3
+                await update.message.reply_text("💸 ¿Deseas colocar costo de transferencia?\n\nResponde: sí o no")
+            elif step == 3:
+                respuesta = text.lower().strip()
+                if respuesta in ["sí", "si", "yes", "s", "y"]:
+                    data["step"] = 4
+                    await update.message.reply_text("💰 Ingresa el costo de transferencia:\n\nEjemplo: 50, 1000, etc.")
+                elif respuesta in ["no", "n"]:
+                    data["costo_transferencia"] = 0
+                    data["step"] = 5
+                    await update.message.reply_text("🔢 ¿Deseas colocar referencia de transferencia?\n\nResponde: sí o no")
+                else:
+                    await update.message.reply_text("⚠️ Por favor responde: sí o no")
+            elif step == 4:
+                costo_limpio = text.replace(".", "").replace(",", "").replace(" ", "").replace("$", "")
+                if not costo_limpio.isdigit():
+                    await update.message.reply_text("⚠️ El costo debe ser numérico.")
                     return
-                # Si tiene fecha manual, usarla
-                if fecha_manual and "fecha_manual_value" in data:
-                    data["fecha"] = data["fecha_manual_value"]
+                costo = int(costo_limpio)
+                data["costo_transferencia"] = costo
+                data["step"] = 5
+                await update.message.reply_text("🔢 ¿Deseas colocar referencia de transferencia?\n\nResponde: sí o no")
+            elif step == 5:
+                respuesta = text.lower().strip()
+                if respuesta in ["sí", "si", "yes", "s", "y"]:
+                    data["step"] = 6
+                    await update.message.reply_text("🔢 Ingresa los 4 dígitos de la referencia:\n\nEjemplo: 7423 (se agregará * automáticamente)")
+                elif respuesta in ["no", "n"]:
+                    # Generar referencia aleatoria automáticamente (4 dígitos)
+                    referencia_aleatoria = "".join([str(random.randint(0, 9)) for _ in range(4)])
+                    data["referencia_transferencia"] = referencia_aleatoria
+                    # Generar comprobante directamente
+                    try:
+                        output_path = generar_comprobante_ahorros(data, COMPROBANTE_AHORROS_CONFIG)
+                        if output_path and await send_document(output_path, "✅ Comprobante BC a BC generado"):
+                            # Generar movimiento BC a BC usando ahorros.jpg
+                            try:
+                                data_mov_ahorros = {
+                                    "valor": -abs(data["valor"])
+                                }
+                                output_path_mov_ahorros = generar_movimiento_ahorros(data_mov_ahorros, MOVIMIENTO_AHORROS_CONFIG)
+                                if output_path_mov_ahorros:
+                                    await send_document(output_path_mov_ahorros, "📄 Movimiento BC a BC generado")
+                            except Exception as e_mov:
+                                logger.error(f"Error generando movimiento BC a BC: {str(e_mov)}")
+                        else:
+                            await update.message.reply_text("⚠️ Error al generar el comprobante BC a BC.")
+                    except Exception as e:
+                        logger.error(f"Error generando BC a BC: {str(e)}")
+                        await update.message.reply_text("⚠️ Error al generar el comprobante BC a BC.")
+                    # Preservar flags antes de eliminar sesión
+                    fecha_flag = user_data_store.get(user_id, {}).get("fecha_manual", False)
+                    referencia_flag = user_data_store.get(user_id, {}).get("referencia_manual", False)
+                    del user_data_store[user_id]
+                    if fecha_flag or referencia_flag:
+                        user_data_store[user_id] = {}
+                        if fecha_flag:
+                            user_data_store[user_id]["fecha_manual"] = True
+                        if referencia_flag:
+                            user_data_store[user_id]["referencia_manual"] = True
+                else:
+                    await update.message.reply_text("⚠️ Por favor responde: sí o no")
+            elif step == 6:
+                # Validar que sean exactamente 4 dígitos
+                digitos = "".join(ch for ch in text if ch.isdigit())
+                if len(digitos) != 4:
+                    await update.message.reply_text("⚠️ La referencia debe tener exactamente 4 dígitos.\n\nEjemplo: 7423")
+                    return
+                data["referencia_transferencia"] = digitos
                 try:
-                    # Usar COMPROBANTE_AHORROS_CONFIG (bancolombia.jpg) para BC a BC
+                    # Usar COMPROBANTE_AHORROS_CONFIG (bc_a_bc.png) para BC a BC
                     output_path = generar_comprobante_ahorros(data, COMPROBANTE_AHORROS_CONFIG)
                     if output_path and await send_document(output_path, "✅ Comprobante BC a BC generado"):
                         # Generar movimiento BC a BC usando ahorros.jpg
