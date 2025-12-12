@@ -203,9 +203,9 @@ COMPROBANTE_AHORROS_CONFIG = {
     "template": "img/bc_a_bc.png",
     "output": "comprobante_ahorros_generado.png",
     "styles": {
-        "fecha_esquina": {"size": 36, "color": "#FFFFFF", "pos": (32, 33), "font": "fuentes/opensans_semibold.ttf"},
-        "comprobante_no": {"size": 35, "color": "#FFFFFF", "pos": (575, 572), "font": "fuentes/OpenSans-Regular.ttf"},
-        "fecha": {"size": 32, "color": "#FFFFFF", "pos": (318, 628), "font": "fuentes/OpenSans-Regular.ttf"},
+        "fecha_esquina": {"size": 36, "color": "#FFFFFF", "pos": (20, 33), "font": "fuentes/opensans_semibold.ttf"},
+        "comprobante_no": {"size": 35, "color": "#FFFFFF", "pos": (575, 572), "font": "fuentes/opensans_regular.ttf"},
+        "fecha": {"size": 32, "color": "#FFFFFF", "pos": (318, 628), "font": "fuentes/opensans_regular.ttf"},
         "valor_transferencia": {"size": 48, "color": "#FFFFFF", "pos": (78, 1010), "font": "fuentes/cibfontsans_bold.ttf"},
         "costo_transferencia": {"size": 48, "color": "#FFFFFF", "pos": (78, 1178), "font": "fuentes/cibfontsans_bold.ttf"},
         "nombre": {"size": 48, "color": "#FFFFFF", "pos": (88, 1500), "font": "fuentes/cibfontsans_bold.ttf"},
