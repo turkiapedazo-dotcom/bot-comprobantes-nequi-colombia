@@ -31,9 +31,10 @@ from config import (
     MOVIMIENTO_LLAVE_CONFIG,
     COMPROBANTE_ANULADO_CONFIG,
     MOVIMIENTO_AHORROS_CONFIG,
-    MOVIMIENTO_QR_BC_CONFIG
+    MOVIMIENTO_QR_BC_CONFIG,
+    COMPROBANTE_LLAVES_DAVIPLATA_CONFIG
 )
-from utils import generar_comprobante, ofuscar_nombre, generar_comprobante_nequi_bc, generar_comprobante_bc_nq_t, generar_comprobante_bc_qr, generar_comprobante_nequi_ahorros, generar_comprobante_ahorros, generar_comprobante_bc_nequi, generar_movimientos_bc_nequi, generar_comprobante_qr_bc, generar_comprobante_anulado, generar_movimiento_ahorros, generar_movimiento_qr_bc
+from utils import generar_comprobante, ofuscar_nombre, generar_comprobante_nequi_bc, generar_comprobante_bc_nq_t, generar_comprobante_bc_qr, generar_comprobante_nequi_ahorros, generar_comprobante_ahorros, generar_comprobante_bc_nequi, generar_movimientos_bc_nequi, generar_comprobante_qr_bc, generar_comprobante_anulado, generar_movimiento_ahorros, generar_movimiento_qr_bc, generar_comprobante_llaves_daviplata
 
 # Configuration
 ADMIN_IDS = [8058901135]  # IDs de los administradores
@@ -159,16 +160,16 @@ async def nequicol_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         
         last_command_time[key] = current_time
         
-        # Verificar acceso usando auth_system (incluye modo gratis)
-        if not auth_system.can_use_bot(user_id, chat_id, chat_type == 'private'):
-            if not auth_system.gratis_mode:
-                await update.message.reply_text(
-                    f"👋 Querido usuario,\n\n"
-                    f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
-                    f"Una vez que te unas, podrás usar el bot sin restricciones.",
-                    parse_mode='HTML'
-                )
-            return
+        # TEMPORALMENTE COMENTADO PARA PROBAR BOT - Verificar acceso usando auth_system (incluye modo gratis)
+        # if not auth_system.can_use_bot(user_id, chat_id, chat_type == 'private'):
+        #     if not auth_system.gratis_mode:
+        #         await update.message.reply_text(
+        #             f"👋 Querido usuario,\n\n"
+        #             f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
+        #             f"Una vez que te unas, podrás usar el bot sin restricciones.",
+        #             parse_mode='HTML'
+        #         )
+        #     return
         
         # Todos los comprobantes disponibles en grupos y privado
         keyboard = [
@@ -177,6 +178,7 @@ async def nequicol_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             ["🏦 Nequi a Bancolombia"],
             ["🏦 QR BC", "💳 BC a Nequi"],
             ["🏛️ BC a BC", "🔵 DaviPlata"],
+            ["📱 QR DaviPlata", "💳 Llaves DaviPlata"],
             ["✅ Anulado"],
             ["❌ Cancelar"]
         ]
@@ -223,16 +225,16 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         if chat_id < 0 and chat_id in disabled_groups:
             return  # No responder si el bot está deshabilitado en este grupo
         
-        # Verificar acceso usando auth_system (incluye modo gratis)
-        if not auth_system.can_use_bot(user_id, chat_id, chat_type == 'private'):
-            if not auth_system.gratis_mode:
-                await update.message.reply_text(
-                    f"👋 Querido usuario,\n\n"
-                    f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
-                    f"Una vez que te unas, podrás usar el bot sin restricciones.",
-                    parse_mode='HTML'
-                )
-            return
+        # TEMPORALMENTE COMENTADO PARA PROBAR BOT - Verificar acceso usando auth_system (incluye modo gratis)
+        # if not auth_system.can_use_bot(user_id, chat_id, chat_type == 'private'):
+        #     if not auth_system.gratis_mode:
+        #         await update.message.reply_text(
+        #             f"👋 Querido usuario,\n\n"
+        #             f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
+        #             f"Una vez que te unas, podrás usar el bot sin restricciones.",
+        #             parse_mode='HTML'
+        #         )
+        #     return
         
         
         # En grupos: anti-spam con cooldown de 2 segundos
@@ -335,46 +337,46 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 'username': username or 'N/A',
                 'first_name': first_name or 'N/A'
             }
-        # Verificar acceso usando auth_system (incluye modo gratis)
-        if not auth_system.can_use_bot(user_id, chat_id, chat_type == 'private'):
-            if not auth_system.gratis_mode:
-                await update.message.reply_text(
-                    f"👋 Querido usuario,\n\n"
-                    f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
-                    f"Una vez que te unas, podrás usar el bot sin restricciones.",
-                    parse_mode='HTML'
-                )
-            return
+        # TEMPORALMENTE COMENTADO PARA PROBAR BOT - Verificar acceso usando auth_system (incluye modo gratis)
+        # if not auth_system.can_use_bot(user_id, chat_id, chat_type == 'private'):
+        #     if not auth_system.gratis_mode:
+        #         await update.message.reply_text(
+        #             f"👋 Querido usuario,\n\n"
+        #             f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
+        #             f"Una vez que te unas, podrás usar el bot sin restricciones.",
+        #             parse_mode='HTML'
+        #         )
+        #     return
         
-        # Si el usuario está EN el grupo permitido, permitir acceso directo (código antiguo - ya no se usa)
-        if False:  # chat_id == ALLOWED_GROUP:
-            # Usuario está en el grupo permitido, continuar
-            pass
-        else:
-            # Usuario está fuera del grupo, verificar si es miembro
-            try:
-                member = await context.bot.get_chat_member(ALLOWED_GROUP, user_id)
-                if member.status not in ['member', 'administrator', 'creator']:
-                    # Removed button
-                    # Removed markup
-                    await query.message.reply_text(
-                        f"� Querido uVsuario,\n\n"
-                        f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
-                        f"Una vez que te unas, podrás usar el bot sin restricciones.",
-                        parse_mode='HTML'
-                    )
-                    return
-            except Exception as e:
-                logger.warning(f"No se pudo verificar membresía del usuario {user_id}: {str(e)}")
-                # Removed button
-                # Removed markup
-                await query.message.reply_text(
-                    f"👋 Querido usuario,\n\n"
-                    f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
-                    f"Una vez que te unas, podrás usar el bot sin restricciones.",
-                    parse_mode='HTML'
-                )
-                return
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -         # Si el usuario está EN el grupo permitido, permitir acceso directo (código antiguo - ya no se usa)
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -         if False:  # chat_id == ALLOWED_GROUP:
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -             # Usuario está en el grupo permitido, continuar
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -             pass
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -         else:
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -             # Usuario está fuera del grupo, verificar si es miembro
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -             try:
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                 member = await context.bot.get_chat_member(ALLOWED_GROUP, user_id)
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                 if member.status not in ['member', 'administrator', 'creator']:
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                     # Removed button
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                     # Removed markup
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                     await query.message.reply_text(
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                         f"� Querido uVsuario,\n\n"
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                         f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                         f"Una vez que te unas, podrás usar el bot sin restricciones.",
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                         parse_mode='HTML'
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                     )
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                     return
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -             except Exception as e:
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                 logger.warning(f"No se pudo verificar membresía del usuario {user_id}: {str(e)}")
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                 # Removed button
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                 # Removed markup
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                 await query.message.reply_text(
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                     f"👋 Querido usuario,\n\n"
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                     f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                     f"Una vez que te unas, podrás usar el bot sin restricciones.",
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                     parse_mode='HTML'
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                 )
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                 return
         
         # Verificar modo mantenimiento
         global maintenance_mode
@@ -387,6 +389,16 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             )
             return
         tipo = query.data or "default"
+        
+        # QR DAVIPLATA está en desarrollo
+        if tipo == "qr_daviplata":
+            await query.message.reply_text(
+                "⚠️ Esta función está en desarrollo.\n\n"
+                "🔧 Estamos trabajando en las plantillas para QR DaviPlata.\n\n"
+                "💬 Si quieres colaborar con una plantilla, escríbeme: @Sangre_binerojs"
+            )
+            return
+        
         # Preservar flags de configuración (fecha_manual, referencia_manual) si existen
         fecha_manual_flag = user_data_store.get(user_id, {}).get("fecha_manual", False)
         referencia_manual_flag = user_data_store.get(user_id, {}).get("referencia_manual", False)
@@ -411,7 +423,8 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             "comprobante4": "👤 Ingresa el nombre a enviar:",
             "comprobante_qr": "🏬 Nombre del negocio:",
             "comprobante_llave": "👤 Ingresa el nombre a enviar:",
-            "bancolombia": "👤 Ingresa el nombre del destinario:"
+            "bancolombia": "👤 Ingresa el nombre del destinario:",
+            "llaves_daviplata": "👤 Ingresa el nombre del destinatario:"
         }
         await query.message.reply_text(
             prompts.get(tipo, "🔍 Por favor, inicia ingresando los datos requeridos:"),
@@ -453,46 +466,46 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 )
             return
         
-        # Verificar acceso usando auth_system (incluye modo gratis)
-        if not auth_system.can_use_bot(user_id, chat_id, chat_type == 'private'):
-            if not auth_system.gratis_mode:
-                await update.message.reply_text(
-                    f"👋 Querido usuario,\n\n"
-                    f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
-                    f"Una vez que te unas, podrás usar el bot sin restricciones.",
-                    parse_mode='HTML'
-                )
-            return
+        # TEMPORALMENTE COMENTADO PARA PROBAR BOT - Verificar acceso usando auth_system (incluye modo gratis)
+        # if not auth_system.can_use_bot(user_id, chat_id, chat_type == 'private'):
+        #     if not auth_system.gratis_mode:
+        #         await update.message.reply_text(
+        #             f"👋 Querido usuario,\n\n"
+        #             f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
+        #             f"Una vez que te unas, podrás usar el bot sin restricciones.",
+        #             parse_mode='HTML'
+        #         )
+        #     return
         
-        # Si el usuario está EN el grupo permitido, permitir acceso directo (código antiguo - ya no se usa)
-        if False:  # chat_id == ALLOWED_GROUP:
-            # Usuario está en el grupo permitido, continuar
-            pass
-        else:
-            # Usuario está fuera del grupo, verificar si es miembro
-            try:
-                member = await context.bot.get_chat_member(ALLOWED_GROUP, user_id)
-                if member.status not in ['member', 'administrator', 'creator']:
-                    # Removed button
-                    # Removed markup
-                    await update.message.reply_text(
-                        f"� QueriPdo usuario,\n\n"
-                        f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
-                        f"Una vez que te unas, podrás usar el bot sin restricciones.",
-                        parse_mode='HTML'
-                    )
-                    return
-            except Exception as e:
-                logger.warning(f"No se pudo verificar membresía del usuario {user_id}: {str(e)}")
-                # Removed button
-                # Removed markup
-                await update.message.reply_text(
-                    f"👋 Querido usuario,\n\n"
-                    f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
-                    f"Una vez que te unas, podrás usar el bot sin restricciones.",
-                    parse_mode='HTML'
-                )
-                return
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -         # Si el usuario está EN el grupo permitido, permitir acceso directo (código antiguo - ya no se usa)
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -         if False:  # chat_id == ALLOWED_GROUP:
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -             # Usuario está en el grupo permitido, continuar
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -             pass
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -         else:
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -             # Usuario está fuera del grupo, verificar si es miembro
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -             try:
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                 member = await context.bot.get_chat_member(ALLOWED_GROUP, user_id)
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                 if member.status not in ['member', 'administrator', 'creator']:
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                     # Removed button
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                     # Removed markup
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                     await update.message.reply_text(
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                         f"� QueriPdo usuario,\n\n"
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                         f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                         f"Una vez que te unas, podrás usar el bot sin restricciones.",
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                         parse_mode='HTML'
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                     )
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                     return
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -             except Exception as e:
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                 logger.warning(f"No se pudo verificar membresía del usuario {user_id}: {str(e)}")
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                 # Removed button
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                 # Removed markup
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                 await update.message.reply_text(
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                     f"👋 Querido usuario,\n\n"
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                     f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                     f"Una vez que te unas, podrás usar el bot sin restricciones.",
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                     parse_mode='HTML'
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                 )
+# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                 return
         
         # Detectar si el mensaje es de los botones de acceso rápido (antes de ignorar grupos)
         button_mapping = {
@@ -505,12 +518,24 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             "💳 BC a Nequi": "bc_nequi",
             "🏛️ BC a BC": "bc_bc",
             "🔵 DaviPlata": "daviplata",
+            "📱 QR DaviPlata": "qr_daviplata",
+            "💳 Llaves DaviPlata": "llaves_daviplata",
             "✅ Anulado": "comprobante_anulado"
         }
         
         # Permitir todos los comprobantes en grupos y privado
         if text in button_mapping:
             tipo = button_mapping[text]
+            
+            # QR DAVIPLATA está en desarrollo
+            if tipo == "qr_daviplata":
+                await update.message.reply_text(
+                    "⚠️ Esta función está en desarrollo.\n\n"
+                    "🔧 Estamos trabajando en las plantillas para QR DaviPlata.\n\n"
+                    "💬 Si quieres colaborar con una plantilla, escríbeme: @Sangre_binerojs"
+                )
+                return
+            
             # Preservar flags de configuración (fecha_manual, referencia_manual) si existen
             fecha_manual_flag = user_data_store.get(user_id, {}).get("fecha_manual", False)
             referencia_manual_flag = user_data_store.get(user_id, {}).get("referencia_manual", False)
@@ -533,6 +558,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 "bc_nequi": "📱 Ingresa el número Nequi (10 dígitos):",
                 "bc_bc": "👤 Ingresa el nombre:",
                 "daviplata": "📱 Ingresa el número DaviPlata (mínimo 10 dígitos):",
+                "llaves_daviplata": "👤 Ingresa el nombre del destinatario:",
                 "comprobante_anulado": "👤 ¿Nombre de la víctima?"
             }
             await update.message.reply_text(
@@ -1423,6 +1449,101 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     if referencia_flag:
                         user_data_store[user_id]["referencia_manual"] = True
         
+        # --- QR DAVIPLATA ---
+        elif tipo == "qr_daviplata":
+            # QR DAVIPLATA está en desarrollo - bloquear cualquier intento
+            await update.message.reply_text(
+                "⚠️ Esta función está en desarrollo.\n\n"
+                "🔧 Estamos trabajando en las plantillas para QR DaviPlata.\n\n"
+                "💬 Si quieres colaborar con una plantilla, escríbeme: @Sangre_binerojs"
+            )
+            # Limpiar sesión
+            if user_id in user_data_store:
+                del user_data_store[user_id]
+            return
+        
+        # --- LLAVES DAVIPLATA ---
+        elif tipo == "llaves_daviplata":
+            if step == 0:
+                data["nombre"] = text
+                data["step"] = 1
+                await update.message.reply_text("🔑 Ingresa la llave a enviar:")
+            elif step == 1:
+                data["llave"] = text
+                data["step"] = 2
+                await update.message.reply_text("💰 Ingresa la cantidad a enviar:")
+            elif step == 2:
+                # Remover puntos y comas si el usuario las incluye
+                valor_limpio = text.replace(".", "").replace(",", "").replace("$", "").strip()
+                if not valor_limpio.isdigit():
+                    await update.message.reply_text("⚠️ La cantidad debe ser solo números, sin puntos ni comas. Ejemplo: 32000")
+                    return
+                data["valor"] = int(valor_limpio)
+                data["step"] = 3
+                await update.message.reply_text("🔢 Ingresa los últimos 4 dígitos de tu cuenta:")
+            elif step == 3:
+                if not text.isdigit() or len(text) != 4:
+                    await update.message.reply_text("⚠️ Deben ser exactamente 4 dígitos.")
+                    return
+                data["ultimos_4"] = text
+                # Generar "desde" con formato DaviPlata - ******ultimos_4
+                data["desde"] = f"DaviPlata - ******{text}"
+                data["step"] = 4
+                await update.message.reply_text("🏦 Selecciona el banco:\n\n• Nequi\n• Dale\n• Davivienda\n\nO escribe el nombre del banco:")
+            elif step == 4 or data.get("fecha_recibida", False):
+                if not data.get("fecha_recibida", False):
+                    data["entidad_destino"] = text
+                    # Verificar si necesita pedir fecha manual (para TODOS)
+                    if await verificar_fecha_manual():
+                        return
+                # Verificar que todos los datos estén guardados antes de continuar
+                if "valor" not in data or "nombre" not in data or "llave" not in data or "entidad_destino" not in data or "desde" not in data:
+                    await update.message.reply_text(
+                        "⚠️ Error: Faltan datos. Por favor, intenta de nuevo.",
+                        parse_mode='Markdown'
+                    )
+                    limpiar_sesion_preservando_flags()
+                    return
+                # Si tiene fecha manual, usarla
+                if fecha_manual and "fecha_manual_value" in data:
+                    data["fecha_manual_value"] = data["fecha_manual_value"]
+                # Limpiar flag de fecha_recibida
+                data.pop("fecha_recibida", None)
+                try:
+                    output_path = generar_comprobante_llaves_daviplata(data, COMPROBANTE_LLAVES_DAVIPLATA_CONFIG)
+                    if output_path is None:
+                        await update.message.reply_text(
+                            "⚠️ Error al generar el comprobante Llaves DaviPlata.",
+                            parse_mode='Markdown'
+                        )
+                        limpiar_sesion_preservando_flags()
+                        return
+                    # Enviar como foto para que se muestre directamente en el chat
+                    try:
+                        if output_path and os.path.exists(output_path):
+                            with open(output_path, "rb") as f:
+                                await update.message.reply_photo(photo=f, caption="✅ Comprobante Llaves DaviPlata generado")
+                            os.remove(output_path)
+                            logger.info(f"Foto enviada exitosamente: {output_path}")
+                        else:
+                            await update.message.reply_text("⚠️ Error al enviar el comprobante Llaves DaviPlata.")
+                    except Exception as e:
+                        logger.error(f"Error enviando foto Llaves DaviPlata: {str(e)}")
+                        await update.message.reply_text("⚠️ Error al enviar el comprobante Llaves DaviPlata.")
+                except Exception as e:
+                    logger.error(f"Error generando Llaves DaviPlata: {str(e)}")
+                    await update.message.reply_text("⚠️ Error al generar el comprobante Llaves DaviPlata.")
+                # Preservar flags antes de eliminar sesión
+                fecha_flag = user_data_store.get(user_id, {}).get("fecha_manual", False)
+                referencia_flag = user_data_store.get(user_id, {}).get("referencia_manual", False)
+                del user_data_store[user_id]
+                if fecha_flag or referencia_flag:
+                    user_data_store[user_id] = {}
+                    if fecha_flag:
+                        user_data_store[user_id]["fecha_manual"] = True
+                    if referencia_flag:
+                        user_data_store[user_id]["referencia_manual"] = True
+        
         # --- COMPROBANTE ANULADO ---
         elif tipo == "comprobante_anulado":
             if step == 0:
@@ -2027,9 +2148,9 @@ async def masinf_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     chat_type = update.effective_chat.type
     
     try:
-        # Verificar acceso usando auth_system (incluye modo gratis)
-        if not auth_system.can_use_bot(user_id, chat_id, chat_type == 'private'):
-            return
+        # TEMPORALMENTE COMENTADO PARA PROBAR BOT - Verificar acceso usando auth_system (incluye modo gratis)
+        # if not auth_system.can_use_bot(user_id, chat_id, chat_type == 'private'):
+        #     return
         
         mensaje_info = (
             "⚙️ **Comandos:**\n\n"
