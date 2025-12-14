@@ -160,16 +160,16 @@ async def nequicol_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         
         last_command_time[key] = current_time
         
-        # TEMPORALMENTE COMENTADO PARA PROBAR BOT - Verificar acceso usando auth_system (incluye modo gratis)
-        # if not auth_system.can_use_bot(user_id, chat_id, chat_type == 'private'):
-        #     if not auth_system.gratis_mode:
-        #         await update.message.reply_text(
-        #             f"👋 Querido usuario,\n\n"
-        #             f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
-        #             f"Una vez que te unas, podrás usar el bot sin restricciones.",
-        #             parse_mode='HTML'
-        #         )
-        #     return
+        # Verificar acceso usando auth_system (incluye modo gratis)
+        if not auth_system.can_use_bot(user_id, chat_id, chat_type == 'private'):
+            if not auth_system.gratis_mode:
+                await update.message.reply_text(
+                    f"👋 Querido usuario,\n\n"
+                    f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
+                    f"Una vez que te unas, podrás usar el bot sin restricciones.",
+                    parse_mode='HTML'
+                )
+            return
         
         # Todos los comprobantes disponibles en grupos y privado
         keyboard = [
@@ -225,16 +225,16 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         if chat_id < 0 and chat_id in disabled_groups:
             return  # No responder si el bot está deshabilitado en este grupo
         
-        # TEMPORALMENTE COMENTADO PARA PROBAR BOT - Verificar acceso usando auth_system (incluye modo gratis)
-        # if not auth_system.can_use_bot(user_id, chat_id, chat_type == 'private'):
-        #     if not auth_system.gratis_mode:
-        #         await update.message.reply_text(
-        #             f"👋 Querido usuario,\n\n"
-        #             f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
-        #             f"Una vez que te unas, podrás usar el bot sin restricciones.",
-        #             parse_mode='HTML'
-        #         )
-        #     return
+        # Verificar acceso usando auth_system (incluye modo gratis)
+        if not auth_system.can_use_bot(user_id, chat_id, chat_type == 'private'):
+            if not auth_system.gratis_mode:
+                await update.message.reply_text(
+                    f"👋 Querido usuario,\n\n"
+                    f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
+                    f"Una vez que te unas, podrás usar el bot sin restricciones.",
+                    parse_mode='HTML'
+                )
+            return
         
         
         # En grupos: anti-spam con cooldown de 2 segundos
@@ -337,46 +337,46 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 'username': username or 'N/A',
                 'first_name': first_name or 'N/A'
             }
-        # TEMPORALMENTE COMENTADO PARA PROBAR BOT - Verificar acceso usando auth_system (incluye modo gratis)
-        # if not auth_system.can_use_bot(user_id, chat_id, chat_type == 'private'):
-        #     if not auth_system.gratis_mode:
-        #         await update.message.reply_text(
-        #             f"👋 Querido usuario,\n\n"
-        #             f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
-        #             f"Una vez que te unas, podrás usar el bot sin restricciones.",
-        #             parse_mode='HTML'
-        #         )
-        #     return
+        # Verificar acceso usando auth_system (incluye modo gratis)
+        if not auth_system.can_use_bot(user_id, chat_id, chat_type == 'private'):
+            if not auth_system.gratis_mode:
+                await update.message.reply_text(
+                    f"👋 Querido usuario,\n\n"
+                    f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
+                    f"Una vez que te unas, podrás usar el bot sin restricciones.",
+                    parse_mode='HTML'
+                )
+            return
         
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -         # Si el usuario está EN el grupo permitido, permitir acceso directo (código antiguo - ya no se usa)
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -         if False:  # chat_id == ALLOWED_GROUP:
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -             # Usuario está en el grupo permitido, continuar
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -             pass
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -         else:
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -             # Usuario está fuera del grupo, verificar si es miembro
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -             try:
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                 member = await context.bot.get_chat_member(ALLOWED_GROUP, user_id)
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                 if member.status not in ['member', 'administrator', 'creator']:
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                     # Removed button
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                     # Removed markup
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                     await query.message.reply_text(
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                         f"� Querido uVsuario,\n\n"
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                         f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                         f"Una vez que te unas, podrás usar el bot sin restricciones.",
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                         parse_mode='HTML'
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                     )
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                     return
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -             except Exception as e:
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                 logger.warning(f"No se pudo verificar membresía del usuario {user_id}: {str(e)}")
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                 # Removed button
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                 # Removed markup
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                 await query.message.reply_text(
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                     f"👋 Querido usuario,\n\n"
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                     f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                     f"Una vez que te unas, podrás usar el bot sin restricciones.",
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                     parse_mode='HTML'
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                 )
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                 return
+        # Si el usuario está EN el grupo permitido, permitir acceso directo (código antiguo - ya no se usa)
+        if False:  # chat_id == ALLOWED_GROUP:
+            # Usuario está en el grupo permitido, continuar
+            pass
+        else:
+            # Usuario está fuera del grupo, verificar si es miembro
+            try:
+                member = await context.bot.get_chat_member(ALLOWED_GROUP, user_id)
+                if member.status not in ['member', 'administrator', 'creator']:
+                    # Removed button
+                    # Removed markup
+                    await query.message.reply_text(
+                        f"� Querido uVsuario,\n\n"
+                        f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
+                        f"Una vez que te unas, podrás usar el bot sin restricciones.",
+                        parse_mode='HTML'
+                    )
+                    return
+            except Exception as e:
+                logger.warning(f"No se pudo verificar membresía del usuario {user_id}: {str(e)}")
+                # Removed button
+                # Removed markup
+                await query.message.reply_text(
+                    f"👋 Querido usuario,\n\n"
+                    f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
+                    f"Una vez que te unas, podrás usar el bot sin restricciones.",
+                    parse_mode='HTML'
+                )
+                return
         
         # Verificar modo mantenimiento
         global maintenance_mode
@@ -466,46 +466,46 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 )
             return
         
-        # TEMPORALMENTE COMENTADO PARA PROBAR BOT - Verificar acceso usando auth_system (incluye modo gratis)
-        # if not auth_system.can_use_bot(user_id, chat_id, chat_type == 'private'):
-        #     if not auth_system.gratis_mode:
-        #         await update.message.reply_text(
-        #             f"👋 Querido usuario,\n\n"
-        #             f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
-        #             f"Una vez que te unas, podrás usar el bot sin restricciones.",
-        #             parse_mode='HTML'
-        #         )
-        #     return
+        # Verificar acceso usando auth_system (incluye modo gratis)
+        if not auth_system.can_use_bot(user_id, chat_id, chat_type == 'private'):
+            if not auth_system.gratis_mode:
+                await update.message.reply_text(
+                    f"👋 Querido usuario,\n\n"
+                    f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
+                    f"Una vez que te unas, podrás usar el bot sin restricciones.",
+                    parse_mode='HTML'
+                )
+            return
         
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -         # Si el usuario está EN el grupo permitido, permitir acceso directo (código antiguo - ya no se usa)
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -         if False:  # chat_id == ALLOWED_GROUP:
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -             # Usuario está en el grupo permitido, continuar
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -             pass
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -         else:
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -             # Usuario está fuera del grupo, verificar si es miembro
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -             try:
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                 member = await context.bot.get_chat_member(ALLOWED_GROUP, user_id)
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                 if member.status not in ['member', 'administrator', 'creator']:
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                     # Removed button
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                     # Removed markup
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                     await update.message.reply_text(
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                         f"� QueriPdo usuario,\n\n"
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                         f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                         f"Una vez que te unas, podrás usar el bot sin restricciones.",
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                         parse_mode='HTML'
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                     )
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                     return
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -             except Exception as e:
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                 logger.warning(f"No se pudo verificar membresía del usuario {user_id}: {str(e)}")
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                 # Removed button
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                 # Removed markup
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                 await update.message.reply_text(
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                     f"👋 Querido usuario,\n\n"
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                     f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                     f"Una vez que te unas, podrás usar el bot sin restricciones.",
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                     parse_mode='HTML'
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                 )
-# TEMPORALMENTE COMENTADO PARA PROBAR BOT -                 return
+        # Si el usuario está EN el grupo permitido, permitir acceso directo (código antiguo - ya no se usa)
+        if False:  # chat_id == ALLOWED_GROUP:
+            # Usuario está en el grupo permitido, continuar
+            pass
+        else:
+            # Usuario está fuera del grupo, verificar si es miembro
+            try:
+                member = await context.bot.get_chat_member(ALLOWED_GROUP, user_id)
+                if member.status not in ['member', 'administrator', 'creator']:
+                    # Removed button
+                    # Removed markup
+                    await update.message.reply_text(
+                        f"� QueriPdo usuario,\n\n"
+                        f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
+                        f"Una vez que te unas, podrás usar el bot sin restricciones.",
+                        parse_mode='HTML'
+                    )
+                    return
+            except Exception as e:
+                logger.warning(f"No se pudo verificar membresía del usuario {user_id}: {str(e)}")
+                # Removed button
+                # Removed markup
+                await update.message.reply_text(
+                    f"👋 Querido usuario,\n\n"
+                    f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
+                    f"Una vez que te unas, podrás usar el bot sin restricciones.",
+                    parse_mode='HTML'
+                )
+                return
         
         # Detectar si el mensaje es de los botones de acceso rápido (antes de ignorar grupos)
         button_mapping = {
@@ -2148,9 +2148,9 @@ async def masinf_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     chat_type = update.effective_chat.type
     
     try:
-        # TEMPORALMENTE COMENTADO PARA PROBAR BOT - Verificar acceso usando auth_system (incluye modo gratis)
-        # if not auth_system.can_use_bot(user_id, chat_id, chat_type == 'private'):
-        #     return
+        # Verificar acceso usando auth_system (incluye modo gratis)
+        if not auth_system.can_use_bot(user_id, chat_id, chat_type == 'private'):
+            return
         
         mensaje_info = (
             "⚙️ **Comandos:**\n\n"
