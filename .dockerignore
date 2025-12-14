@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+
+# Archivos generados temporalmente
+comprobante_*.jpg
+comprobante_*.png
+movimientos_*.jpg
+movimientos_*.png
+gen_*.png
+logs/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Git
+.git/
+.gitignore
+
+# Datos locales (pero permitir archivos .example)
+users.json
+groups.json
+logs.json
+settings.json
+!users.json.example
+!groups.json.example
+!logs.json.example
+
+# Temporal
+*.tmp
+.DS_Store
