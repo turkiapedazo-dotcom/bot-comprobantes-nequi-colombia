@@ -36,6 +36,29 @@ def draw_text_with_outline(draw, position, text, font, fill, outline_fill, outli
         logger.error(f"Error al dibujar texto con contorno: {str(e)}")
         raise
 
+def draw_text_professional(draw, position, text, font, fill):
+    """Dibuja texto con efecto profesional: múltiples capas de sombra suave para profundidad."""
+    try:
+        x, y = position
+        # Múltiples capas de sombra para efecto profesional más pronunciado
+        # Sombra 1: muy suave, lejos (gris muy claro) - más desplazada
+        shadow1_color = (255, 255, 255)  # Blanco para contraste
+        draw.text((x + 3, y + 3), text, font=font, fill=shadow1_color)
+        # Sombra 2: suave, media distancia (gris muy claro)
+        shadow2_color = (250, 250, 250)
+        draw.text((x + 2, y + 2), text, font=font, fill=shadow2_color)
+        # Sombra 3: más visible, cerca (gris claro)
+        shadow3_color = (240, 240, 240)
+        draw.text((x + 1, y + 1), text, font=font, fill=shadow3_color)
+        # Sombra 4: intermedia (gris medio-claro)
+        shadow4_color = (230, 230, 230)
+        draw.text((x + 1, y + 1), text, font=font, fill=shadow4_color)
+        # Texto principal encima con el color original
+        draw.text((x, y), text, font=font, fill=fill)
+    except Exception as e:
+        logger.error(f"Error al dibujar texto profesional: {str(e)}")
+        raise
+
 def dibujar_valor_movimiento(draw, base_style, valor, font_path, ancho_imagen, decimal_style=None, es_alineacion_derecha=False):
     """Formatea y dibuja valores monetarios para comprobantes de movimiento."""
     try:
@@ -393,6 +416,9 @@ def generar_comprobante(data, config):
                         # Para Nequi a Bancolombia, dibujar sin outline (como el original)
                         if es_bancolombia:
                             draw.text((pos_x, pos_y), str(texto), font=font, fill=style["color"])
+                        # Para Nequi (COMPROBANTE1), usar efecto profesional con múltiples capas de sombra
+                        elif config["output"] == "comprobante1_generado.png":
+                            draw_text_professional(draw, (pos_x, pos_y), str(texto), font, style["color"])
                         else:
                             draw_text_with_outline(draw, (pos_x, pos_y), str(texto), font=font, fill=style["color"], outline_fill="white", outline_width=2)
                     except Exception as e:
@@ -1438,6 +1464,71 @@ def generar_comprobante_daviplata(numero_daviplata: str, ultimos_4: str, valor: 
     output_path = f"gen_{uuid.uuid4().hex}.png"
     plantilla.save(output_path, format='PNG', compress_level=1)
     logger.info(f"Comprobante DaviPlata generado: {numero_daviplata} - ${valor:,}")
+    return output_path
+
+
+def generar_comprobante_llaves_daviplata(data, config):
+    """Genera comprobante de DaviPlata LLAVES con la plantilla Daviplata_llaves.jpg"""
+    template_path = config["template"]
+    output_path = f"gen_{uuid.uuid4().hex}.png"
+    styles = config["styles"]
+    font_path = config["font"]
+
+    image = Image.open(template_path).convert("RGB")
+    draw = ImageDraw.Draw(image)
+
+    # Formatear datos
+    nombre = data.get("nombre", "").upper()  # Siempre en mayúsculas
+    llave = data.get("llave", "")
+    valor = data.get("valor", 0)
+    desde = data.get("desde", "DaviPlata - ******0000")
+    entidad_destino = data.get("entidad_destino", "")
+    
+    # Formatear valor con puntos
+    try:
+        valor_int = int(valor)
+        valor_formateado = f"$ {valor_int:,}".replace(",", ".")
+    except:
+        valor_formateado = f"$ {valor}"
+    
+    # Generar fecha y hora en formato "Agosto 31 de 2025 - 01:13 a.m."
+    now = datetime.now(pytz.timezone("America/Bogota"))
+    dia = now.strftime("%d").lstrip("0")  # Quitar cero inicial si existe
+    mes_num = now.strftime("%m")
+    anio = now.strftime("%Y")
+    hora = now.strftime("%I:%M %p").lower()
+    
+    # Diccionario de meses en español
+    meses_es = {
+        "01": "enero", "02": "febrero", "03": "marzo", "04": "abril",
+        "05": "mayo", "06": "junio", "07": "julio", "08": "agosto",
+        "09": "septiembre", "10": "octubre", "11": "noviembre", "12": "diciembre"
+    }
+    mes_nombre = meses_es.get(mes_num, mes_num).capitalize()
+    fecha_hora = f"{mes_nombre} {dia} de {anio} - {hora}"
+    
+    # Si tiene fecha manual, usarla
+    if "fecha_manual_value" in data:
+        fecha_hora = data["fecha_manual_value"]
+
+    datos = {
+        "nombre": nombre,
+        "llave": llave,
+        "valor": valor_formateado,
+        "desde": desde,
+        "entidad_destino": entidad_destino,
+        "fecha": fecha_hora,
+    }
+
+    # Dibujar cada campo
+    for campo, texto in datos.items():
+        if campo in styles:
+            style = styles[campo]
+            fuente_campo = style.get("font", font_path)
+            font = ImageFont.truetype(fuente_campo, style["size"])
+            draw.text(style["pos"], str(texto), font=font, fill=style["color"])
+
+    image.save(output_path, format='PNG', compress_level=1)
     return output_path
     """Genera el comprobante de DaviPlata con fuentes originales Helvetica Neue (original)"""
     from config import COORDENADAS_DAVIPLATA, FUENTES_DAVIPLATA, RUTAS_DAVIPLATA, COLORES_DAVIPLATA
