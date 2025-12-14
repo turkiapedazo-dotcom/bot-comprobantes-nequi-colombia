@@ -3,12 +3,12 @@ COMPROBANTE1_CONFIG = {
     "template": "img/plantilla_nequi.jpg",
     "output": "comprobante1_generado.png",
     "styles": {
-        "nombre": {"size": 80, "color": "#200021", "pos": (200, 2340)},
-        "valor1": {"size": 80, "color": "#200021", "pos": (200, 2680)},
-        "telefono": {"size": 80, "color": "#200021", "pos": (200, 3000)},
-        "fecha": {"size": 80, "color": "#200021", "pos": (200, 3320)},
-        "referencia": {"size": 80, "color": "#200021", "pos": (200, 3650)},
-        "disponible": {"size": 80, "color": "#200021", "pos": (200, 4010)},
+        "nombre": {"size": 83, "color": "#200021", "pos": (200, 2320)},
+        "valor1": {"size": 83, "color": "#200021", "pos": (200, 2660)},
+        "telefono": {"size": 83, "color": "#200021", "pos": (200, 3000)},
+        "fecha": {"size": 83, "color": "#200021", "pos": (200, 3320)},
+        "referencia": {"size": 83, "color": "#200021", "pos": (200, 3650)},
+        "disponible": {"size": 83, "color": "#200021", "pos": (200, 3990)},
     },
     "font": "fuentes/Manrope-Medium.ttf",
 }
@@ -396,4 +396,22 @@ COLORES_DAVIPLATA = {
     'negro': (51, 51, 51),        # #333333 del proyecto app (solo color cambiado)
     'gris': (128, 128, 128),   # Gris para etiquetas (mantener original)
     'hora': (255, 255, 255),   # Blanco para la hora en esquina
+}
+
+# ====================================================================
+# CONFIGURACIÓN DAVIPLATA LLAVES
+# ====================================================================
+
+COMPROBANTE_LLAVES_DAVIPLATA_CONFIG = {
+    "template": "img/Daviplata_llaves.jpg",
+    "output": "comprobante_llaves_daviplata_generado.png",
+    "styles": {
+        "nombre": {"size": 100, "color": "#413f3d", "pos": (350, 1740), "font": "fuentes/roboto_bold.ttf"},
+        "llave": {"size": 100, "color": "#413f3d", "pos": (350, 1850), "font": "fuentes/roboto_bold.ttf"},
+        "valor": {"size": 125, "color": "#413f3d", "pos": (360, 2550), "font": "fuentes/roboto_bold.ttf"},
+        "desde": {"size": 125, "color": "#413f3d", "pos": (360, 3060), "font": "fuentes/roboto_bold.ttf"},
+        "entidad_destino": {"size": 125, "color": "#413f3d", "pos": (360, 3480), "font": "fuentes/roboto_bold.ttf"},
+        "fecha": {"size": 100, "color": "#413f3d", "pos": (360, 4390), "font": "fuentes/roboto_bold.ttf"},
+    },
+    "font": "fuentes/roboto_regular.ttf",
 }
