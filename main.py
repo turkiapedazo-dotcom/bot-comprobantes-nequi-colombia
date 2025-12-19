@@ -786,7 +786,20 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     )
                     limpiar_sesion_preservando_flags()
                     return
-                if await send_document(output_path, "✅ Comprobante Nequi generado"):
+                               # Enviar comprobante como foto (no como documento)
+                try:
+                    with open(output_path, "rb") as f:
+                        await update.message.reply_photo(photo=f, caption="✅ Comprobante Nequi generado")
+                    os.remove(output_path)
+                    comprobante_enviado = True
+                except Exception as e:
+                    logger.error(f"Error al enviar comprobante Nequi como foto: {e}")
+                    await update.message.reply_text("⚠️ Error al enviar el comprobante.")
+                    if os.path.exists(output_path):
+                        os.remove(output_path)
+                    comprobante_enviado = False
+
+                if comprobante_enviado:
                     # Movimiento negativo
                     data_mov = data.copy()
                     data_mov["nombre"] = data["nombre"].upper()
