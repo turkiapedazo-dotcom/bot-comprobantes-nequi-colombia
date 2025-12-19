@@ -1,7 +1,7 @@
 # Configuración para comprobante Nequi
 COMPROBANTE1_CONFIG = {
     "template": "img/plantilla_nequi.jpg",
-    "output": "comprobante1_generado.png",
+    "output": "comprobante_generado.jpg",
     "styles": {
         "nombre": {"size": 83, "color": "#200021", "pos": (200, 2320)},
         "valor1": {"size": 83, "color": "#200021", "pos": (200, 2660)},
