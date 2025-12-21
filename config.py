@@ -105,6 +105,33 @@ COMPROBANTE_LLAVE = {
     "font": "fuentes/Manrope-Medium.ttf",
 }
 
+# Configuración para comprobante NQ QR Normal
+COMPROBANTE_NQ_QR_NORMAL_CONFIG = {
+    "template": "img/qr_nequinormal.png",
+    "output": "comprobante_nq_qr_normal_generado.png",
+    "styles": {
+        "nombre": {"size": 85, "color": "#2e2b33", "pos": (273, 2114), "font": "fuentes/Manrope-Medium.ttf"},
+        "valor1": {"size": 85, "color": "#2e2b33", "pos": (273, 2510), "font": "fuentes/Manrope-Medium.ttf"},
+        "fecha": {"size": 85, "color": "#2e2b33", "pos": (273, 2870), "font": "fuentes/Manrope-Medium.ttf"},
+        "referencia": {"size": 85, "color": "#2e2b33", "pos": (273, 3250), "font": "fuentes/Manrope-Medium.ttf"},
+        "disponible": {"size": 85, "color": "#2e2b33", "pos": (273, 3640), "font": "fuentes/Manrope-Medium.ttf"},
+    },
+    "font": "fuentes/Manrope-Medium.ttf",
+}
+
+# Configuración para movimiento NQ QR Normal
+MOVIMIENTO_NQ_QR_NORMAL_CONFIG = {
+    "template": "img/movement.jpg",
+    "output": "movimiento_nq_qr_normal_generado.png",
+    "styles": {
+        "nombre": {"size": 16, "color": "#262626", "pos": (78, 340), "font": "fuentes/Manrope-Medium.ttf"},
+        "valor1": {"size": 18, "color": "#C85C6E", "pos": (323, 355), "max_width": 200, "font": "fuentes/Manrope-Bold.ttf"},
+        "valor_decimal": {"size": 26, "color": "#C85C6E", "pos": (0, 0), "font": "fuentes/Manrope-Bold.ttf"},
+        "hora_esquina": {"size": 22, "color": "#FFFFFF", "pos": (19, 13)},
+    },
+    "font": "fuentes/Manrope-Medium.ttf",
+}
+
 # Configuración para comprobante Anulado
 COMPROBANTE_ANULADO_CONFIG = {
     "template": "img/anulado.jpg",
@@ -271,28 +298,31 @@ COLORES_BC = {
 
 # ✅ Configuración original para comprobante BC a Nequi
 COORDENADAS_NEQUI_BC = {
-    'fecha': (238, 302),
-    'valor': (70, 565),
-    'numero': (65, 840),
-    'comprobante': (420, 250),
-    'cuenta_ahorros': (65, 1150),
+    'hora': (20, 14),
+    'fecha': (211, 268),
+    'valor': (48, 690),
+    'numero': (50, 845),
+    'comprobante': (314, 234),
+    'cuenta_ahorros': (50, 1035),
     'nombre': (50, 1010),
 }
 
 FUENTES_NEQUI_BC = {
-    'numero': 30,
-    'valor': 32,
-    'fecha': 23,
-    'nombre': 23,
-    'comprobante': 25,
-    'cuenta_ahorros': 30,
+    'hora': 18,
+    'numero': 20,
+    'valor': 22,
+    'fecha': 16,
+    'nombre': 18,
+    'comprobante': 17,
+    'cuenta_ahorros': 20,
 }
 
 COLORES_NEQUI_BC = {
+    'hora': (255, 255, 255),
     'numero': (255, 255, 255),
     'valor': (255, 255, 255),
-    'fecha': (255, 255, 255),
-    'comprobante': (255, 255, 255),
+    'fecha': (160, 160, 160),
+    'comprobante': (160, 160, 160),
     'cuenta_ahorros': (255, 255, 255),
 }
 

@@ -32,7 +32,9 @@ from config import (
     COMPROBANTE_ANULADO_CONFIG,
     MOVIMIENTO_AHORROS_CONFIG,
     MOVIMIENTO_QR_BC_CONFIG,
-    COMPROBANTE_LLAVES_DAVIPLATA_CONFIG
+    COMPROBANTE_LLAVES_DAVIPLATA_CONFIG,
+    COMPROBANTE_NQ_QR_NORMAL_CONFIG,
+    MOVIMIENTO_NQ_QR_NORMAL_CONFIG
 )
 from utils import generar_comprobante, ofuscar_nombre, generar_comprobante_nequi_bc, generar_comprobante_bc_nq_t, generar_comprobante_bc_qr, generar_comprobante_nequi_ahorros, generar_comprobante_ahorros, generar_comprobante_bc_nequi, generar_movimientos_bc_nequi, generar_comprobante_qr_bc, generar_comprobante_anulado, generar_movimiento_ahorros, generar_movimiento_qr_bc, generar_comprobante_llaves_daviplata
 
@@ -179,6 +181,7 @@ async def nequicol_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             ["🏦 QR BC", "💳 BC a Nequi"],
             ["🏛️ BC a BC", "🔵 DaviPlata"],
             ["📱 QR DaviPlata", "💳 Llaves DaviPlata"],
+            ["📲 NQ QR NORMAL"],
             ["✅ Anulado"],
             ["❌ Cancelar"]
         ]
@@ -424,7 +427,8 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             "comprobante_qr": "🏬 Nombre del negocio:",
             "comprobante_llave": "👤 Ingresa el nombre a enviar:",
             "bancolombia": "👤 Ingresa el nombre del destinario:",
-            "llaves_daviplata": "👤 Ingresa el nombre del destinatario:"
+            "llaves_daviplata": "👤 Ingresa el nombre del destinatario:",
+            "nq_qr_normal": "🏬 Ingresa el nombre del negocio:"
         }
         await query.message.reply_text(
             prompts.get(tipo, "🔍 Por favor, inicia ingresando los datos requeridos:"),
@@ -520,6 +524,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             "🔵 DaviPlata": "daviplata",
             "📱 QR DaviPlata": "qr_daviplata",
             "💳 Llaves DaviPlata": "llaves_daviplata",
+            "📲 NQ QR NORMAL": "nq_qr_normal",
             "✅ Anulado": "comprobante_anulado"
         }
         
@@ -559,6 +564,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 "bc_bc": "👤 Ingresa el nombre:",
                 "daviplata": "📱 Ingresa el número DaviPlata (mínimo 10 dígitos):",
                 "llaves_daviplata": "👤 Ingresa el nombre del destinatario:",
+                "nq_qr_normal": "🏬 Ingresa el nombre del negocio:",
                 "comprobante_anulado": "👤 ¿Nombre de la víctima?"
             }
             await update.message.reply_text(
@@ -1556,6 +1562,64 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                         user_data_store[user_id]["fecha_manual"] = True
                     if referencia_flag:
                         user_data_store[user_id]["referencia_manual"] = True
+        
+        # --- NQ QR NORMAL ---
+        elif tipo == "nq_qr_normal":
+            if step == 0:
+                data["nombre"] = text
+                data["step"] = 1
+                await update.message.reply_text("💰 Ingresa el valor:")
+            elif step == 1 or data.get("fecha_recibida", False):
+                # Si viene de fecha_recibida, el valor ya está en data
+                if not data.get("fecha_recibida", False):
+                    if not text.replace("-", "", 1).isdigit():
+                        await update.message.reply_text(
+                            "⚠️ El valor debe ser numérico.",
+                            parse_mode='Markdown'
+                        )
+                        return
+                    data["valor"] = int(text)
+                    # Verificar si necesita pedir fecha manual (para TODOS)
+                    if await verificar_fecha_manual():
+                        return
+                # Verificar que el valor esté guardado antes de continuar
+                if "valor" not in data:
+                    await update.message.reply_text(
+                        "⚠️ Error: No se encontró el valor. Por favor, intenta de nuevo.",
+                        parse_mode='Markdown'
+                    )
+                    limpiar_sesion_preservando_flags()
+                    return
+                # Si tiene fecha manual, usarla
+                if fecha_manual and "fecha_manual_value" in data:
+                    data["fecha"] = data["fecha_manual_value"]
+                # Limpiar flag de fecha_recibida
+                data.pop("fecha_recibida", None)
+                output_path = generar_comprobante(data, COMPROBANTE_NQ_QR_NORMAL_CONFIG)
+                if output_path is None:
+                    await update.message.reply_text(
+                        "⚠️ Error al generar el comprobante NQ QR Normal.",
+                        parse_mode='Markdown'
+                    )
+                    limpiar_sesion_preservando_flags()
+                    return
+                
+                # Enviar comprobante como documento
+                if await send_document(output_path, "✅ Comprobante NQ QR Normal generado"):
+                    # Generar movimiento negativo
+                    data_mov = data.copy()
+                    data_mov["nombre"] = data["nombre"].upper()
+                    data_mov["valor"] = -abs(data["valor"])
+                    output_path_mov = generar_comprobante(data_mov, MOVIMIENTO_NQ_QR_NORMAL_CONFIG)
+                    if output_path_mov is None:
+                        await update.message.reply_text(
+                            "⚠️ Error al generar el movimiento NQ QR Normal.",
+                            parse_mode='Markdown'
+                        )
+                    else:
+                        await send_document(output_path_mov, "📄 Movimiento NQ QR Normal generado")
+                
+                limpiar_sesion_preservando_flags()
         
         # --- COMPROBANTE ANULADO ---
         elif tipo == "comprobante_anulado":
