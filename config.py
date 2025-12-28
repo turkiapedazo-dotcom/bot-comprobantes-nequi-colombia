@@ -267,33 +267,32 @@ COMPROBANTE_BC_NQ_T_CONFIG = {
     "font": "fuentes/cibfontsans_regular.ttf",
 }
 
-# ✅ Configuración original para comprobante QR BC
+# ✅ Configuración para comprobante QR BC (nueva plantilla qr_bancolombia_bre-b.png)
 COORDENADAS_QR_BC = {
-    'comprobante_no': (322, 411),
-    'fecha': (179, 449),
-    'cantidad': (230, 568),  # Movido más a la derecha (210 → 230)
-    'punto_venta': (298, 738),
-    'enviado_a': (365, 825),
-    'codigo_negocio': (410, 917),  # Movido 10 píxeles a la izquierda
-    'ultimos_4_digitos': (461, 1059),
-    'icono_ahorros': (334, 1150),
-    'texto_ahorros': (461, 1065),
-    'cuenta_ahorros': (475, 1090),
+    'comprobante_no': (1236, 1310),   # Comprobante No. (12 caracteres aleatorios)
+    'fecha': (780, 1420),             # Fecha formato "24 dic. 2025 - 08:28 a.m."
+    'valor': (950, 1870),             # Valor del pago ($ 100.000)
+    'costo_pago': (1080, 2280),       # Costo del pago ($ 0,00)
+    'punto_venta': (1210, 2810),      # Punto de venta (nombre negocio sin ofuscar)
+    'enviado_a': (1210, 3024),        # Enviado a (nombre ofuscado MIZ*** ES***)
+    'cuenta_ahorros': (1870, 3870),   # Cuenta de Ahorros (*2231)
+    'limite_derecho': 2852,           # Límite derecho que no se debe sobrepasar
 }
 
 FUENTES_BC = {
-    'fecha': 20,
-    'normal': 24,
-    'cantidad': 40,
+    'normal': 70,
+    'fecha': 65,
+    'valor': 110,
+    'costo': 60,
 }
 
 RUTAS_BC = {
-    'plantilla_qr_bc': 'img/plantilla_qr_bc.jpg',
+    'plantilla_qr_bc': 'img/qr_bancolombia_bre-b.png',
     'font': 'fuentes/cibfontsans_bold.ttf',
 }
 
 COLORES_BC = {
-    'texto': 'white',
+    'texto': '#000000',  # Negro para punto de venta, enviado a, valor
 }
 
 # ✅ Configuración original para comprobante BC a Nequi
@@ -444,4 +443,22 @@ COMPROBANTE_LLAVES_DAVIPLATA_CONFIG = {
         "fecha": {"size": 100, "color": "#413f3d", "pos": (360, 4390), "font": "fuentes/roboto_bold.ttf"},
     },
     "font": "fuentes/roboto_regular.ttf",
+}
+
+# ====================================================================
+# CONFIGURACIÓN QR DAVIPLATA (Negocios)
+# ====================================================================
+
+COMPROBANTE_QR_DAVIPLATA_CONFIG = {
+    "template": "img/qr_negociosdaviplata.png",
+    "output": "comprobante_qr_daviplata_generado.png",
+    "styles": {
+        "compra_en": {"size": 85, "color": "#413f3d", "pos": (250, 2230), "font": "fuentes/roboto_bold.ttf"},
+        "cantidad": {"size": 85, "color": "#413f3d", "pos": (260, 2710), "font": "fuentes/roboto_bold.ttf"},
+        "desde": {"size": 85, "color": "#413f3d", "pos": (260, 3400), "font": "fuentes/roboto_bold.ttf"},
+        "fecha": {"size": 85, "color": "#413f3d", "pos": (250, 3730), "font": "fuentes/roboto_bold.ttf"},
+        "aprobacion": {"size": 85, "color": "#413f3d", "pos": (250, 4040), "font": "fuentes/roboto_bold.ttf"},
+        "costo": {"size": 85, "color": "#413f3d", "pos": (250, 4360), "font": "fuentes/roboto_bold.ttf"},
+    },
+    "font": "fuentes/roboto_bold.ttf",
 }

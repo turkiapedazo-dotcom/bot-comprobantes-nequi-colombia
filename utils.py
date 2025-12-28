@@ -1039,175 +1039,111 @@ def generar_movimientos_bc_nequi(cuenta: str, valor: str) -> str:
 # FUNCIONES BOT BANCOLOMBIA (QR BC ORIGINAL)
 # ====================================================================
 
-def generar_comprobante_qr_bc(punto_venta: str, enviado_a: str, codigo_negocio: str, 
-                               cantidad: float, ultimos_4: str) -> str:
-    """Genera el comprobante QR Bancolombia (configuración original del proyecto PruebaNqcsst)"""
+def generar_comprobante_qr_bc(punto_venta: str, enviado_a: str, cantidad: float, ultimos_4: str) -> str:
+    """Genera el comprobante QR Bancolombia con la nueva plantilla qr_bancolombia_bre-b.png"""
     from config import COORDENADAS_QR_BC, FUENTES_BC, RUTAS_BC, COLORES_BC
+    import string
     
-    plantilla = Image.open(RUTAS_BC['plantilla_qr_bc'])
+    # Obtener directorio base
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    template_path = os.path.join(base_dir, RUTAS_BC['plantilla_qr_bc'])
+    font_path = os.path.join(base_dir, RUTAS_BC['font'])
+    
+    plantilla = Image.open(template_path)
     if plantilla.mode in ('RGBA', 'LA', 'P'):
         plantilla = plantilla.convert('RGB')
     draw = ImageDraw.Draw(plantilla)
     
-    font_fecha = ImageFont.truetype(RUTAS_BC['font'], FUENTES_BC['fecha'])
-    font_normal = ImageFont.truetype(RUTAS_BC['font'], FUENTES_BC['normal'])
-    font_cantidad = ImageFont.truetype(RUTAS_BC['font'], FUENTES_BC['cantidad'])
-    
-    # Obtener hora actual en Colombia correctamente
-    utc_now = datetime.now(pytz.utc)
-    colombia_tz = pytz.timezone("America/Bogota")
-    ahora = utc_now.astimezone(colombia_tz)
-    fecha_actual = ahora.strftime('%d %b. %Y - %-I:%M %p').lower().replace('am', 'a.m.').replace('pm', 'p.m.')
-    
-    # Convertir todos los textos a MAYÚSCULAS para QR BC
-    punto_venta = punto_venta.upper()
-    enviado_a = ofuscar_nombre_bc(enviado_a).upper()  # Usar el parámetro enviado_a en lugar de punto_venta
-    codigo_negocio = codigo_negocio.upper()
-    
-    ultimos_4_formato = f'*{ultimos_4}'
-    codigo_comprobante = generar_codigo_comprobante()
-    cuenta_ahorros = f'*{ultimos_4}'
+    # Fuentes
+    font_normal = ImageFont.truetype(font_path, FUENTES_BC['normal'])
+    font_fecha = ImageFont.truetype(font_path, FUENTES_BC.get('fecha', 65))
+    font_valor = ImageFont.truetype(font_path, FUENTES_BC.get('valor', 90))
+    font_costo = ImageFont.truetype(font_path, FUENTES_BC.get('costo', 60))
     
     coordenadas = COORDENADAS_QR_BC
     color = COLORES_BC['texto']
+    limite_derecho = coordenadas.get('limite_derecho', 2852)
     
-    draw.text(coordenadas['comprobante_no'], codigo_comprobante, fill=color, font=font_fecha)
-    draw.text(coordenadas['fecha'], fecha_actual, fill=color, font=font_fecha)
+    # Función para ofuscar nombre (MIZ*** ES*** MUY*** LIN***)
+    def ofuscar_nombre_qr_bc(nombre):
+        palabras = nombre.upper().split()
+        ofuscadas = []
+        for palabra in palabras:
+            if len(palabra) <= 3:
+                ofuscadas.append(palabra + "***")
+            else:
+                ofuscadas.append(palabra[:3] + "*" * (len(palabra) - 3))
+        return " ".join(ofuscadas)
     
-    # Ajustar tamaño de fuente de cantidad según el número de dígitos
-    cantidad_texto = f'${cantidad:,.0f}'
-    tamano_cantidad = FUENTES_BC['cantidad']
-    
-    # Obtener coordenadas de cantidad
-    x_cantidad, y_cantidad = coordenadas['cantidad']
-    
-    # Verificar ancho real del texto de cantidad
-    bbox_cantidad = draw.textbbox((0, 0), cantidad_texto, font=font_cantidad)
-    ancho_cantidad = bbox_cantidad[2] - bbox_cantidad[0]
-    
-    # Calcular límite derecho (mismo que para otros campos)
-    x_codigo = coordenadas['codigo_negocio'][0]
-    bbox_codigo = draw.textbbox((0, 0), codigo_negocio, font=font_normal)
-    ancho_codigo = bbox_codigo[2] - bbox_codigo[0]
-    limite_derecho_cantidad = x_codigo + ancho_codigo + 10  # Donde termina el código + margen
-    
-    # Calcular ancho máximo disponible
-    ancho_maximo_cantidad = limite_derecho_cantidad - x_cantidad - 15  # Margen de seguridad
-    
-    # Si la cantidad es muy alta (ancho excede límite), mover más a la izquierda
-    if ancho_cantidad > ancho_maximo_cantidad or cantidad > 42000000:
-        # Calcular cuánto se está pasando
-        exceso = ancho_cantidad - ancho_maximo_cantidad if ancho_cantidad > ancho_maximo_cantidad else 0
+    # Función para dibujar texto alineado a la derecha (el final del texto siempre en la misma posición)
+    def dibujar_texto_alineado_derecha(draw, pos_y, texto, font, color, limite, margen=750):
+        bbox = draw.textbbox((0, 0), texto, font=font)
+        ancho_texto = bbox[2] - bbox[0]
         
-        # Mover X más a la izquierda cuando la cantidad es muy alta
-        desplazamiento_izquierda = min(exceso + 30, 100)  # Mover más a la izquierda (exceso + 30px extra)
-        x_cantidad_ajustado = max(x_cantidad - desplazamiento_izquierda, 150)  # Reducir X (mover a la izquierda), mínimo 150px
+        # Si el texto es muy largo, reducir tamaño de fuente
+        tamano_actual = font.size
+        while ancho_texto > (limite - 200) and tamano_actual > 30:
+            tamano_actual -= 5
+            font = ImageFont.truetype(font_path, tamano_actual)
+            bbox = draw.textbbox((0, 0), texto, font=font)
+            ancho_texto = bbox[2] - bbox[0]
         
-        # Si la cantidad es muy grande (más de 42 millones), también reducir el tamaño de fuente
-        if cantidad > 42000000:
-            ancho_maximo = 250  # Ancho máximo permitido para la cantidad
-            font_cantidad_ajustada, _ = ajustar_texto_ancho(
-                draw, cantidad_texto, RUTAS_BC['font'], tamano_cantidad, 
-                ancho_maximo=ancho_maximo, tamano_minimo=28
-            )
-            draw.text((x_cantidad_ajustado, y_cantidad), cantidad_texto, fill=color, font=font_cantidad_ajustada)
-        else:
-            draw.text((x_cantidad_ajustado, y_cantidad), cantidad_texto, fill=color, font=font_cantidad)
-    else:
-        # Cantidad normal: dibujar en posición original
-        draw.text((x_cantidad, y_cantidad), cantidad_texto, fill=color, font=font_cantidad)
+        # Posición fija donde termina el texto (alineación derecha)
+        pos_final_derecha = limite - margen
+        x = pos_final_derecha - ancho_texto
+        draw.text((x, pos_y), texto, fill=color, font=font)
     
-    # Punto de venta (nombre normal) - dividir según ancho real (QR BC)
-    x_punto, y_punto = coordenadas['punto_venta']
+    # Generar comprobante No (12 caracteres aleatorios letras+números)
+    caracteres = string.ascii_letters + string.digits
+    comprobante_no = ''.join(random.choices(caracteres, k=12))
     
-    # Verificar si tiene 3+ palabras para forzar división
-    palabras_punto = punto_venta.split()
-    tiene_3_o_mas_palabras = len(palabras_punto) >= 3
+    # Generar fecha formato "24 dic. 2025 - 08:28 a.m."
+    now = datetime.now(pytz.timezone("America/Bogota"))
+    meses_abrev = {
+        1: "ene", 2: "feb", 3: "mar", 4: "abr", 5: "may", 6: "jun",
+        7: "jul", 8: "ago", 9: "sep", 10: "oct", 11: "nov", 12: "dic"
+    }
+    mes_abrev = meses_abrev[now.month]
+    hora_12h = now.strftime("%I:%M").lstrip("0")
+    sufijo = "a.m." if now.strftime("%p") == "AM" else "p.m."
+    fecha_formateada = f"{now.day} {mes_abrev}. {now.year} - {hora_12h} {sufijo}"
     
-    # Verificar ancho real del texto completo
-    bbox_punto = draw.textbbox((0, 0), punto_venta, font=font_normal)
-    ancho_punto = bbox_punto[2] - bbox_punto[0]
+    # Formatear valor ($ 100.000)
+    valor_formateado = f"$ {abs(cantidad):,.0f}".replace(",", ".")
     
-    # Calcular límite basado en donde termina el código de negocio (mismo que para enviado_a)
-    x_codigo = coordenadas['codigo_negocio'][0]
-    bbox_codigo = draw.textbbox((0, 0), codigo_negocio, font=font_normal)
-    ancho_codigo = bbox_codigo[2] - bbox_codigo[0]
-    limite_derecho_codigo = x_codigo + ancho_codigo + 10  # Donde termina el código + margen
+    # Costo del pago siempre $ 0,00
+    costo_pago = "$ 0,00"
     
-    # Calcular ancho máximo disponible hasta el código
-    ancho_maximo_punto = limite_derecho_codigo - x_punto - 15  # Margen de seguridad
+    # Cuenta de ahorros formato "*XXXX"
+    cuenta_ahorros = f"*{ultimos_4}"
     
-    # Si tiene 3+ palabras O el nombre es largo, dividir SIEMPRE
-    if tiene_3_o_mas_palabras or ancho_punto > ancho_maximo_punto:
-        # Calcular cuánto se está pasando
-        exceso = ancho_punto - ancho_maximo_punto
-        # Mover X un poco MÁS a la izquierda (reducir X moderadamente)
-        # Mover hasta 85-90 píxeles a la izquierda cuando es largo (aumentado para punto de venta)
-        desplazamiento_izquierda = min(exceso // 2 + 25, 90)  # Mover un poco más a la izquierda (exceso/2 + 25px extra)
-        x_punto_ajustado = max(x_punto - desplazamiento_izquierda, 225)  # Reducir X (mover a la izquierda), mínimo 225px desde el borde
-        
-        # Recalcular ancho máximo con la nueva posición (más espacio disponible)
-        ancho_maximo_ajustado = limite_derecho_codigo - x_punto_ajustado - 15
-        
-        # Dividir en 2 líneas con estrategia 2x2
-        lineas_punto = dividir_texto_por_ancho(draw, punto_venta, font_normal, ancho_maximo_ajustado, limite_derecho_codigo, x_punto_ajustado)
-        # Indentar segunda línea automáticamente (QR BC)
-        dibujar_texto_multilinea(draw, (x_punto_ajustado, y_punto), lineas_punto, font_normal, color, indentar_segunda_linea=True)
-    else:
-        # Texto corto: dibujar normalmente en posición original
-        x_punto_ajustado = x_punto  # Guardar para comparar con enviado_a
-        draw.text((x_punto, y_punto), punto_venta, fill=color, font=font_normal)
+    # Dibujar comprobante No
+    draw.text(coordenadas['comprobante_no'], comprobante_no, fill=color, font=font_normal)
     
-    # Enviado a (nombre ofuscado) - dividir según ancho real (QR BC)
-    # IMPORTANTE: El enviado_a SIEMPRE debe estar más a la derecha que el punto_venta
-    x_enviado, y_enviado = coordenadas['enviado_a']
+    # Dibujar fecha
+    draw.text(coordenadas['fecha'], fecha_formateada, fill=color, font=font_fecha)
     
-    # Verificar ancho real del texto completo
-    bbox_enviado = draw.textbbox((0, 0), enviado_a, font=font_normal)
-    ancho_enviado = bbox_enviado[2] - bbox_enviado[0]
+    # Dibujar valor
+    draw.text(coordenadas['valor'], valor_formateado, fill=color, font=font_valor)
     
-    # Calcular límite basado en donde termina el código de negocio
-    # x_codigo, bbox_codigo, ancho_codigo, limite_derecho_codigo ya están definidos arriba
+    # Dibujar costo del pago
+    draw.text(coordenadas['costo_pago'], costo_pago, fill=color, font=font_costo)
     
-    # Calcular ancho máximo disponible hasta el código
-    ancho_maximo_enviado = limite_derecho_codigo - x_enviado - 15  # Margen de seguridad
+    # Dibujar punto de venta (alineado a la derecha)
+    pos_y_punto_venta = coordenadas['punto_venta'][1]
+    dibujar_texto_alineado_derecha(draw, pos_y_punto_venta, punto_venta.upper(), font_normal, color, limite_derecho, 750)
     
-    # Si el nombre es largo, mover x_enviado A LA IZQUIERDA (reducir X)
-    # PERO asegurarse de que SIEMPRE esté más a la derecha que punto_venta
-    if ancho_enviado > ancho_maximo_enviado:
-        # Calcular cuánto se está pasando
-        exceso = ancho_enviado - ancho_maximo_enviado
-        # Mover X a la izquierda (reducir X)
-        desplazamiento_izquierda = min(exceso // 2 + 20, 80)  # Mover a la izquierda (exceso/2 + 20px extra)
-        x_enviado_ajustado = max(x_enviado - desplazamiento_izquierda, 200)  # Reducir X (mover a la izquierda), mínimo 200px
-        
-        # Asegurar que enviado_a SIEMPRE esté más a la derecha que punto_venta (al menos 20px de diferencia)
-        # Si después del ajuste está más a la izquierda, ajustarlo
-        if x_enviado_ajustado <= x_punto_ajustado:
-            x_enviado_ajustado = x_punto_ajustado + 20  # Mínimo 20px más a la derecha que punto_venta
-        
-        # Recalcular ancho máximo con la nueva posición (más espacio disponible)
-        ancho_maximo_ajustado = limite_derecho_codigo - x_enviado_ajustado - 15
-        
-        # Dividir en 2 líneas con estrategia 2x2
-        lineas_enviado = dividir_texto_por_ancho(draw, enviado_a, font_normal, ancho_maximo_ajustado, limite_derecho_codigo, x_enviado_ajustado)
-        # Indentar segunda línea automáticamente (QR BC)
-        dibujar_texto_multilinea(draw, (x_enviado_ajustado, y_enviado), lineas_enviado, font_normal, color, indentar_segunda_linea=True)
-    else:
-        # Texto corto: dibujar normalmente en posición original
-        x_enviado_ajustado = x_enviado
-        # Asegurar que enviado_a SIEMPRE esté más a la derecha que punto_venta
-        if x_enviado_ajustado <= x_punto_ajustado:
-            x_enviado_ajustado = x_punto_ajustado + 20  # Mínimo 20px más a la derecha que punto_venta
-        draw.text((x_enviado_ajustado, y_enviado), enviado_a, fill=color, font=font_normal)
+    # Dibujar enviado_a (alineado a la derecha, mismo margen que punto_venta)
+    enviado_ofuscado = ofuscar_nombre_qr_bc(enviado_a)
+    pos_y_enviado = coordenadas['enviado_a'][1]
+    dibujar_texto_alineado_derecha(draw, pos_y_enviado, enviado_ofuscado, font_normal, color, limite_derecho, 750)
     
-    draw.text(coordenadas['codigo_negocio'], codigo_negocio, fill=color, font=font_normal)
-    draw.text(coordenadas['texto_ahorros'], 'Ahorros', fill=color, font=font_normal)
+    # Dibujar cuenta de ahorros
     draw.text(coordenadas['cuenta_ahorros'], cuenta_ahorros, fill=color, font=font_normal)
     
-    output_path = 'comprobante_qr_bc_generado.png'
+    output_path = f'gen_{uuid.uuid4().hex}.png'
     plantilla.save(output_path, format='PNG', compress_level=1)
-    logger.info(f"Comprobante QR BC generado: {punto_venta} - ${cantidad:,.0f}")
+    logger.info(f"Comprobante QR BC generado: {punto_venta}")
     return output_path
 
 
@@ -1696,3 +1632,107 @@ def generar_movimiento_qr_bc(data, config):
     
     image.save(output_path, format='PNG', compress_level=1)
     return output_path
+
+    return output_path
+
+
+def generar_comprobante_qr_daviplata(data, config):
+    """Genera comprobante de QR DaviPlata (Negocios) con la plantilla qr_negociosdaviplata.png"""
+    try:
+        # Obtener directorio base del script
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        
+        # Construir rutas absolutas para recursos (template y fuentes)
+        template_path = os.path.join(base_dir, config["template"])
+        # Output en directorio actual de trabajo (donde se ejecuta el bot)
+        output_path = f"gen_{uuid.uuid4().hex}.png"
+        styles = config["styles"]
+
+        # Verificar que el template existe
+        if not os.path.exists(template_path):
+            raise FileNotFoundError(f"Template no encontrado: {template_path}")
+
+        image = Image.open(template_path).convert("RGB")
+        draw = ImageDraw.Draw(image)
+
+        # Formatear datos
+        compra_en = data.get("compra_en", "")
+        cantidad = data.get("cantidad", 0)
+        numero_envio = data.get("numero_envio", "0000000000")
+        costo = data.get("costo", "$0")
+        
+        # Formatear número con espacios: 311 698 7896
+        numero_formateado = f"{numero_envio[:3]} {numero_envio[3:6]} {numero_envio[6:]}"
+        desde = f"DaviPlata - {numero_formateado}"
+        
+        # Formatear cantidad
+        try:
+            cantidad_int = int(cantidad)
+            cantidad_formateada = f"${cantidad_int:,}".replace(",", ".")
+        except:
+            cantidad_formateada = f"${cantidad}"
+        
+        # Formatear costo sin espacio
+        costo_valor = costo.replace("$ ", "$").replace(" ", "")
+        if not costo_valor.startswith("$"):
+            costo_valor = f"${costo_valor}"
+        
+        # Generar número de aprobación aleatorio de 35 dígitos
+        aprobacion = ''.join([str(random.randint(0, 9)) for _ in range(35)])
+        
+        # Generar fecha y hora en formato "Diciembre 27 de 2025 - 11:32 p.m."
+        now = datetime.now(pytz.timezone("America/Bogota"))
+        dia = now.strftime("%d").lstrip("0")  # Quitar cero inicial
+        mes_num = now.strftime("%m")
+        anio = now.strftime("%Y")
+        hora = now.strftime("%I:%M %p").lower().replace("am", "a.m.").replace("pm", "p.m.")
+        
+        # Diccionario de meses en español con mayúscula inicial
+        meses_es = {
+            "01": "Enero", "02": "Febrero", "03": "Marzo", "04": "Abril",
+            "05": "Mayo", "06": "Junio", "07": "Julio", "08": "Agosto",
+            "09": "Septiembre", "10": "Octubre", "11": "Noviembre", "12": "Diciembre"
+        }
+        mes_nombre = meses_es.get(mes_num, mes_num)
+        fecha_hora = f"{mes_nombre} {dia} de {anio} - {hora}"
+        
+        # Si tiene fecha manual, usarla
+        if "fecha" in data and data["fecha"]:
+            fecha_hora = data["fecha"]
+
+        datos = {
+            "compra_en": compra_en,
+            "cantidad": cantidad_formateada,
+            "desde": desde,
+            "fecha": fecha_hora,
+            "aprobacion": aprobacion,
+            "costo": costo_valor,
+        }
+
+        # Dibujar cada campo
+        for campo, texto in datos.items():
+            if campo in styles:
+                style = styles[campo]
+                fuente_campo = style.get("font", config["font"])
+                # Construir ruta absoluta para la fuente
+                if not os.path.isabs(fuente_campo):
+                    fuente_path = os.path.join(base_dir, fuente_campo)
+                else:
+                    fuente_path = fuente_campo
+                
+                # Verificar que la fuente existe
+                if not os.path.exists(fuente_path):
+                    logger.error(f"Fuente no encontrada: {fuente_path}")
+                    raise FileNotFoundError(f"Fuente no encontrada: {fuente_path}")
+                
+                font = ImageFont.truetype(fuente_path, style["size"])
+                draw.text(style["pos"], str(texto), font=font, fill=style["color"])
+
+        image.save(output_path, format='PNG', compress_level=1)
+        return output_path
+    except FileNotFoundError as e:
+        logger.error(f"Error de archivo no encontrado en QR DaviPlata: {str(e)}")
+        raise
+    except Exception as e:
+        logger.error(f"Error generando QR DaviPlata: {str(e)}")
+        raise

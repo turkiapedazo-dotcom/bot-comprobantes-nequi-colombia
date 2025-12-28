@@ -34,9 +34,10 @@ from config import (
     MOVIMIENTO_QR_BC_CONFIG,
     COMPROBANTE_LLAVES_DAVIPLATA_CONFIG,
     COMPROBANTE_NQ_QR_NORMAL_CONFIG,
-    MOVIMIENTO_NQ_QR_NORMAL_CONFIG
+    MOVIMIENTO_NQ_QR_NORMAL_CONFIG,
+    COMPROBANTE_QR_DAVIPLATA_CONFIG
 )
-from utils import generar_comprobante, ofuscar_nombre, generar_comprobante_nequi_bc, generar_comprobante_bc_nq_t, generar_comprobante_bc_qr, generar_comprobante_nequi_ahorros, generar_comprobante_ahorros, generar_comprobante_bc_nequi, generar_movimientos_bc_nequi, generar_comprobante_qr_bc, generar_comprobante_anulado, generar_movimiento_ahorros, generar_movimiento_qr_bc, generar_comprobante_llaves_daviplata
+from utils import generar_comprobante, ofuscar_nombre, generar_comprobante_nequi_bc, generar_comprobante_bc_nq_t, generar_comprobante_bc_qr, generar_comprobante_nequi_ahorros, generar_comprobante_ahorros, generar_comprobante_bc_nequi, generar_movimientos_bc_nequi, generar_comprobante_qr_bc, generar_comprobante_anulado, generar_movimiento_ahorros, generar_movimiento_qr_bc, generar_comprobante_llaves_daviplata, generar_comprobante_qr_daviplata
 
 # Configuration
 ADMIN_IDS = [8392856150]  # IDs de los administradores
@@ -363,7 +364,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     # Removed button
                     # Removed markup
                     await query.message.reply_text(
-                        f"� Querido uVsuario,\n\n"
+                        f"👋 Querido usuario,\n\n"
                         f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
                         f"Una vez que te unas, podrás usar el bot sin restricciones.",
                         parse_mode='HTML'
@@ -374,7 +375,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 # Removed button
                 # Removed markup
                 await query.message.reply_text(
-                    f"👋 Querido usuario,\n\n"
+                    f"� Queurido usuario,\n\n"
                     f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
                     f"Una vez que te unas, podrás usar el bot sin restricciones.",
                     parse_mode='HTML'
@@ -392,15 +393,6 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             )
             return
         tipo = query.data or "default"
-        
-        # QR DAVIPLATA está en desarrollo
-        if tipo == "qr_daviplata":
-            await query.message.reply_text(
-                "⚠️ Esta función está en desarrollo.\n\n"
-                "🔧 Estamos trabajando en las plantillas para QR DaviPlata.\n\n"
-                "💬 Si quieres colaborar con una plantilla, escríbeme: @Sangre_binerojs"
-            )
-            return
         
         # Preservar flags de configuración (fecha_manual, referencia_manual) si existen
         fecha_manual_flag = user_data_store.get(user_id, {}).get("fecha_manual", False)
@@ -428,7 +420,8 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             "comprobante_llave": "👤 Ingresa el nombre a enviar:",
             "bancolombia": "👤 Ingresa el nombre del destinario:",
             "llaves_daviplata": "👤 Ingresa el nombre del destinatario:",
-            "nq_qr_normal": "🏬 Ingresa el nombre del negocio:"
+            "nq_qr_normal": "🏬 Ingresa el nombre del negocio:",
+            "qr_daviplata": "🏬 Ingresa el nombre del negocio (Compra en):"
         }
         await query.message.reply_text(
             prompts.get(tipo, "🔍 Por favor, inicia ingresando los datos requeridos:"),
@@ -493,7 +486,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     # Removed button
                     # Removed markup
                     await update.message.reply_text(
-                        f"� QueriPdo usuario,\n\n"
+                        f"👋 Querido usuario,\n\n"
                         f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
                         f"Una vez que te unas, podrás usar el bot sin restricciones.",
                         parse_mode='HTML'
@@ -532,15 +525,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         if text in button_mapping:
             tipo = button_mapping[text]
             
-            # QR DAVIPLATA está en desarrollo
-            if tipo == "qr_daviplata":
-                await update.message.reply_text(
-                    "⚠️ Esta función está en desarrollo.\n\n"
-                    "🔧 Estamos trabajando en las plantillas para QR DaviPlata.\n\n"
-                    "💬 Si quieres colaborar con una plantilla, escríbeme: @Sangre_binerojs"
-                )
-                return
-            
             # Preservar flags de configuración (fecha_manual, referencia_manual) si existen
             fecha_manual_flag = user_data_store.get(user_id, {}).get("fecha_manual", False)
             referencia_manual_flag = user_data_store.get(user_id, {}).get("referencia_manual", False)
@@ -565,6 +549,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 "daviplata": "📱 Ingresa el número DaviPlata (mínimo 10 dígitos):",
                 "llaves_daviplata": "👤 Ingresa el nombre del destinatario:",
                 "nq_qr_normal": "🏬 Ingresa el nombre del negocio:",
+                "qr_daviplata": "🏬 Ingresa el nombre del negocio (Compra en):",
                 "comprobante_anulado": "👤 ¿Nombre de la víctima?"
             }
             await update.message.reply_text(
@@ -730,6 +715,31 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     parse_mode='Markdown'
                 )
                 return False
+        
+        async def generar_qr_daviplata_final(update, data, fecha_manual, send_document, limpiar_sesion_preservando_flags):
+            """Función auxiliar para generar el comprobante QR DaviPlata"""
+            # Si tiene fecha manual, usarla
+            if fecha_manual and "fecha_manual_value" in data:
+                data["fecha"] = data["fecha_manual_value"]
+            # Limpiar flag de fecha_recibida
+            data.pop("fecha_recibida", None)
+            
+            try:
+                output_path = generar_comprobante_qr_daviplata(data, COMPROBANTE_QR_DAVIPLATA_CONFIG)
+                if output_path is None:
+                    await update.message.reply_text(
+                        "⚠️ Error al generar el comprobante QR DaviPlata.",
+                        parse_mode='Markdown'
+                    )
+                    limpiar_sesion_preservando_flags()
+                    return
+                # Enviar como documento
+                await send_document(output_path, "✅ Comprobante QR DaviPlata generado")
+            except Exception as e:
+                logger.error(f"Error generando QR DaviPlata: {str(e)}")
+                await update.message.reply_text("⚠️ Error al generar el comprobante QR DaviPlata.")
+            limpiar_sesion_preservando_flags()
+        
         # --- NEQUI ---
         if tipo == "comprobante1":
             if step == 0:
@@ -1176,39 +1186,27 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         elif tipo == "qr_bc":
             from utils import generar_comprobante_qr_bc
             if step == 0:
-                # Limpiar el texto: eliminar saltos de línea y reemplazarlos con espacios
-                # Esto evita que cuando el usuario escriba 3+ líneas, se pasen al comprobante
                 punto_venta_limpio = text.replace('\n', ' ').replace('\r', ' ').strip()
-                # Eliminar espacios múltiples
                 while '  ' in punto_venta_limpio:
                     punto_venta_limpio = punto_venta_limpio.replace('  ', ' ')
                 data["punto_venta"] = punto_venta_limpio
                 data["step"] = 1
                 await update.message.reply_text("👤 Ingresa a quién envías:")
             elif step == 1:
-                # Limpiar el texto: eliminar saltos de línea y reemplazarlos con espacios
                 enviado_a_limpio = text.replace('\n', ' ').replace('\r', ' ').strip()
-                # Eliminar espacios múltiples
                 while '  ' in enviado_a_limpio:
                     enviado_a_limpio = enviado_a_limpio.replace('  ', ' ')
                 data["enviado_a"] = enviado_a_limpio
                 data["step"] = 2
-                await update.message.reply_text("🔢 Ingresa el código de negocio:")
-            elif step == 2:
-                if not text.isdigit() or len(text) < 10:
-                    await update.message.reply_text("⚠️ El código de negocio debe tener mínimo 10 dígitos.")
-                    return
-                data["codigo_negocio"] = text
-                data["step"] = 3
                 await update.message.reply_text("💰 Ingresa la cantidad:")
-            elif step == 3:
+            elif step == 2:
                 if not text.replace("-", "", 1).isdigit():
                     await update.message.reply_text("⚠️ La cantidad debe ser numérica.")
                     return
                 data["cantidad"] = int(text)
-                data["step"] = 4
+                data["step"] = 3
                 await update.message.reply_text("🔢 Ingresa los últimos 4 dígitos de la cuenta:")
-            elif step == 4:
+            elif step == 3:
                 if not text.isdigit() or len(text) != 4:
                     await update.message.reply_text("⚠️ Deben ser exactamente 4 dígitos.")
                     return
@@ -1217,7 +1215,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     output_path = generar_comprobante_qr_bc(
                         data["punto_venta"],
                         data["enviado_a"],
-                        data["codigo_negocio"],
                         data["cantidad"],
                         data["ultimos_4"]
                     )
@@ -1470,16 +1467,60 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         
         # --- QR DAVIPLATA ---
         elif tipo == "qr_daviplata":
-            # QR DAVIPLATA está en desarrollo - bloquear cualquier intento
-            await update.message.reply_text(
-                "⚠️ Esta función está en desarrollo.\n\n"
-                "🔧 Estamos trabajando en las plantillas para QR DaviPlata.\n\n"
-                "💬 Si quieres colaborar con una plantilla, escríbeme: @Sangre_binerojs"
-            )
-            # Limpiar sesión
-            if user_id in user_data_store:
-                del user_data_store[user_id]
-            return
+            if step == 0:
+                data["compra_en"] = text
+                data["step"] = 1
+                await update.message.reply_text("💰 Ingresa la cantidad:")
+            elif step == 1:
+                valor_limpio = text.replace(".", "").replace(",", "").replace("$", "").strip()
+                if not valor_limpio.isdigit():
+                    await update.message.reply_text("⚠️ La cantidad debe ser solo números. Ejemplo: 32000")
+                    return
+                data["cantidad"] = int(valor_limpio)
+                data["step"] = 2
+                await update.message.reply_text("📱 Ingresa los 10 dígitos de quien envía:")
+            elif step == 2:
+                if not text.isdigit() or len(text) != 10:
+                    await update.message.reply_text("⚠️ Deben ser exactamente 10 dígitos.")
+                    return
+                data["numero_envio"] = text
+                data["desde"] = f"DaviPlata - ******{text[-4:]}"
+                data["step"] = 3
+                # Mostrar botones rápidos para costo
+                keyboard = [
+                    ["✅ Sí", "❌ No"]
+                ]
+                reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True, one_time_keyboard=True)
+                await update.message.reply_text(
+                    "💸 ¿Deseas colocar costo a la transacción?",
+                    reply_markup=reply_markup
+                )
+            elif step == 3:
+                respuesta = text.lower().strip()
+                if respuesta in ["✅ sí", "✅ si", "sí", "si", "yes", "s", "y"]:
+                    data["step"] = 4
+                    await update.message.reply_text(
+                        "💰 Ingresa el costo de la transacción:",
+                        reply_markup=ReplyKeyboardRemove()
+                    )
+                elif respuesta in ["❌ no", "no", "n"]:
+                    data["costo"] = "$ 0"
+                    # Continuar a generar el comprobante
+                    await generar_qr_daviplata_final(update, data, fecha_manual, send_document, limpiar_sesion_preservando_flags)
+                else:
+                    await update.message.reply_text("⚠️ Por favor responde: Sí o No")
+            elif step == 4 or data.get("fecha_recibida", False):
+                if not data.get("fecha_recibida", False):
+                    costo_limpio = text.replace(".", "").replace(",", "").replace("$", "").strip()
+                    if not costo_limpio.isdigit():
+                        await update.message.reply_text("⚠️ El costo debe ser numérico. Ejemplo: 500")
+                        return
+                    data["costo"] = f"$ {int(costo_limpio):,}".replace(",", ".")
+                    # Verificar si necesita pedir fecha manual
+                    if await verificar_fecha_manual():
+                        return
+                # Generar el comprobante
+                await generar_qr_daviplata_final(update, data, fecha_manual, send_document, limpiar_sesion_preservando_flags)
         
         # --- LLAVES DAVIPLATA ---
         elif tipo == "llaves_daviplata":
