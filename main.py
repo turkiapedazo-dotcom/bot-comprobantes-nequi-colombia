@@ -352,17 +352,18 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 )
             return
         
-        # Si el usuario está EN el grupo permitido, permitir acceso directo (código antiguo - ya no se usa)
-        if False:  # chat_id == ALLOWED_GROUP:
-            # Usuario está en el grupo permitido, continuar
-            pass
+        # Si el usuario es admin del bot, saltar verificación
+        if user_id in ADMIN_IDS:
+            pass  # Admin del bot, acceso permitido
+        # Si el mensaje viene desde el grupo permitido, el usuario ya está ahí
+        elif chat_id == ALLOWED_GROUP:
+            pass  # Usuario está en el grupo, acceso permitido
         else:
             # Usuario está fuera del grupo, verificar si es miembro
             try:
                 member = await context.bot.get_chat_member(ALLOWED_GROUP, user_id)
-                if member.status not in ['member', 'administrator', 'creator']:
-                    # Removed button
-                    # Removed markup
+                # Incluir 'restricted' para admins anónimos y otros casos especiales
+                if member.status not in ['member', 'administrator', 'creator', 'restricted']:
                     await query.message.reply_text(
                         f"👋 Querido usuario,\n\n"
                         f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
@@ -372,15 +373,18 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     return
             except Exception as e:
                 logger.warning(f"No se pudo verificar membresía del usuario {user_id}: {str(e)}")
-                # Removed button
-                # Removed markup
-                await query.message.reply_text(
-                    f"� Queurido usuario,\n\n"
-                    f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
-                    f"Una vez que te unas, podrás usar el bot sin restricciones.",
-                    parse_mode='HTML'
-                )
-                return
+                # Si falla la verificación pero el usuario es admin anónimo, puede que get_chat_member falle
+                # En ese caso, permitir si viene de un chat que podría ser el grupo
+                if chat_id < 0:  # Es un grupo, podría ser admin anónimo
+                    pass  # Permitir acceso
+                else:
+                    await query.message.reply_text(
+                        f"👋 Querido usuario,\n\n"
+                        f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
+                        f"Una vez que te unas, podrás usar el bot sin restricciones.",
+                        parse_mode='HTML'
+                    )
+                    return
         
         # Verificar modo mantenimiento
         global maintenance_mode
@@ -474,17 +478,18 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 )
             return
         
-        # Si el usuario está EN el grupo permitido, permitir acceso directo (código antiguo - ya no se usa)
-        if False:  # chat_id == ALLOWED_GROUP:
-            # Usuario está en el grupo permitido, continuar
-            pass
+        # Si el usuario es admin del bot, saltar verificación
+        if user_id in ADMIN_IDS:
+            pass  # Admin del bot, acceso permitido
+        # Si el mensaje viene desde el grupo permitido, el usuario ya está ahí
+        elif chat_id == ALLOWED_GROUP:
+            pass  # Usuario está en el grupo, acceso permitido
         else:
             # Usuario está fuera del grupo, verificar si es miembro
             try:
                 member = await context.bot.get_chat_member(ALLOWED_GROUP, user_id)
-                if member.status not in ['member', 'administrator', 'creator']:
-                    # Removed button
-                    # Removed markup
+                # Incluir 'restricted' para admins anónimos y otros casos especiales
+                if member.status not in ['member', 'administrator', 'creator', 'restricted']:
                     await update.message.reply_text(
                         f"👋 Querido usuario,\n\n"
                         f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
@@ -494,15 +499,18 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     return
             except Exception as e:
                 logger.warning(f"No se pudo verificar membresía del usuario {user_id}: {str(e)}")
-                # Removed button
-                # Removed markup
-                await update.message.reply_text(
-                    f"👋 Querido usuario,\n\n"
-                    f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
-                    f"Una vez que te unas, podrás usar el bot sin restricciones.",
-                    parse_mode='HTML'
-                )
-                return
+                # Si falla la verificación pero el usuario es admin anónimo, puede que get_chat_member falle
+                # En ese caso, permitir si viene de un chat que podría ser el grupo
+                if chat_id < 0:  # Es un grupo, podría ser admin anónimo
+                    pass  # Permitir acceso
+                else:
+                    await update.message.reply_text(
+                        f"👋 Querido usuario,\n\n"
+                        f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
+                        f"Una vez que te unas, podrás usar el bot sin restricciones.",
+                        parse_mode='HTML'
+                    )
+                    return
         
         # Detectar si el mensaje es de los botones de acceso rápido (antes de ignorar grupos)
         button_mapping = {
