@@ -40,7 +40,7 @@ from config import (
 from utils import generar_comprobante, ofuscar_nombre, generar_comprobante_nequi_bc, generar_comprobante_bc_nq_t, generar_comprobante_bc_qr, generar_comprobante_nequi_ahorros, generar_comprobante_ahorros, generar_comprobante_bc_nequi, generar_movimientos_bc_nequi, generar_comprobante_qr_bc, generar_comprobante_anulado, generar_movimiento_ahorros, generar_movimiento_qr_bc, generar_comprobante_llaves_daviplata, generar_comprobante_qr_daviplata
 
 # Configuration
-ADMIN_IDS = [8392856150]  # IDs de los administradores
+ADMIN_IDS = [8392856150, 8485045964]  # IDs de los administradores
 ALLOWED_GROUP = -1003349066708  # ID del grupo permitido principal
 ALLOWED_GROUPS_HARDCODED = [-1003349066708]  # Grupos siempre permitidos
 OWNER = "@sangre_binerojs"
