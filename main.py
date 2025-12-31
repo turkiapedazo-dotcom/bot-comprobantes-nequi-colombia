@@ -167,9 +167,9 @@ async def nequicol_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         if not auth_system.can_use_bot(user_id, chat_id, chat_type == 'private'):
             if not auth_system.gratis_mode:
                 await update.message.reply_text(
-                    f"👋 Querido usuario,\n\n"
-                    f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
-                    f"Una vez que te unas, podrás usar el bot sin restricciones.",
+                    f"👑 Este bot está restringido en el privado para evitar estafas.\n\n"
+                    f"Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER @AxondevUI 👑"
+                    f"",
                     parse_mode='HTML'
                 )
             return
@@ -233,9 +233,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         if not auth_system.can_use_bot(user_id, chat_id, chat_type == 'private'):
             if not auth_system.gratis_mode:
                 await update.message.reply_text(
-                    f"👋 Querido usuario,\n\n"
-                    f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
-                    f"Una vez que te unas, podrás usar el bot sin restricciones.",
+                    f"👑 Este bot está restringido en el privado para evitar estafas.\n\n"
+                    f"Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER @AxondevUI 👑"
+                    f"",
                     parse_mode='HTML'
                 )
             return
@@ -345,9 +345,9 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         if not auth_system.can_use_bot(user_id, chat_id, chat_type == 'private'):
             if not auth_system.gratis_mode:
                 await update.message.reply_text(
-                    f"👋 Querido usuario,\n\n"
-                    f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
-                    f"Una vez que te unas, podrás usar el bot sin restricciones.",
+                    f"👑 Este bot está restringido en el privado para evitar estafas.\n\n"
+                    f"Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER @AxondevUI 👑"
+                    f"",
                     parse_mode='HTML'
                 )
             return
@@ -365,9 +365,9 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 # Incluir 'restricted' para admins anónimos y otros casos especiales
                 if member.status not in ['member', 'administrator', 'creator', 'restricted']:
                     await query.message.reply_text(
-                        f"👋 Querido usuario,\n\n"
-                        f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
-                        f"Una vez que te unas, podrás usar el bot sin restricciones.",
+                        f"👑 Este bot está restringido en el privado para evitar estafas.\n\n"
+                        f"Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER @AxondevUI 👑"
+                        f"",
                         parse_mode='HTML'
                     )
                     return
@@ -379,9 +379,9 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     pass  # Permitir acceso
                 else:
                     await query.message.reply_text(
-                        f"👋 Querido usuario,\n\n"
-                        f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
-                        f"Una vez que te unas, podrás usar el bot sin restricciones.",
+                        f"👑 Este bot está restringido en el privado para evitar estafas.\n\n"
+                        f"Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER @AxondevUI 👑"
+                        f"",
                         parse_mode='HTML'
                     )
                     return
@@ -471,9 +471,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         if not auth_system.can_use_bot(user_id, chat_id, chat_type == 'private'):
             if not auth_system.gratis_mode:
                 await update.message.reply_text(
-                    f"👋 Querido usuario,\n\n"
-                    f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
-                    f"Una vez que te unas, podrás usar el bot sin restricciones.",
+                    f"👑 Este bot está restringido en el privado para evitar estafas.\n\n"
+                    f"Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER @AxondevUI 👑"
+                    f"",
                     parse_mode='HTML'
                 )
             return
@@ -491,9 +491,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 # Incluir 'restricted' para admins anónimos y otros casos especiales
                 if member.status not in ['member', 'administrator', 'creator', 'restricted']:
                     await update.message.reply_text(
-                        f"👋 Querido usuario,\n\n"
-                        f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
-                        f"Una vez que te unas, podrás usar el bot sin restricciones.",
+                        f"👑 Este bot está restringido en el privado para evitar estafas.\n\n"
+                        f"Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER @AxondevUI 👑"
+                        f"",
                         parse_mode='HTML'
                     )
                     return
@@ -505,9 +505,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     pass  # Permitir acceso
                 else:
                     await update.message.reply_text(
-                        f"👋 Querido usuario,\n\n"
-                        f"Para usar este bot, únete al grupo de comprobantes totalmente GRATIS:\n\n💎 <a href='{GROUP_INVITE_LINK}'>Unirse al Grupo</a>\n\n"
-                        f"Una vez que te unas, podrás usar el bot sin restricciones.",
+                        f"👑 Este bot está restringido en el privado para evitar estafas.\n\n"
+                        f"Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER @AxondevUI 👑"
+                        f"",
                         parse_mode='HTML'
                     )
                     return
