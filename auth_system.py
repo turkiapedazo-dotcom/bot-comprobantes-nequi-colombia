@@ -6,13 +6,14 @@ from typing import Dict, List, Set, Optional
 logger = logging.getLogger(__name__)
 
 class AuthSystem:
-    def __init__(self, admin_ids: List[int] = [8058901135], allowed_group: int = -1003349066708):
+    def __init__(self, admin_ids: List[int] = [8058901135], allowed_group: int = -1003122616445):
         if not isinstance(admin_ids, (list, tuple)):
             admin_ids = [admin_ids]
         if not all(isinstance(id, int) for id in admin_ids):
             raise ValueError("Todos los admin_ids deben ser enteros")
         self.admin_ids = set(admin_ids)
-        self.allowed_groups: Set[int] = {allowed_group}
+        # Grupos permitidos por defecto (hardcoded)
+        self.allowed_groups: Set[int] = {-1003122616445, -1003349066708, allowed_group}
         self.authorized_users: Set[int] = set()
         self.gratis_mode = False
         self.logger = logging.getLogger(__name__)
