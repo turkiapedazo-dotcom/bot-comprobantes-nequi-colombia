@@ -67,8 +67,8 @@ for group_id in ALLOWED_GROUPS_HARDCODED:
 auth_system.save_data()  # Guardar para persistencia
 user_data_store = {}
 maintenance_mode = False  # Variable para modo mantenimiento
-disabled_groups = set()  # Grupos donde el bot está deshabilitado con /off
-# Anti-spam: guardar último mensaje por usuario/grupo
+disabled_groups = set()  # Grupos donde el bot estÃ¡ deshabilitado con /off
+# Anti-spam: guardar Ãºltimo mensaje por usuario/grupo
 last_command_time = {}
 
 # Cargar datos de usuarios, grupos y registros
@@ -92,7 +92,7 @@ def load_data():
                     with open(file_path, 'r', encoding='utf-8') as f:
                         data = json.load(f)
                         if not isinstance(data, dict) or key not in data:
-                            logger.warning(f"Estructura JSON inválida en {file_path}. Usando valor por defecto.")
+                            logger.warning(f"Estructura JSON invÃ¡lida en {file_path}. Usando valor por defecto.")
                             continue
                         if file_path == USERS_FILE:
                             authorized_users = data.get(key, default)
@@ -143,16 +143,16 @@ for group_id in authorized_groups:
 # COMANDOS
 # ------------------------------------------------------------------
 async def nequiglitch_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Comando que muestra botones de acceso rápido - Verifica autorización del grupo"""
+    """Comando que muestra botones de acceso rÃ¡pido - Verifica autorizaciÃ³n del grupo"""
     user_id = update.effective_user.id
     chat_id = update.effective_chat.id
     chat_type = update.effective_chat.type
     user_name = update.effective_user.first_name or update.effective_user.username or "Usuario"
     
     try:
-        # Verificar si el bot está deshabilitado en este grupo
+        # Verificar si el bot estÃ¡ deshabilitado en este grupo
         if chat_id < 0 and chat_id in disabled_groups:
-            return  # No responder si el bot está deshabilitado en este grupo
+            return  # No responder si el bot estÃ¡ deshabilitado en este grupo
         # Anti-spam: cooldown de 3 segundos por usuario
         import time
         current_time = time.time()
@@ -168,9 +168,9 @@ async def nequiglitch_command(update: Update, context: ContextTypes.DEFAULT_TYPE
         if not auth_system.can_use_bot(user_id, chat_id, chat_type == 'private'):
             if not auth_system.gratis_mode:
                 await update.message.reply_text(
-                    "👑 Este bot está restringido en el privado para evitar estafas.\n\n"
-                    "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @ROBERTKIMBDO\n\n"
-                    "👉 <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
+                    "ðŸ‘‘ Este bot estÃ¡ restringido en el privado para evitar estafas.\n\n"
+                    "Si deseas usarlo gratuitamente sin pagar nada, mÃ¡ndale un mensaje al OWNER ðŸ‘‘ @ROBERTKIMBDO\n\n"
+                    "ðŸ‘‰ <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
                     parse_mode="HTML",
                     disable_web_page_preview=True
                 )
@@ -178,21 +178,21 @@ async def nequiglitch_command(update: Update, context: ContextTypes.DEFAULT_TYPE
         
         # Todos los comprobantes disponibles en grupos y privado
         keyboard = [
-            ["💸 Nequi", "🔄 BRE-B"],
-            ["📱 QR Comprobante", "🔑 LLAVES"],
-            ["🏦 Nequi a Bancolombia"],
-            ["🏦 QR BC", "💳 BC a Nequi"],
-            ["🏛️ BC a BC", "🔵 DaviPlata"],
-            ["📱 QR DaviPlata", "💳 Llaves DaviPlata"],
-            ["📲 NQ QR NORMAL"],
-            ["✅ Anulado"],
-            ["❌ Cancelar"]
+            ["ðŸ’¸ Nequi", "ðŸ”„ BRE-B"],
+            ["ðŸ“± QR Comprobante", "ðŸ”‘ LLAVES"],
+            ["ðŸ¦ Nequi a Bancolombia"],
+            ["ðŸ¦ QR BC", "ðŸ’³ BC a Nequi"],
+            ["ðŸ›ï¸ BC a BC", "ðŸ”µ DaviPlata"],
+            ["ðŸ“± QR DaviPlata", "ðŸ’³ Llaves DaviPlata"],
+            ["ðŸ“² NQ QR NORMAL"],
+            ["âœ… Anulado"],
+            ["âŒ Cancelar"]
         ]
         mensaje_comandos = (
-            f"👋 Hola {user_name}!\n\n"
-            f"💎 Generador de Comprobantes\n"
-            f"📌 Selecciona una opción:\n\n"
-            f"ℹ️ Para conocer funciones de fechas y referencias manuales, pulsa /masinf"
+            f"ðŸ‘‹ Hola {user_name}!\n\n"
+            f"ðŸ’Ž Generador de Comprobantes\n"
+            f"ðŸ“Œ Selecciona una opciÃ³n:\n\n"
+            f"â„¹ï¸ Para conocer funciones de fechas y referencias manuales, pulsa /masinf"
         )
         
         reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True, one_time_keyboard=True)
@@ -212,9 +212,9 @@ async def new_chat_member(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
                 # El bot fue agregado al grupo
                 user_name = update.effective_user.first_name or update.effective_user.username or "Usuario"
                 await update.message.reply_text(
-                    f"🎉 Hola {user_name}!\n\n"
+                    f"ðŸŽ‰ Hola {user_name}!\n\n"
                     f"Para iniciar el bot presiona /Nequiglitch\n\n"
-                    f"💎 Servicio gratuito de alta calidad"
+                    f"ðŸ’Ž Servicio gratuito de alta calidad"
                 )
     except Exception as e:
         logger.error(f"Error en new_chat_member: {str(e)}")
@@ -227,17 +227,17 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     username = update.effective_user.username
     
     try:
-        # Verificar si el bot está deshabilitado en este grupo
+        # Verificar si el bot estÃ¡ deshabilitado en este grupo
         if chat_id < 0 and chat_id in disabled_groups:
-            return  # No responder si el bot está deshabilitado en este grupo
+            return  # No responder si el bot estÃ¡ deshabilitado en este grupo
 
       # Verificar acceso usando auth_system (incluye modo gratis)
         if not auth_system.can_use_bot(user_id, chat_id, chat_type == 'private'):
             if not auth_system.gratis_mode:
                 await update.message.reply_text(
-                "👑 Este bot está restringido en el privado para evitar estafas.\n\n"
-                "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @ROBERTKIMBDO\n\n"
-                "👉 <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
+                "ðŸ‘‘ Este bot estÃ¡ restringido en el privado para evitar estafas.\n\n"
+                "Si deseas usarlo gratuitamente sin pagar nada, mÃ¡ndale un mensaje al OWNER ðŸ‘‘ @ROBERTKIMBDO\n\n"
+                "ðŸ‘‰ <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
                 parse_mode="HTML",
                  disable_web_page_preview=True
                 )
@@ -257,7 +257,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             
             last_command_time[key] = current_time
             user_name = first_name or username or "Usuario"
-            await update.message.reply_text(f"👋 Hola {user_name}!\n\nPresiona /Nequiglitch para iniciar")
+            await update.message.reply_text(f"ðŸ‘‹ Hola {user_name}!\n\nPresiona /Nequiglitch para iniciar")
             return
         
         # En privado: mostrar bienvenida personalizada
@@ -265,48 +265,48 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         username_display = f"@{username}" if username else "Sin username"
         first_name_display = first_name or 'No disponible'
         
-        # Verificar autorización
+        # Verificar autorizaciÃ³n
         global maintenance_mode
         if maintenance_mode and user_id not in ADMIN_IDS:
-            await update.message.reply_text("⚠️ Bot en mantenimiento.")
+            await update.message.reply_text("âš ï¸ Bot en mantenimiento.")
             return
         
-        # Usuario autorizado (ya verificó membresía), mostrar mensaje de bienvenida
+        # Usuario autorizado (ya verificÃ³ membresÃ­a), mostrar mensaje de bienvenida
         mensaje_bienvenida = (
-            f"👋 ¡Bienvenido {user_display_name}!\n\n"
-            f"📋 Información de tu cuenta:\n"
-            f"🆔 ID: {user_id}\n"
-            f"👤 Nombre: {first_name_display}\n"
-            f"📱 Username: {username_display}\n\n"
-            f"💎 Para usar el bot, escribe /Nequiglitch\n\n"
-            f"ℹ️ Para conocer funciones de fechas y referencias manuales, pulsa /masinf"
+            f"ðŸ‘‹ Â¡Bienvenido {user_display_name}!\n\n"
+            f"ðŸ“‹ InformaciÃ³n de tu cuenta:\n"
+            f"ðŸ†” ID: {user_id}\n"
+            f"ðŸ‘¤ Nombre: {first_name_display}\n"
+            f"ðŸ“± Username: {username_display}\n\n"
+            f"ðŸ’Ž Para usar el bot, escribe /Nequiglitch\n\n"
+            f"â„¹ï¸ Para conocer funciones de fechas y referencias manuales, pulsa /masinf"
         )
         await update.message.reply_text(mensaje_bienvenida)
     except Exception as e:
         logger.error(f"Error en comando start: {str(e)}")
         # No enviar mensaje de error en grupos para evitar spam
         if chat_type == 'private':
-            await update.message.reply_text("⚠️ Error. Intenta /start de nuevo.")
+            await update.message.reply_text("âš ï¸ Error. Intenta /start de nuevo.")
 
 async def cancelar(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     chat_id = update.effective_chat.id
     
     try:
-        # Verificar si el bot está deshabilitado en este grupo
+        # Verificar si el bot estÃ¡ deshabilitado en este grupo
         if chat_id < 0 and chat_id in disabled_groups:
-            return  # No responder si el bot está deshabilitado en este grupo
+            return  # No responder si el bot estÃ¡ deshabilitado en este grupo
         
         if user_id in user_data_store:
             del user_data_store[user_id]
             await update.message.reply_text(
-                "✅ Operación cancelada correctamente.\n\n"
+                "âœ… OperaciÃ³n cancelada correctamente.\n\n"
                 "Presiona /Nequiglitch para generar un nuevo comprobante.",
                 reply_markup=ReplyKeyboardRemove()
             )
         else:
             await update.message.reply_text(
-                "❌ No hay ninguna operación activa para cancelar.\n\n"
+                "âŒ No hay ninguna operaciÃ³n activa para cancelar.\n\n"
                 "Presiona /Nequiglitch para generar un comprobante.",
                 reply_markup=ReplyKeyboardRemove()
             )
@@ -326,19 +326,19 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         username = query.from_user.username
         first_name = query.from_user.first_name
         
-        # Verificar si el bot está deshabilitado en este grupo
+        # Verificar si el bot estÃ¡ deshabilitado en este grupo
         if chat_id < 0 and chat_id in disabled_groups:
-            return  # No responder si el bot está deshabilitado en este grupo
+            return  # No responder si el bot estÃ¡ deshabilitado en este grupo
         
         # Si se ejecuta en grupo, ignorar
         if chat_type in ['group', 'supergroup']:
             await query.message.reply_text(
-                f"👋 @{username}, usa el bot en privado.",
+                f"ðŸ‘‹ @{username}, usa el bot en privado.",
                 parse_mode='Markdown'
             )
             return
         
-        # Actualizar información de admins
+        # Actualizar informaciÃ³n de admins
         if user_id in ADMIN_IDS:
             context.bot_data.setdefault('admin_info', {})
             context.bot_data['admin_info'][user_id] = {
@@ -349,45 +349,45 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         if not auth_system.can_use_bot(user_id, chat_id, chat_type == 'private'):
             if not auth_system.gratis_mode:
                 await update.message.reply_text(
-                    "👑 Este bot está restringido en el privado para evitar estafas.\n\n"
-                    "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @ROBERTKIMBDO\n\n"
-                    "👉 <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
+                    "ðŸ‘‘ Este bot estÃ¡ restringido en el privado para evitar estafas.\n\n"
+                    "Si deseas usarlo gratuitamente sin pagar nada, mÃ¡ndale un mensaje al OWNER ðŸ‘‘ @ROBERTKIMBDO\n\n"
+                    "ðŸ‘‰ <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
                     parse_mode="HTML",
                     disable_web_page_preview=True
                 )
             return
         
-        # Si el usuario es admin del bot, saltar verificación
+        # Si el usuario es admin del bot, saltar verificaciÃ³n
         if user_id in ADMIN_IDS:
             pass  # Admin del bot, acceso permitido
-        # Si el mensaje viene desde el grupo permitido, el usuario ya está ahí
+        # Si el mensaje viene desde el grupo permitido, el usuario ya estÃ¡ ahÃ­
         elif chat_id == ALLOWED_GROUP:
-            pass  # Usuario está en el grupo, acceso permitido
+            pass  # Usuario estÃ¡ en el grupo, acceso permitido
         else:
-            # Usuario está fuera del grupo, verificar si es miembro
+            # Usuario estÃ¡ fuera del grupo, verificar si es miembro
             try:
                 member = await context.bot.get_chat_member(ALLOWED_GROUP, user_id)
-                # Incluir 'restricted' para admins anónimos y otros casos especiales
+                # Incluir 'restricted' para admins anÃ³nimos y otros casos especiales
                 if member.status not in ['member', 'administrator', 'creator', 'restricted']:
                     await query.message.reply_text(
-                        "👑 Este bot está restringido en el privado para evitar estafas.\n\n"
-                    "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @ROBERTKIMBDO\n\n"
-                    "👉 <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
+                        "ðŸ‘‘ Este bot estÃ¡ restringido en el privado para evitar estafas.\n\n"
+                    "Si deseas usarlo gratuitamente sin pagar nada, mÃ¡ndale un mensaje al OWNER ðŸ‘‘ @ROBERTKIMBDO\n\n"
+                    "ðŸ‘‰ <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
                     parse_mode="HTML",
                     disable_web_page_preview=True
                     )
                     return
             except Exception as e:
-                logger.warning(f"No se pudo verificar membresía del usuario {user_id}: {str(e)}")
-                # Si falla la verificación pero el usuario es admin anónimo, puede que get_chat_member falle
-                # En ese caso, permitir si viene de un chat que podría ser el grupo
-                if chat_id < 0:  # Es un grupo, podría ser admin anónimo
+                logger.warning(f"No se pudo verificar membresÃ­a del usuario {user_id}: {str(e)}")
+                # Si falla la verificaciÃ³n pero el usuario es admin anÃ³nimo, puede que get_chat_member falle
+                # En ese caso, permitir si viene de un chat que podrÃ­a ser el grupo
+                if chat_id < 0:  # Es un grupo, podrÃ­a ser admin anÃ³nimo
                     pass  # Permitir acceso
                 else:
                     await query.message.reply_text(
-                        "👑 Este bot está restringido en el privado para evitar estafas.\n\n"
-                    "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @ROBERTKIMBDO\n\n"
-                    "👉 <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
+                        "ðŸ‘‘ Este bot estÃ¡ restringido en el privado para evitar estafas.\n\n"
+                    "Si deseas usarlo gratuitamente sin pagar nada, mÃ¡ndale un mensaje al OWNER ðŸ‘‘ @ROBERTKIMBDO\n\n"
+                    "ðŸ‘‰ <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
                     parse_mode="HTML",
                     disable_web_page_preview=True
                     )
@@ -396,16 +396,16 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         # Verificar modo mantenimiento
         global maintenance_mode
         if maintenance_mode and user_id not in ADMIN_IDS:
-            admin_list = "\n".join(f"• {uid} (@{info['username']})"
+            admin_list = "\n".join(f"â€¢ {uid} (@{info['username']})"
                                    for uid, info in context.bot_data.get('admin_info', {}).items())
             await query.message.reply_text(
-                f"⚠️ El bot está en mantenimiento. Contacta a los administradores: {OWNER}",
+                f"âš ï¸ El bot estÃ¡ en mantenimiento. Contacta a los administradores: {OWNER}",
                 parse_mode='Markdown'
             )
             return
         tipo = query.data or "default"
         
-        # Preservar flags de configuración (fecha_manual, referencia_manual) si existen
+        # Preservar flags de configuraciÃ³n (fecha_manual, referencia_manual) si existen
         fecha_manual_flag = user_data_store.get(user_id, {}).get("fecha_manual", False)
         referencia_manual_flag = user_data_store.get(user_id, {}).get("referencia_manual", False)
         user_data_store[user_id] = {
@@ -425,22 +425,22 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         })
         save_data(authorized_users, authorized_groups, logs)
         prompts = {
-            "comprobante1": "👤 Ingresa el nombre completo:",
-            "comprobante4": "👤 Ingresa el nombre a enviar:",
-            "comprobante_qr": "🏬 Nombre del negocio:",
-            "comprobante_llave": "👤 Ingresa el nombre a enviar:",
-            "bancolombia": "👤 Ingresa el nombre del destinario:",
-            "llaves_daviplata": "👤 Ingresa el nombre del destinatario:",
-            "nq_qr_normal": "🏬 Ingresa el nombre del negocio:",
-            "qr_daviplata": "🏬 Ingresa el nombre del negocio (Compra en):"
+            "comprobante1": "ðŸ‘¤ Ingresa el nombre completo:",
+            "comprobante4": "ðŸ‘¤ Ingresa el nombre a enviar:",
+            "comprobante_qr": "ðŸ¬ Nombre del negocio:",
+            "comprobante_llave": "ðŸ‘¤ Ingresa el nombre a enviar:",
+            "bancolombia": "ðŸ‘¤ Ingresa el nombre del destinario:",
+            "llaves_daviplata": "ðŸ‘¤ Ingresa el nombre del destinatario:",
+            "nq_qr_normal": "ðŸ¬ Ingresa el nombre del negocio:",
+            "qr_daviplata": "ðŸ¬ Ingresa el nombre del negocio (Compra en):"
         }
         await query.message.reply_text(
-            prompts.get(tipo, "🔍 Por favor, inicia ingresando los datos requeridos:"),
+            prompts.get(tipo, "ðŸ” Por favor, inicia ingresando los datos requeridos:"),
             parse_mode='Markdown'
         )
     except Exception as e:
         logger.error(f"Error en button_handler: {str(e)}")
-        await query.message.reply_text("⚠️ Error al procesar la selección. Intenta de nuevo.", parse_mode='Markdown')
+        await query.message.reply_text("âš ï¸ Error al procesar la selecciÃ³n. Intenta de nuevo.", parse_mode='Markdown')
 
 # ------------------------------------------------------------------
 # MENSAJES
@@ -454,21 +454,21 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     first_name = update.effective_user.first_name
     
     try:
-        # Verificar si el bot está deshabilitado en este grupo
+        # Verificar si el bot estÃ¡ deshabilitado en este grupo
         if chat_id < 0 and chat_id in disabled_groups:
-            return  # No responder si el bot está deshabilitado en este grupo
-        # Detectar si el usuario presionó "❌ Cancelar"
-        if text == "❌ Cancelar":
+            return  # No responder si el bot estÃ¡ deshabilitado en este grupo
+        # Detectar si el usuario presionÃ³ "âŒ Cancelar"
+        if text == "âŒ Cancelar":
             if user_id in user_data_store:
                 del user_data_store[user_id]
                 await update.message.reply_text(
-                    "✅ Operación cancelada correctamente.\n\n"
+                    "âœ… OperaciÃ³n cancelada correctamente.\n\n"
                     "Presiona /Nequiglitch para generar un nuevo comprobante.",
                     reply_markup=ReplyKeyboardRemove()
                 )
             else:
                 await update.message.reply_text(
-                    "❌ No hay ninguna operación activa para cancelar.\n\n"
+                    "âŒ No hay ninguna operaciÃ³n activa para cancelar.\n\n"
                     "Presiona /Nequiglitch para generar un comprobante.",
                     reply_markup=ReplyKeyboardRemove()
                 )
@@ -478,72 +478,72 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         if not auth_system.can_use_bot(user_id, chat_id, chat_type == 'private'):
             if not auth_system.gratis_mode:
                 await update.message.reply_text(
-                    "👑 Este bot está restringido en el privado para evitar estafas.\n\n"
-                    "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @ROBERTKIMBDO\n\n"
-                    "👉 <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
+                    "ðŸ‘‘ Este bot estÃ¡ restringido en el privado para evitar estafas.\n\n"
+                    "Si deseas usarlo gratuitamente sin pagar nada, mÃ¡ndale un mensaje al OWNER ðŸ‘‘ @ROBERTKIMBDO\n\n"
+                    "ðŸ‘‰ <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
                     parse_mode="HTML",
                     disable_web_page_preview=True
                 )
             return
         
-        # Si el usuario es admin del bot, saltar verificación
+        # Si el usuario es admin del bot, saltar verificaciÃ³n
         if user_id in ADMIN_IDS:
             pass  # Admin del bot, acceso permitido
-        # Si el mensaje viene desde el grupo permitido, el usuario ya está ahí
+        # Si el mensaje viene desde el grupo permitido, el usuario ya estÃ¡ ahÃ­
         elif chat_id == ALLOWED_GROUP:
-            pass  # Usuario está en el grupo, acceso permitido
+            pass  # Usuario estÃ¡ en el grupo, acceso permitido
         else:
-            # Usuario está fuera del grupo, verificar si es miembro
+            # Usuario estÃ¡ fuera del grupo, verificar si es miembro
             try:
                 member = await context.bot.get_chat_member(ALLOWED_GROUP, user_id)
-                # Incluir 'restricted' para admins anónimos y otros casos especiales
+                # Incluir 'restricted' para admins anÃ³nimos y otros casos especiales
                 if member.status not in ['member', 'administrator', 'creator', 'restricted']:
                     await update.message.reply_text(
-                        "👑 Este bot está restringido en el privado para evitar estafas.\n\n"
-                    "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @ROBERTKIMBDO\n\n"
-                    "👉 <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
+                        "ðŸ‘‘ Este bot estÃ¡ restringido en el privado para evitar estafas.\n\n"
+                    "Si deseas usarlo gratuitamente sin pagar nada, mÃ¡ndale un mensaje al OWNER ðŸ‘‘ @ROBERTKIMBDO\n\n"
+                    "ðŸ‘‰ <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
                     parse_mode="HTML",
                     disable_web_page_preview=True
                     )
                     return
             except Exception as e:
-                logger.warning(f"No se pudo verificar membresía del usuario {user_id}: {str(e)}")
-                # Si falla la verificación pero el usuario es admin anónimo, puede que get_chat_member falle
-                # En ese caso, permitir si viene de un chat que podría ser el grupo
-                if chat_id < 0:  # Es un grupo, podría ser admin anónimo
+                logger.warning(f"No se pudo verificar membresÃ­a del usuario {user_id}: {str(e)}")
+                # Si falla la verificaciÃ³n pero el usuario es admin anÃ³nimo, puede que get_chat_member falle
+                # En ese caso, permitir si viene de un chat que podrÃ­a ser el grupo
+                if chat_id < 0:  # Es un grupo, podrÃ­a ser admin anÃ³nimo
                     pass  # Permitir acceso
                 else:
                     await update.message.reply_text(
-                        "👑 Este bot está restringido en el privado para evitar estafas.\n\n"
-                    "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @ROBERTKIMBDO\n\n"
-                    "👉 <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
+                        "ðŸ‘‘ Este bot estÃ¡ restringido en el privado para evitar estafas.\n\n"
+                    "Si deseas usarlo gratuitamente sin pagar nada, mÃ¡ndale un mensaje al OWNER ðŸ‘‘ @ROBERTKIMBDO\n\n"
+                    "ðŸ‘‰ <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
                     parse_mode="HTML",
                     disable_web_page_preview=True
                     )
                     return
         
-        # Detectar si el mensaje es de los botones de acceso rápido (antes de ignorar grupos)
+        # Detectar si el mensaje es de los botones de acceso rÃ¡pido (antes de ignorar grupos)
         button_mapping = {
-            "💸 Nequi": "comprobante1",
-            "🔄 BRE-B": "comprobante4",
-            "📱 QR Comprobante": "comprobante_qr",
-            "🔑 LLAVES": "comprobante_llave",
-            "🏦 Nequi a Bancolombia": "bancolombia",
-            "🏦 QR BC": "qr_bc",
-            "💳 BC a Nequi": "bc_nequi",
-            "🏛️ BC a BC": "bc_bc",
-            "🔵 DaviPlata": "daviplata",
-            "📱 QR DaviPlata": "qr_daviplata",
-            "💳 Llaves DaviPlata": "llaves_daviplata",
-            "📲 NQ QR NORMAL": "nq_qr_normal",
-            "✅ Anulado": "comprobante_anulado"
+            "ðŸ’¸ Nequi": "comprobante1",
+            "ðŸ”„ BRE-B": "comprobante4",
+            "ðŸ“± QR Comprobante": "comprobante_qr",
+            "ðŸ”‘ LLAVES": "comprobante_llave",
+            "ðŸ¦ Nequi a Bancolombia": "bancolombia",
+            "ðŸ¦ QR BC": "qr_bc",
+            "ðŸ’³ BC a Nequi": "bc_nequi",
+            "ðŸ›ï¸ BC a BC": "bc_bc",
+            "ðŸ”µ DaviPlata": "daviplata",
+            "ðŸ“± QR DaviPlata": "qr_daviplata",
+            "ðŸ’³ Llaves DaviPlata": "llaves_daviplata",
+            "ðŸ“² NQ QR NORMAL": "nq_qr_normal",
+            "âœ… Anulado": "comprobante_anulado"
         }
         
         # Permitir todos los comprobantes en grupos y privado
         if text in button_mapping:
             tipo = button_mapping[text]
             
-            # Preservar flags de configuración (fecha_manual, referencia_manual) si existen
+            # Preservar flags de configuraciÃ³n (fecha_manual, referencia_manual) si existen
             fecha_manual_flag = user_data_store.get(user_id, {}).get("fecha_manual", False)
             referencia_manual_flag = user_data_store.get(user_id, {}).get("referencia_manual", False)
             user_data_store[user_id] = {
@@ -554,34 +554,34 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 "referencia_manual": referencia_manual_flag
             }
             
-            # Cerrar el teclado de acceso rápido
+            # Cerrar el teclado de acceso rÃ¡pido
             prompts = {
-                "comprobante1": "👤 Ingresa el nombre del destinatario:",
-                "comprobante4": "👤 Ingresa el nombre a enviar:",
-                "comprobante_qr": "🏬 Nombre del negocio:",
-                "comprobante_llave": "👤 Ingresa el nombre a enviar:",
-                "bancolombia": "👤 Ingresa el nombre del destinario:",
-                "qr_bc": "🏬 Ingresa el punto de venta:",
-                "bc_nequi": "📱 Ingresa el número Nequi (10 dígitos):",
-                "bc_bc": "👤 Ingresa el nombre:",
-                "daviplata": "📱 Ingresa el número DaviPlata (mínimo 10 dígitos):",
-                "llaves_daviplata": "👤 Ingresa el nombre del destinatario:",
-                "nq_qr_normal": "🏬 Ingresa el nombre del negocio:",
-                "qr_daviplata": "🏬 Ingresa el nombre del negocio (Compra en):",
-                "comprobante_anulado": "👤 ¿Nombre de la víctima?"
+                "comprobante1": "ðŸ‘¤ Ingresa el nombre del destinatario:",
+                "comprobante4": "ðŸ‘¤ Ingresa el nombre a enviar:",
+                "comprobante_qr": "ðŸ¬ Nombre del negocio:",
+                "comprobante_llave": "ðŸ‘¤ Ingresa el nombre a enviar:",
+                "bancolombia": "ðŸ‘¤ Ingresa el nombre del destinario:",
+                "qr_bc": "ðŸ¬ Ingresa el punto de venta:",
+                "bc_nequi": "ðŸ“± Ingresa el nÃºmero Nequi (10 dÃ­gitos):",
+                "bc_bc": "ðŸ‘¤ Ingresa el nombre:",
+                "daviplata": "ðŸ“± Ingresa el nÃºmero DaviPlata (mÃ­nimo 10 dÃ­gitos):",
+                "llaves_daviplata": "ðŸ‘¤ Ingresa el nombre del destinatario:",
+                "nq_qr_normal": "ðŸ¬ Ingresa el nombre del negocio:",
+                "qr_daviplata": "ðŸ¬ Ingresa el nombre del negocio (Compra en):",
+                "comprobante_anulado": "ðŸ‘¤ Â¿Nombre de la vÃ­ctima?"
             }
             await update.message.reply_text(
-                prompts.get(tipo, "🔍 Por favor, inicia ingresando los datos requeridos:"),
+                prompts.get(tipo, "ðŸ” Por favor, inicia ingresando los datos requeridos:"),
                 reply_markup=ReplyKeyboardRemove()
             )
             return
         
-        # En grupos: solo responder si el usuario tiene una sesión activa
+        # En grupos: solo responder si el usuario tiene una sesiÃ³n activa
         if chat_type in ['group', 'supergroup']:
             if user_id not in user_data_store:
                 return  # Ignorar mensajes aleatorios en grupos
         
-        # Actualizar información de admins
+        # Actualizar informaciÃ³n de admins
         if user_id in ADMIN_IDS:
             context.bot_data.setdefault('admin_info', {})
             context.bot_data['admin_info'][user_id] = {
@@ -591,16 +591,16 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         # Verificar modo mantenimiento
         global maintenance_mode
         if maintenance_mode and user_id not in ADMIN_IDS:
-            admin_list = "\n".join(f"• {uid} (@{info['username']})"
+            admin_list = "\n".join(f"â€¢ {uid} (@{info['username']})"
                                    for uid, info in context.bot_data.get('admin_info', {}).items())
             await update.message.reply_text(
-                f"⚠️ El bot está en mantenimiento. Contacta a los administradores:\n{admin_list}",
+                f"âš ï¸ El bot estÃ¡ en mantenimiento. Contacta a los administradores:\n{admin_list}",
                 parse_mode='Markdown'
             )
             return
         
         if user_id not in user_data_store:
-            return  # No responde si el usuario no está en una sesión activa
+            return  # No responde si el usuario no estÃ¡ en una sesiÃ³n activa
         # Registrar uso
         logs.append({
             'user_id': user_id,
@@ -619,13 +619,13 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         # Referencia manual solo para Nequi y Nequi a Bancolombia
         referencia_manual = data.get("referencia_manual", False) if tipo in ["comprobante1", "bancolombia"] else False
         
-        # Función auxiliar para limpiar sesión preservando flags de configuración
+        # FunciÃ³n auxiliar para limpiar sesiÃ³n preservando flags de configuraciÃ³n
         def limpiar_sesion_preservando_flags():
-            """Elimina la sesión pero preserva los flags de configuración del usuario"""
+            """Elimina la sesiÃ³n pero preserva los flags de configuraciÃ³n del usuario"""
             fecha_flag = data.get("fecha_manual", False)
             referencia_flag = data.get("referencia_manual", False)
             del user_data_store[user_id]
-            # Restaurar solo los flags de configuración si existen
+            # Restaurar solo los flags de configuraciÃ³n si existen
             if fecha_flag or referencia_flag:
                 user_data_store[user_id] = {}
                 if fecha_flag:
@@ -633,58 +633,58 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 if referencia_flag:
                     user_data_store[user_id]["referencia_manual"] = True
         
-        # Función auxiliar para verificar y pedir fecha antes de generar (para TODOS)
+        # FunciÃ³n auxiliar para verificar y pedir fecha antes de generar (para TODOS)
         async def verificar_fecha_manual():
             """Verifica si necesita pedir fecha manual y la solicita"""
             if fecha_manual and "fecha_manual_value" not in data:
                 data["esperando_fecha"] = True
                 await update.message.reply_text(
-                    "📅 Fecha Manual\n\n"
-                    "📝 Ingresa la fecha:\n"
+                    "ðŸ“… Fecha Manual\n\n"
+                    "ðŸ“ Ingresa la fecha:\n"
                     "Ejemplo: 06 de diciembre de 2025 a las 12:00 a.m."
                 )
                 return True
             return False
         
-        # Función auxiliar para verificar y pedir referencia (solo Nequi)
+        # FunciÃ³n auxiliar para verificar y pedir referencia (solo Nequi)
         async def verificar_referencia_manual():
             """Verifica si necesita pedir referencia manual y la solicita (solo Nequi)"""
             if referencia_manual and "referencia_manual_value" not in data:
                 data["esperando_referencia"] = True
                 await update.message.reply_text(
-                    "🔢 Referencia Manual\n\n"
-                    "Ingresa solo los 8 dígitos de la referencia.\n"
-                    "La M se colocará automáticamente.\n\n"
+                    "ðŸ”¢ Referencia Manual\n\n"
+                    "Ingresa solo los 8 dÃ­gitos de la referencia.\n"
+                    "La M se colocarÃ¡ automÃ¡ticamente.\n\n"
                     "Ejemplo: 12345678\n\n"
-                    "La referencia se formateará como: M12345678"
+                    "La referencia se formatearÃ¡ como: M12345678"
                 )
                 return True
             return False
         
-        # Si está esperando fecha, procesarla primero (ANTES de cualquier paso del comprobante)
+        # Si estÃ¡ esperando fecha, procesarla primero (ANTES de cualquier paso del comprobante)
         if data.get("esperando_fecha", False):
             data["fecha_manual_value"] = text
             data["esperando_fecha"] = False
-            # Continuar con referencia si está activada (solo Nequi)
+            # Continuar con referencia si estÃ¡ activada (solo Nequi)
             if await verificar_referencia_manual():
                 return
-            # Si no hay referencia manual, continuar con la generación del comprobante
-            # Marcar que la fecha fue recibida para continuar con la generación
+            # Si no hay referencia manual, continuar con la generaciÃ³n del comprobante
+            # Marcar que la fecha fue recibida para continuar con la generaciÃ³n
             data["fecha_recibida"] = True
             # Continuar con el flujo normal del comprobante (no retornar)
         
-        # Si está esperando referencia (solo Nequi), procesarla primero
+        # Si estÃ¡ esperando referencia (solo Nequi), procesarla primero
         if data.get("esperando_referencia", False):
-            # Validar que sean exactamente 8 dígitos
+            # Validar que sean exactamente 8 dÃ­gitos
             if not text.isdigit() or len(text) != 8:
                 await update.message.reply_text(
-                    "⚠️ La referencia debe tener exactamente 8 dígitos.\n"
+                    "âš ï¸ La referencia debe tener exactamente 8 dÃ­gitos.\n"
                     "Ejemplo: 12345678"
                 )
                 return
             data["referencia_manual_value"] = f"M{text}"
             data["esperando_referencia"] = False
-            # Marcar que la referencia fue recibida para continuar con la generación
+            # Marcar que la referencia fue recibida para continuar con la generaciÃ³n
             data["fecha_recibida"] = True
             # Continuar con el flujo normal del comprobante (no retornar)
         
@@ -694,20 +694,20 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 if output_path is None or not os.path.exists(output_path):
                     logger.error(f"Documento no encontrado o None: {output_path}")
                     await update.message.reply_text(
-                        "⚠️ Error: No se pudo generar el comprobante.",
+                        "âš ï¸ Error: No se pudo generar el comprobante.",
                         parse_mode='Markdown'
                     )
                     return False
                 
-                # Verificar tamaño del archivo (Telegram límite: 50MB, pero archivos grandes pueden fallar)
+                # Verificar tamaÃ±o del archivo (Telegram lÃ­mite: 50MB, pero archivos grandes pueden fallar)
                 file_size = os.path.getsize(output_path)
                 file_size_mb = file_size / (1024 * 1024)
-                logger.info(f"Enviando documento: {output_path}, Tamaño: {file_size_mb:.2f} MB")
+                logger.info(f"Enviando documento: {output_path}, TamaÃ±o: {file_size_mb:.2f} MB")
                 
                 if file_size > 50 * 1024 * 1024:  # 50MB
                     logger.error(f"Archivo demasiado grande: {file_size_mb:.2f} MB")
                     await update.message.reply_text(
-                        f"⚠️ Error: El archivo generado es demasiado grande ({file_size_mb:.2f} MB). Límite: 50 MB.",
+                        f"âš ï¸ Error: El archivo generado es demasiado grande ({file_size_mb:.2f} MB). LÃ­mite: 50 MB.",
                         parse_mode='Markdown'
                     )
                     os.remove(output_path)
@@ -729,13 +729,13 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 except:
                     pass
                 await update.message.reply_text(
-                    f"⚠️ Error al enviar el comprobante.\n\nDetalle: {str(e)}",
+                    f"âš ï¸ Error al enviar el comprobante.\n\nDetalle: {str(e)}",
                     parse_mode='Markdown'
                 )
                 return False
         
         async def generar_qr_daviplata_final(update, data, fecha_manual, send_document, limpiar_sesion_preservando_flags):
-            """Función auxiliar para generar el comprobante QR DaviPlata"""
+            """FunciÃ³n auxiliar para generar el comprobante QR DaviPlata"""
             # Si tiene fecha manual, usarla
             if fecha_manual and "fecha_manual_value" in data:
                 data["fecha"] = data["fecha_manual_value"]
@@ -746,16 +746,16 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 output_path = generar_comprobante_qr_daviplata(data, COMPROBANTE_QR_DAVIPLATA_CONFIG)
                 if output_path is None:
                     await update.message.reply_text(
-                        "⚠️ Error al generar el comprobante QR DaviPlata.",
+                        "âš ï¸ Error al generar el comprobante QR DaviPlata.",
                         parse_mode='Markdown'
                     )
                     limpiar_sesion_preservando_flags()
                     return
                 # Enviar como documento
-                await send_document(output_path, "✅ Comprobante QR DaviPlata generado")
+                await send_document(output_path, "âœ… Comprobante QR DaviPlata generado")
             except Exception as e:
                 logger.error(f"Error generando QR DaviPlata: {str(e)}")
-                await update.message.reply_text("⚠️ Error al generar el comprobante QR DaviPlata.")
+                await update.message.reply_text("âš ï¸ Error al generar el comprobante QR DaviPlata.")
             limpiar_sesion_preservando_flags()
         
         # --- NEQUI ---
@@ -764,28 +764,28 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 data["nombre"] = text
                 data["step"] = 1
                 await update.message.reply_text(
-                    "📱 Ingresa el número de teléfono (solo dígitos):",
+                    "ðŸ“± Ingresa el nÃºmero de telÃ©fono (solo dÃ­gitos):",
                     parse_mode='Markdown'
                 )
             elif step == 1:
                 if not text.isdigit():
                     await update.message.reply_text(
-                        "⚠️ El número debe contener solo dígitos.",
+                        "âš ï¸ El nÃºmero debe contener solo dÃ­gitos.",
                         parse_mode='Markdown'
                     )
                     return
                 data["telefono"] = text
                 data["step"] = 2
                 await update.message.reply_text(
-                    "💰 Ingresa el valor:",
+                    "ðŸ’° Ingresa el valor:",
                     parse_mode='Markdown'
                 )
             elif step == 2 or data.get("fecha_recibida", False):
-                # Si viene de fecha_recibida, el valor ya está en data
+                # Si viene de fecha_recibida, el valor ya estÃ¡ en data
                 if not data.get("fecha_recibida", False):
                     if not text.replace("-", "", 1).isdigit():
                         await update.message.reply_text(
-                            "⚠️ El valor debe ser numérico.",
+                            "âš ï¸ El valor debe ser numÃ©rico.",
                             parse_mode='Markdown'
                         )
                         return
@@ -796,10 +796,10 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     # Verificar referencia manual (solo Nequi)
                     if await verificar_referencia_manual():
                         return
-                # Verificar que el valor esté guardado antes de continuar
+                # Verificar que el valor estÃ© guardado antes de continuar
                 if "valor" not in data:
                     await update.message.reply_text(
-                        "⚠️ Error: No se encontró el valor. Por favor, intenta de nuevo.",
+                        "âš ï¸ Error: No se encontrÃ³ el valor. Por favor, intenta de nuevo.",
                         parse_mode='Markdown'
                     )
                     limpiar_sesion_preservando_flags()
@@ -815,7 +815,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 output_path = generar_comprobante(data, COMPROBANTE1_CONFIG)
                 if output_path is None:
                     await update.message.reply_text(
-                        "⚠️ Error al generar el comprobante Nequi.",
+                        "âš ï¸ Error al generar el comprobante Nequi.",
                         parse_mode='Markdown'
                     )
                     limpiar_sesion_preservando_flags()
@@ -823,12 +823,12 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                                # Enviar comprobante como foto (no como documento)
                 try:
                     with open(output_path, "rb") as f:
-                        await update.message.reply_photo(photo=f, caption="✅ Comprobante Nequi generado")
+                        await update.message.reply_photo(photo=f, caption="âœ… Comprobante Nequi generado")
                     os.remove(output_path)
                     comprobante_enviado = True
                 except Exception as e:
                     logger.error(f"Error al enviar comprobante Nequi como foto: {e}")
-                    await update.message.reply_text("⚠️ Error al enviar el comprobante.")
+                    await update.message.reply_text("âš ï¸ Error al enviar el comprobante.")
                     if os.path.exists(output_path):
                         os.remove(output_path)
                     comprobante_enviado = False
@@ -841,11 +841,11 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     output_path_mov = generar_comprobante(data_mov, COMPROBANTE_MOVIMIENTO_CONFIG)
                     if output_path_mov is None:
                         await update.message.reply_text(
-                            "⚠️ Error al generar el movimiento Nequi.",
+                            "âš ï¸ Error al generar el movimiento Nequi.",
                             parse_mode='Markdown'
                         )
                     else:
-                        await send_document(output_path_mov, "📄 Movimiento generado")
+                        await send_document(output_path_mov, "ðŸ“„ Movimiento generado")
                 limpiar_sesion_preservando_flags()
         # --- BRE-B ---
         elif tipo == "comprobante4":
@@ -853,48 +853,48 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 data["nombre"] = text
                 data["step"] = 1
                 await update.message.reply_text(
-                    "🔑 Ingresa la llave (debe iniciar con @):",
+                    "ðŸ”‘ Ingresa la llave (debe iniciar con @):",
                     parse_mode='Markdown'
                 )
             elif step == 1:
                 if not text.startswith("@"):
                     await update.message.reply_text(
-                        "⚠️ La llave debe iniciar con @. Ejemplo: @miusuario",
+                        "âš ï¸ La llave debe iniciar con @. Ejemplo: @miusuario",
                         parse_mode='Markdown'
                     )
                     return
                 data["llave"] = text
                 data["step"] = 2
                 await update.message.reply_text(
-                    "🏦 Ingresa el banco de destino:",
+                    "ðŸ¦ Ingresa el banco de destino:",
                     parse_mode='Markdown'
                 )
             elif step == 2:
                 data["banco_destino"] = text
                 data["step"] = 3
                 await update.message.reply_text(
-                    "📱 Ingresa el número de envío:",
+                    "ðŸ“± Ingresa el nÃºmero de envÃ­o:",
                     parse_mode='Markdown'
                 )
             elif step == 3:
                 if not text.isdigit():
                     await update.message.reply_text(
-                        "⚠️ El número debe contener solo dígitos.",
+                        "âš ï¸ El nÃºmero debe contener solo dÃ­gitos.",
                         parse_mode='Markdown'
                     )
                     return
                 data["numero_envio"] = text
                 data["step"] = 4
                 await update.message.reply_text(
-                    "💰 Ingresa el valor:",
+                    "ðŸ’° Ingresa el valor:",
                     parse_mode='Markdown'
                 )
             elif step == 4 or data.get("fecha_recibida", False):
-                # Si viene de fecha_recibida, el valor ya está en data
+                # Si viene de fecha_recibida, el valor ya estÃ¡ en data
                 if not data.get("fecha_recibida", False):
                     if not text.replace("-", "", 1).isdigit():
                         await update.message.reply_text(
-                            "⚠️ El valor debe ser numérico.",
+                            "âš ï¸ El valor debe ser numÃ©rico.",
                             parse_mode='Markdown'
                         )
                         return
@@ -902,10 +902,10 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     # Verificar si necesita pedir fecha manual (para TODOS)
                     if await verificar_fecha_manual():
                         return
-                # Verificar que el valor esté guardado antes de continuar
+                # Verificar que el valor estÃ© guardado antes de continuar
                 if "valor" not in data:
                     await update.message.reply_text(
-                        "⚠️ Error: No se encontró el valor. Por favor, intenta de nuevo.",
+                        "âš ï¸ Error: No se encontrÃ³ el valor. Por favor, intenta de nuevo.",
                         parse_mode='Markdown'
                     )
                     limpiar_sesion_preservando_flags()
@@ -918,13 +918,13 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 output_path = generar_comprobante(data, COMPROBANTE4_CONFIG)
                 if output_path is None:
                     await update.message.reply_text(
-                        "⚠️ Error al generar el comprobante BRE-B.",
+                        "âš ï¸ Error al generar el comprobante BRE-B.",
                         parse_mode='Markdown'
                     )
                     limpiar_sesion_preservando_flags()
                     return
-                if await send_document(output_path, "✅ Comprobante BRE-B generado"):
-                    # Movimiento negativo BRE-B (la ofuscación se aplica en utils.py)
+                if await send_document(output_path, "âœ… Comprobante BRE-B generado"):
+                    # Movimiento negativo BRE-B (la ofuscaciÃ³n se aplica en utils.py)
                     data_mov2 = {
                         "nombre": data["nombre"],
                         "valor": -abs(data["valor"])
@@ -932,11 +932,11 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     output_path_mov2 = generar_comprobante(data_mov2, COMPROBANTE_MOVIMIENTO2_CONFIG)
                     if output_path_mov2 is None:
                         await update.message.reply_text(
-                            "⚠️ Error al generar el movimiento BRE-B.",
+                            "âš ï¸ Error al generar el movimiento BRE-B.",
                             parse_mode='Markdown'
                         )
                     else:
-                        await send_document(output_path_mov2, "📄 Movimiento BRE-B generado")
+                        await send_document(output_path_mov2, "ðŸ“„ Movimiento BRE-B generado")
                 limpiar_sesion_preservando_flags()
         # --- QR COMPROBANTE ---
         elif tipo == "comprobante_qr":
@@ -944,42 +944,42 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 data["nombre"] = text
                 data["step"] = 1
                 await update.message.reply_text(
-                    "🔑 Ingresa la llave banco a destino:",
+                    "ðŸ”‘ Ingresa la llave banco a destino:",
                     parse_mode='Markdown'
                 )
             elif step == 1:
                 data["llave"] = text
                 data["step"] = 2
                 await update.message.reply_text(
-                    "🏦 Ingresa el banco de destino:",
+                    "ðŸ¦ Ingresa el banco de destino:",
                     parse_mode='Markdown'
                 )
             elif step == 2:
                 data["banco_destino"] = text
                 data["step"] = 3
                 await update.message.reply_text(
-                    "📱 Ingresa el número de envío:",
+                    "ðŸ“± Ingresa el nÃºmero de envÃ­o:",
                     parse_mode='Markdown'
                 )
             elif step == 3:
                 if not text.isdigit():
                     await update.message.reply_text(
-                        "⚠️ El número debe contener solo dígitos.",
+                        "âš ï¸ El nÃºmero debe contener solo dÃ­gitos.",
                         parse_mode='Markdown'
                     )
                     return
                 data["numero_envio"] = text
                 data["step"] = 4
                 await update.message.reply_text(
-                    "💰 Ingresa el valor:",
+                    "ðŸ’° Ingresa el valor:",
                     parse_mode='Markdown'
                 )
             elif step == 4 or data.get("fecha_recibida", False):
-                # Si viene de fecha_recibida, el valor ya está en data
+                # Si viene de fecha_recibida, el valor ya estÃ¡ en data
                 if not data.get("fecha_recibida", False):
                     if not text.replace("-", "", 1).isdigit():
                         await update.message.reply_text(
-                            "⚠️ El valor debe ser numérico.",
+                            "âš ï¸ El valor debe ser numÃ©rico.",
                             parse_mode='Markdown'
                         )
                         return
@@ -987,10 +987,10 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     # Verificar si necesita pedir fecha manual (para TODOS)
                     if await verificar_fecha_manual():
                         return
-                # Verificar que el valor esté guardado antes de continuar
+                # Verificar que el valor estÃ© guardado antes de continuar
                 if "valor" not in data:
                     await update.message.reply_text(
-                        "⚠️ Error: No se encontró el valor. Por favor, intenta de nuevo.",
+                        "âš ï¸ Error: No se encontrÃ³ el valor. Por favor, intenta de nuevo.",
                         parse_mode='Markdown'
                     )
                     limpiar_sesion_preservando_flags()
@@ -1003,12 +1003,12 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 output_path = generar_comprobante(data, COMPROBANTE_QR_CONFIG)
                 if output_path is None:
                     await update.message.reply_text(
-                        "⚠️ Error al generar el comprobante QR.",
+                        "âš ï¸ Error al generar el comprobante QR.",
                         parse_mode='Markdown'
                     )
                     limpiar_sesion_preservando_flags()
                     return
-                if await send_document(output_path, "✅ Comprobante QR generado"):
+                if await send_document(output_path, "âœ… Comprobante QR generado"):
                     # Movimiento adicional
                     data_mov_qr = {
                         "nombre": data["nombre"].upper(),
@@ -1017,11 +1017,11 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     output_path_movqr = generar_comprobante(data_mov_qr, COMPROBANTE_MOVIMIENTO3_CONFIG)
                     if output_path_movqr is None:
                         await update.message.reply_text(
-                            "⚠️ Error al generar el movimiento QR.",
+                            "âš ï¸ Error al generar el movimiento QR.",
                             parse_mode='Markdown'
                         )
                     else:
-                        await send_document(output_path_movqr, "📄 Movimiento QR generado")
+                        await send_document(output_path_movqr, "ðŸ“„ Movimiento QR generado")
                 limpiar_sesion_preservando_flags()
                       # --- LLAVES ---
         elif tipo == "comprobante_llave":
@@ -1029,7 +1029,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 data["nombre"] = text
                 data["step"] = 1
                 await update.message.reply_text(
-                    "🔑 Ingresa la llave:",
+                    "ðŸ”‘ Ingresa la llave:",
                     parse_mode='Markdown'
                 )
 
@@ -1037,7 +1037,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 data["llave"] = text
                 data["step"] = 2
                 await update.message.reply_text(
-                    "🏦 Ingresa el banco de destino:",
+                    "ðŸ¦ Ingresa el banco de destino:",
                     parse_mode='Markdown'
                 )
 
@@ -1045,30 +1045,30 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 data["banco_destino"] = text
                 data["step"] = 3
                 await update.message.reply_text(
-                    "📱 Ingresa el número de envío:",
+                    "ðŸ“± Ingresa el nÃºmero de envÃ­o:",
                     parse_mode='Markdown'
                 )
 
             elif step == 3:
                 if not text.isdigit():
                     await update.message.reply_text(
-                        "⚠️ El número debe contener solo dígitos.",
+                        "âš ï¸ El nÃºmero debe contener solo dÃ­gitos.",
                         parse_mode='Markdown'
                     )
                     return
                 data["numero_envio"] = text
                 data["step"] = 4
                 await update.message.reply_text(
-                    "💰 Ingresa el valor:",
+                    "ðŸ’° Ingresa el valor:",
                     parse_mode='Markdown'
                 )
 
             elif step == 4 or data.get("fecha_recibida", False):
-                # Si viene de fecha_recibida, el valor ya está en data
+                # Si viene de fecha_recibida, el valor ya estÃ¡ en data
                 if not data.get("fecha_recibida", False):
                     if not text.replace("-", "", 1).isdigit():
                         await update.message.reply_text(
-                            "⚠️ El valor debe ser numérico.",
+                            "âš ï¸ El valor debe ser numÃ©rico.",
                             parse_mode='Markdown'
                         )
                         return
@@ -1076,10 +1076,10 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     # Verificar si necesita pedir fecha manual (para TODOS)
                     if await verificar_fecha_manual():
                         return
-                # Verificar que el valor esté guardado antes de continuar
+                # Verificar que el valor estÃ© guardado antes de continuar
                 if "valor" not in data:
                     await update.message.reply_text(
-                        "⚠️ Error: No se encontró el valor. Por favor, intenta de nuevo.",
+                        "âš ï¸ Error: No se encontrÃ³ el valor. Por favor, intenta de nuevo.",
                         parse_mode='Markdown'
                     )
                     limpiar_sesion_preservando_flags()
@@ -1094,14 +1094,14 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 output_path = generar_comprobante(data, COMPROBANTE_LLAVE)
                 if output_path is None:
                     await update.message.reply_text(
-                        "⚠️ Error al generar el comprobante Llave.",
+                        "âš ï¸ Error al generar el comprobante Llave.",
                         parse_mode='Markdown'
                     )
                     limpiar_sesion_preservando_flags()
                     return
 
-                if await send_document(output_path, "✅ Comprobante Llave generado"):
-                    # --- Generar también el movimiento negativo de Llaves ---
+                if await send_document(output_path, "âœ… Comprobante Llave generado"):
+                    # --- Generar tambiÃ©n el movimiento negativo de Llaves ---
                     data_mov_llave = {
                         "nombre": data["nombre"].upper(),
                         "valor": -abs(data["valor"])
@@ -1109,12 +1109,12 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     output_path_mov_llave = generar_comprobante(data_mov_llave, MOVIMIENTO_LLAVE_CONFIG)
                     if output_path_mov_llave is None:
                         await update.message.reply_text(
-                            "⚠️ Error al generar el movimiento de Llaves.",
+                            "âš ï¸ Error al generar el movimiento de Llaves.",
                             parse_mode='Markdown'
                         )
                     else:
-                        await send_document(output_path_mov_llave, "📄 Movimiento Llaves generado")
-                # limpiar sesión
+                        await send_document(output_path_mov_llave, "ðŸ“„ Movimiento Llaves generado")
+                # limpiar sesiÃ³n
                 limpiar_sesion_preservando_flags()
 
 
@@ -1125,28 +1125,28 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 data["nombre"] = text
                 data["step"] = 1
                 await update.message.reply_text(
-                    "💰 Ingresa la cantidad a enviar:",
+                    "ðŸ’° Ingresa la cantidad a enviar:",
                     parse_mode='Markdown'
                 )
             elif step == 1:
                 if not text.replace("-", "", 1).isdigit():
                     await update.message.reply_text(
-                        "⚠️ La cantidad debe ser numérica.",
+                        "âš ï¸ La cantidad debe ser numÃ©rica.",
                         parse_mode='Markdown'
                     )
                     return
                 data["valor"] = int(text)
                 data["step"] = 2
                 await update.message.reply_text(
-                    "🏦 Ingresa el número de cuenta:",
+                    "ðŸ¦ Ingresa el nÃºmero de cuenta:",
                     parse_mode='Markdown'
                 )
             elif step == 2 or data.get("fecha_recibida", False):
-                # Si viene de fecha_recibida, la cuenta ya está en data
+                # Si viene de fecha_recibida, la cuenta ya estÃ¡ en data
                 if not data.get("fecha_recibida", False):
                     if not text.isdigit() or len(text) < 11:
                         await update.message.reply_text(
-                            "⚠️ El número de cuenta debe ser **11 dígitos**.",
+                            "âš ï¸ El nÃºmero de cuenta debe ser **11 dÃ­gitos**.",
                             parse_mode='Markdown'
                         )
                         return
@@ -1157,19 +1157,19 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     # Verificar referencia manual (solo Nequi a Bancolombia)
                     if await verificar_referencia_manual():
                         return
-                # Verificar que la cuenta esté guardada antes de continuar
+                # Verificar que la cuenta estÃ© guardada antes de continuar
                 if "cuenta" not in data:
                     await update.message.reply_text(
-                        "⚠️ Error: No se encontró la cuenta. Por favor, intenta de nuevo.",
+                        "âš ï¸ Error: No se encontrÃ³ la cuenta. Por favor, intenta de nuevo.",
                         parse_mode='Markdown'
                     )
                     limpiar_sesion_preservando_flags()
                     return
-                # Si tiene fecha manual, usarla; si no, dejar que generar_comprobante la genere automáticamente
+                # Si tiene fecha manual, usarla; si no, dejar que generar_comprobante la genere automÃ¡ticamente
                 if fecha_manual and "fecha_manual_value" in data:
                     data["fecha"] = data["fecha_manual_value"]
-                # Si no hay fecha manual, no establecer data["fecha"] para que generar_comprobante la genere automáticamente
-                # Si tiene referencia manual, usarla; si no, generar automática con 8 dígitos
+                # Si no hay fecha manual, no establecer data["fecha"] para que generar_comprobante la genere automÃ¡ticamente
+                # Si tiene referencia manual, usarla; si no, generar automÃ¡tica con 8 dÃ­gitos
                 if referencia_manual and "referencia_manual_value" in data:
                     data["referencia"] = data["referencia_manual_value"]
                 else:
@@ -1180,12 +1180,12 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 output_path = generar_comprobante_nequi_bc(data, COMPROBANTE_NEQUI_BC_CONFIG)
                 if output_path is None:
                     await update.message.reply_text(
-                        "⚠️ Error al generar el comprobante Bancolombia.",
+                        "âš ï¸ Error al generar el comprobante Bancolombia.",
                         parse_mode='Markdown'
                     )
                     limpiar_sesion_preservando_flags()
                     return
-                if await send_document(output_path, "✅ Comprobante Bancolombia generado"):
+                if await send_document(output_path, "âœ… Comprobante Bancolombia generado"):
                     # Movimiento negativo
                     data_mov_bancol = data.copy()
                     data_mov_bancol["nombre"] = data["nombre"].upper()
@@ -1193,14 +1193,14 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     output_path_mov_bancol = generar_comprobante(data_mov_bancol, BANCOL_MOVIMIENTO_CONFIG)
                     if output_path_mov_bancol is None:
                         await update.message.reply_text(
-                            "⚠️ Error al generar el movimiento Bancolombia.",
+                            "âš ï¸ Error al generar el movimiento Bancolombia.",
                             parse_mode='Markdown'
                         )
                     else:
-                        await send_document(output_path_mov_bancol, "📄 Movimiento Bancolombia generado")
+                        await send_document(output_path_mov_bancol, "ðŸ“„ Movimiento Bancolombia generado")
                 limpiar_sesion_preservando_flags()
         
-        # --- QR BC (Bancolombia QR) - Configuración original ---
+        # --- QR BC (Bancolombia QR) - ConfiguraciÃ³n original ---
         elif tipo == "qr_bc":
             from utils import generar_comprobante_qr_bc
             if step == 0:
@@ -1209,24 +1209,24 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     punto_venta_limpio = punto_venta_limpio.replace('  ', ' ')
                 data["punto_venta"] = punto_venta_limpio
                 data["step"] = 1
-                await update.message.reply_text("👤 Ingresa a quién envías:")
+                await update.message.reply_text("ðŸ‘¤ Ingresa a quiÃ©n envÃ­as:")
             elif step == 1:
                 enviado_a_limpio = text.replace('\n', ' ').replace('\r', ' ').strip()
                 while '  ' in enviado_a_limpio:
                     enviado_a_limpio = enviado_a_limpio.replace('  ', ' ')
                 data["enviado_a"] = enviado_a_limpio
                 data["step"] = 2
-                await update.message.reply_text("💰 Ingresa la cantidad:")
+                await update.message.reply_text("ðŸ’° Ingresa la cantidad:")
             elif step == 2:
                 if not text.replace("-", "", 1).isdigit():
-                    await update.message.reply_text("⚠️ La cantidad debe ser numérica.")
+                    await update.message.reply_text("âš ï¸ La cantidad debe ser numÃ©rica.")
                     return
                 data["cantidad"] = int(text)
                 data["step"] = 3
-                await update.message.reply_text("🔢 Ingresa los últimos 4 dígitos de la cuenta:")
+                await update.message.reply_text("ðŸ”¢ Ingresa los Ãºltimos 4 dÃ­gitos de la cuenta:")
             elif step == 3:
                 if not text.isdigit() or len(text) != 4:
-                    await update.message.reply_text("⚠️ Deben ser exactamente 4 dígitos.")
+                    await update.message.reply_text("âš ï¸ Deben ser exactamente 4 dÃ­gitos.")
                     return
                 data["ultimos_4"] = text
                 try:
@@ -1236,7 +1236,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                         data["cantidad"],
                         data["ultimos_4"]
                     )
-                    if output_path and await send_document(output_path, "✅ Comprobante QR BC generado"):
+                    if output_path and await send_document(output_path, "âœ… Comprobante QR BC generado"):
                         # Generar movimiento QR BC usando qr.jpg
                         try:
                             data_mov_qr_bc = {
@@ -1244,15 +1244,15 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                             }
                             output_path_mov_qr_bc = generar_movimiento_qr_bc(data_mov_qr_bc, MOVIMIENTO_QR_BC_CONFIG)
                             if output_path_mov_qr_bc:
-                                await send_document(output_path_mov_qr_bc, "📄 Movimiento QR BC generado")
+                                await send_document(output_path_mov_qr_bc, "ðŸ“„ Movimiento QR BC generado")
                         except Exception as e_mov:
                             logger.error(f"Error generando movimiento QR BC: {str(e_mov)}")
                     else:
-                        await update.message.reply_text("⚠️ Error al generar el comprobante QR BC.")
+                        await update.message.reply_text("âš ï¸ Error al generar el comprobante QR BC.")
                 except Exception as e:
                     logger.error(f"Error generando QR BC: {str(e)}")
-                    await update.message.reply_text("⚠️ Error al generar el comprobante QR BC.")
-                # Preservar flags antes de eliminar sesión
+                    await update.message.reply_text("âš ï¸ Error al generar el comprobante QR BC.")
+                # Preservar flags antes de eliminar sesiÃ³n
                 fecha_flag = user_data_store.get(user_id, {}).get("fecha_manual", False)
                 referencia_flag = user_data_store.get(user_id, {}).get("referencia_manual", False)
                 del user_data_store[user_id]
@@ -1263,22 +1263,22 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     if referencia_flag:
                         user_data_store[user_id]["referencia_manual"] = True
         
-        # --- BC a Nequi (configuración original) ---
+        # --- BC a Nequi (configuraciÃ³n original) ---
         elif tipo == "bc_nequi":
             from utils import generar_comprobante_bc_nequi, generar_movimientos_bc_nequi
             if step == 0:
                 if not text.isdigit() or len(text) != 10:
-                    await update.message.reply_text("⚠️ El número debe tener exactamente 10 dígitos.")
+                    await update.message.reply_text("âš ï¸ El nÃºmero debe tener exactamente 10 dÃ­gitos.")
                     return
                 data["numero"] = text
                 data["step"] = 1
-                await update.message.reply_text("💰 Ingresa el valor:")
+                await update.message.reply_text("ðŸ’° Ingresa el valor:")
             elif step == 1:
                 if not text.replace("-", "", 1).isdigit():
-                    await update.message.reply_text("⚠️ El valor debe ser numérico.")
+                    await update.message.reply_text("âš ï¸ El valor debe ser numÃ©rico.")
                     return
                 data["valor"] = text
-                # Generar directamente sin pedir nombre (configuración original)
+                # Generar directamente sin pedir nombre (configuraciÃ³n original)
                 try:
                     output_path = generar_comprobante_bc_nequi(
                         data["numero"],
@@ -1286,21 +1286,21 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                         ""  # Sin nombre
                     )
                     if output_path:
-                        await send_document(output_path, "✅ Comprobante BC a Nequi generado")
+                        await send_document(output_path, "âœ… Comprobante BC a Nequi generado")
                         # Generar movimiento siempre
                         try:
                             cuenta_ahorros = f"Ahorros *{data['numero'][-4:]}"
                             output_mov = generar_movimientos_bc_nequi(cuenta_ahorros, data["valor"])
                             if output_mov:
-                                await send_document(output_mov, "📄 Movimiento BC a Nequi generado")
+                                await send_document(output_mov, "ðŸ“„ Movimiento BC a Nequi generado")
                         except Exception as e_mov:
                             logger.error(f"Error generando movimiento BC a Nequi: {str(e_mov)}")
                     else:
-                        await update.message.reply_text("⚠️ Error al generar el comprobante BC a Nequi.")
+                        await update.message.reply_text("âš ï¸ Error al generar el comprobante BC a Nequi.")
                 except Exception as e:
                     logger.error(f"Error generando BC a Nequi: {str(e)}")
-                    await update.message.reply_text("⚠️ Error al generar el comprobante BC a Nequi.")
-                # Preservar flags antes de eliminar sesión
+                    await update.message.reply_text("âš ï¸ Error al generar el comprobante BC a Nequi.")
+                # Preservar flags antes de eliminar sesiÃ³n
                 fecha_flag = user_data_store.get(user_id, {}).get("fecha_manual", False)
                 referencia_flag = user_data_store.get(user_id, {}).get("referencia_manual", False)
                 del user_data_store[user_id]
@@ -1311,66 +1311,66 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     if referencia_flag:
                         user_data_store[user_id]["referencia_manual"] = True
         
-        # --- BC a BC (Bancolombia a Bancolombia) - Usa configuración de Ahorros (bc_a_bc.png) ---
+        # --- BC a BC (Bancolombia a Bancolombia) - Usa configuraciÃ³n de Ahorros (bc_a_bc.png) ---
         elif tipo == "bc_bc":
             if step == 0:
                 data["nombre"] = text
                 data["step"] = 1
-                await update.message.reply_text("🏦 Ingresa el número de cuenta:")
+                await update.message.reply_text("ðŸ¦ Ingresa el nÃºmero de cuenta:")
             elif step == 1:
-                # Validar que tenga 11 dígitos
+                # Validar que tenga 11 dÃ­gitos
                 digitos = "".join(ch for ch in text if ch.isdigit())
                 if len(digitos) != 11:
-                    await update.message.reply_text("⚠️ El número de cuenta debe tener exactamente 11 dígitos.\nEjemplo: 12345678912")
+                    await update.message.reply_text("âš ï¸ El nÃºmero de cuenta debe tener exactamente 11 dÃ­gitos.\nEjemplo: 12345678912")
                     return
                 data["numero_cuenta"] = digitos
                 data["step"] = 2
-                await update.message.reply_text("💰 Ingresa el valor:")
+                await update.message.reply_text("ðŸ’° Ingresa el valor:")
             elif step == 2:
                 valor_limpio = text.replace(".", "").replace(",", "").replace(" ", "")
                 if not valor_limpio.isdigit():
-                    await update.message.reply_text("⚠️ El valor debe ser numérico.")
+                    await update.message.reply_text("âš ï¸ El valor debe ser numÃ©rico.")
                     return
                 valor = int(valor_limpio)
                 if valor < 1000:
-                    await update.message.reply_text("⚠️ El valor mínimo es $1,000. Intenta de nuevo.")
+                    await update.message.reply_text("âš ï¸ El valor mÃ­nimo es $1,000. Intenta de nuevo.")
                     return
                 data["valor"] = valor
                 data["step"] = 3
-                await update.message.reply_text("💸 ¿Deseas colocar costo de transferencia?\n\nResponde: sí o no")
+                await update.message.reply_text("ðŸ’¸ Â¿Deseas colocar costo de transferencia?\n\nResponde: sÃ­ o no")
             elif step == 3:
                 respuesta = text.lower().strip()
-                if respuesta in ["sí", "si", "yes", "s", "y"]:
+                if respuesta in ["sÃ­", "si", "yes", "s", "y"]:
                     data["step"] = 4
-                    await update.message.reply_text("💰 Ingresa el costo de transferencia:\n\nEjemplo: 50, 1000, etc.")
+                    await update.message.reply_text("ðŸ’° Ingresa el costo de transferencia:\n\nEjemplo: 50, 1000, etc.")
                 elif respuesta in ["no", "n"]:
                     data["costo_transferencia"] = 0
                     data["step"] = 5
-                    await update.message.reply_text("🔢 ¿Deseas colocar referencia de transferencia?\n\nResponde: sí o no")
+                    await update.message.reply_text("ðŸ”¢ Â¿Deseas colocar referencia de transferencia?\n\nResponde: sÃ­ o no")
                 else:
-                    await update.message.reply_text("⚠️ Por favor responde: sí o no")
+                    await update.message.reply_text("âš ï¸ Por favor responde: sÃ­ o no")
             elif step == 4:
                 costo_limpio = text.replace(".", "").replace(",", "").replace(" ", "").replace("$", "")
                 if not costo_limpio.isdigit():
-                    await update.message.reply_text("⚠️ El costo debe ser numérico.")
+                    await update.message.reply_text("âš ï¸ El costo debe ser numÃ©rico.")
                     return
                 costo = int(costo_limpio)
                 data["costo_transferencia"] = costo
                 data["step"] = 5
-                await update.message.reply_text("🔢 ¿Deseas colocar referencia de transferencia?\n\nResponde: sí o no")
+                await update.message.reply_text("ðŸ”¢ Â¿Deseas colocar referencia de transferencia?\n\nResponde: sÃ­ o no")
             elif step == 5:
                 respuesta = text.lower().strip()
-                if respuesta in ["sí", "si", "yes", "s", "y"]:
+                if respuesta in ["sÃ­", "si", "yes", "s", "y"]:
                     data["step"] = 6
-                    await update.message.reply_text("🔢 Ingresa los 4 dígitos de la referencia:\n\nEjemplo: 7423 (se agregará * automáticamente)")
+                    await update.message.reply_text("ðŸ”¢ Ingresa los 4 dÃ­gitos de la referencia:\n\nEjemplo: 7423 (se agregarÃ¡ * automÃ¡ticamente)")
                 elif respuesta in ["no", "n"]:
-                    # Generar referencia aleatoria automáticamente (4 dígitos)
+                    # Generar referencia aleatoria automÃ¡ticamente (4 dÃ­gitos)
                     referencia_aleatoria = "".join([str(random.randint(0, 9)) for _ in range(4)])
                     data["referencia_transferencia"] = referencia_aleatoria
                     # Generar comprobante directamente
                     try:
                         output_path = generar_comprobante_ahorros(data, COMPROBANTE_AHORROS_CONFIG)
-                        if output_path and await send_document(output_path, "✅ Comprobante BC a BC generado"):
+                        if output_path and await send_document(output_path, "âœ… Comprobante BC a BC generado"):
                             # Generar movimiento BC a BC usando ahorros.jpg
                             try:
                                 data_mov_ahorros = {
@@ -1378,15 +1378,15 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                                 }
                                 output_path_mov_ahorros = generar_movimiento_ahorros(data_mov_ahorros, MOVIMIENTO_AHORROS_CONFIG)
                                 if output_path_mov_ahorros:
-                                    await send_document(output_path_mov_ahorros, "📄 Movimiento BC a BC generado")
+                                    await send_document(output_path_mov_ahorros, "ðŸ“„ Movimiento BC a BC generado")
                             except Exception as e_mov:
                                 logger.error(f"Error generando movimiento BC a BC: {str(e_mov)}")
                         else:
-                            await update.message.reply_text("⚠️ Error al generar el comprobante BC a BC.")
+                            await update.message.reply_text("âš ï¸ Error al generar el comprobante BC a BC.")
                     except Exception as e:
                         logger.error(f"Error generando BC a BC: {str(e)}")
-                        await update.message.reply_text("⚠️ Error al generar el comprobante BC a BC.")
-                    # Preservar flags antes de eliminar sesión
+                        await update.message.reply_text("âš ï¸ Error al generar el comprobante BC a BC.")
+                    # Preservar flags antes de eliminar sesiÃ³n
                     fecha_flag = user_data_store.get(user_id, {}).get("fecha_manual", False)
                     referencia_flag = user_data_store.get(user_id, {}).get("referencia_manual", False)
                     del user_data_store[user_id]
@@ -1397,18 +1397,18 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                         if referencia_flag:
                             user_data_store[user_id]["referencia_manual"] = True
                 else:
-                    await update.message.reply_text("⚠️ Por favor responde: sí o no")
+                    await update.message.reply_text("âš ï¸ Por favor responde: sÃ­ o no")
             elif step == 6:
-                # Validar que sean exactamente 4 dígitos
+                # Validar que sean exactamente 4 dÃ­gitos
                 digitos = "".join(ch for ch in text if ch.isdigit())
                 if len(digitos) != 4:
-                    await update.message.reply_text("⚠️ La referencia debe tener exactamente 4 dígitos.\n\nEjemplo: 7423")
+                    await update.message.reply_text("âš ï¸ La referencia debe tener exactamente 4 dÃ­gitos.\n\nEjemplo: 7423")
                     return
                 data["referencia_transferencia"] = digitos
                 try:
                     # Usar COMPROBANTE_AHORROS_CONFIG (bc_a_bc.png) para BC a BC
                     output_path = generar_comprobante_ahorros(data, COMPROBANTE_AHORROS_CONFIG)
-                    if output_path and await send_document(output_path, "✅ Comprobante BC a BC generado"):
+                    if output_path and await send_document(output_path, "âœ… Comprobante BC a BC generado"):
                         # Generar movimiento BC a BC usando ahorros.jpg
                         try:
                             data_mov_ahorros = {
@@ -1416,15 +1416,15 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                             }
                             output_path_mov_ahorros = generar_movimiento_ahorros(data_mov_ahorros, MOVIMIENTO_AHORROS_CONFIG)
                             if output_path_mov_ahorros:
-                                await send_document(output_path_mov_ahorros, "📄 Movimiento BC a BC generado")
+                                await send_document(output_path_mov_ahorros, "ðŸ“„ Movimiento BC a BC generado")
                         except Exception as e_mov:
                             logger.error(f"Error generando movimiento BC a BC: {str(e_mov)}")
                     else:
-                        await update.message.reply_text("⚠️ Error al generar el comprobante BC a BC.")
+                        await update.message.reply_text("âš ï¸ Error al generar el comprobante BC a BC.")
                 except Exception as e:
                     logger.error(f"Error generando BC a BC: {str(e)}")
-                    await update.message.reply_text("⚠️ Error al generar el comprobante BC a BC.")
-                # Preservar flags antes de eliminar sesión
+                    await update.message.reply_text("âš ï¸ Error al generar el comprobante BC a BC.")
+                # Preservar flags antes de eliminar sesiÃ³n
                 fecha_flag = user_data_store.get(user_id, {}).get("fecha_manual", False)
                 referencia_flag = user_data_store.get(user_id, {}).get("referencia_manual", False)
                 del user_data_store[user_id]
@@ -1435,28 +1435,28 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     if referencia_flag:
                         user_data_store[user_id]["referencia_manual"] = True
         
-        # --- DaviPlata (configuración original, solo con color #333333 y fuente Manrope-Bold) ---
+        # --- DaviPlata (configuraciÃ³n original, solo con color #333333 y fuente Manrope-Bold) ---
         elif tipo == "daviplata":
             from utils import generar_comprobante_daviplata
             if step == 0:
                 if not text.isdigit() or len(text) < 10:
-                    await update.message.reply_text("⚠️ El número DaviPlata debe tener mínimo 10 dígitos (puedes usar 10, 11, 12, 14, etc.).")
+                    await update.message.reply_text("âš ï¸ El nÃºmero DaviPlata debe tener mÃ­nimo 10 dÃ­gitos (puedes usar 10, 11, 12, 14, etc.).")
                     return
                 data["numero_daviplata"] = text
                 data["step"] = 1
-                await update.message.reply_text("💰 Ingresa la cantidad:")
+                await update.message.reply_text("ðŸ’° Ingresa la cantidad:")
             elif step == 1:
                 # Remover puntos y comas si el usuario las incluye
                 valor_limpio = text.replace(".", "").replace(",", "").replace("$", "").strip()
                 if not valor_limpio.isdigit():
-                    await update.message.reply_text("⚠️ La cantidad debe ser solo números, sin puntos ni comas. Ejemplo: 32000")
+                    await update.message.reply_text("âš ï¸ La cantidad debe ser solo nÃºmeros, sin puntos ni comas. Ejemplo: 32000")
                     return
                 data["valor"] = int(valor_limpio)
                 data["step"] = 2
-                await update.message.reply_text("🔢 Ingresa los últimos 4 dígitos de tu cuenta:")
+                await update.message.reply_text("ðŸ”¢ Ingresa los Ãºltimos 4 dÃ­gitos de tu cuenta:")
             elif step == 2:
                 if not text.isdigit() or len(text) != 4:
-                    await update.message.reply_text("⚠️ Deben ser exactamente 4 dígitos.")
+                    await update.message.reply_text("âš ï¸ Deben ser exactamente 4 dÃ­gitos.")
                     return
                 data["ultimos_4"] = text
                 try:
@@ -1465,14 +1465,14 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                         data["ultimos_4"],
                         data["valor"]
                     )
-                    if output_path and await send_document(output_path, "✅ Comprobante DaviPlata generado"):
+                    if output_path and await send_document(output_path, "âœ… Comprobante DaviPlata generado"):
                         pass
                     else:
-                        await update.message.reply_text("⚠️ Error al generar el comprobante DaviPlata.")
+                        await update.message.reply_text("âš ï¸ Error al generar el comprobante DaviPlata.")
                 except Exception as e:
                     logger.error(f"Error generando DaviPlata: {str(e)}")
-                    await update.message.reply_text("⚠️ Error al generar el comprobante DaviPlata.")
-                # Preservar flags antes de eliminar sesión
+                    await update.message.reply_text("âš ï¸ Error al generar el comprobante DaviPlata.")
+                # Preservar flags antes de eliminar sesiÃ³n
                 fecha_flag = user_data_store.get(user_id, {}).get("fecha_manual", False)
                 referencia_flag = user_data_store.get(user_id, {}).get("referencia_manual", False)
                 del user_data_store[user_id]
@@ -1488,50 +1488,50 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             if step == 0:
                 data["compra_en"] = text
                 data["step"] = 1
-                await update.message.reply_text("💰 Ingresa la cantidad:")
+                await update.message.reply_text("ðŸ’° Ingresa la cantidad:")
             elif step == 1:
                 valor_limpio = text.replace(".", "").replace(",", "").replace("$", "").strip()
                 if not valor_limpio.isdigit():
-                    await update.message.reply_text("⚠️ La cantidad debe ser solo números. Ejemplo: 32000")
+                    await update.message.reply_text("âš ï¸ La cantidad debe ser solo nÃºmeros. Ejemplo: 32000")
                     return
                 data["cantidad"] = int(valor_limpio)
                 data["step"] = 2
-                await update.message.reply_text("📱 Ingresa los 10 dígitos de quien envía:")
+                await update.message.reply_text("ðŸ“± Ingresa los 10 dÃ­gitos de quien envÃ­a:")
             elif step == 2:
                 if not text.isdigit() or len(text) != 10:
-                    await update.message.reply_text("⚠️ Deben ser exactamente 10 dígitos.")
+                    await update.message.reply_text("âš ï¸ Deben ser exactamente 10 dÃ­gitos.")
                     return
                 data["numero_envio"] = text
                 data["desde"] = f"DaviPlata - ******{text[-4:]}"
                 data["step"] = 3
-                # Mostrar botones rápidos para costo
+                # Mostrar botones rÃ¡pidos para costo
                 keyboard = [
-                    ["✅ Sí", "❌ No"]
+                    ["âœ… SÃ­", "âŒ No"]
                 ]
                 reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True, one_time_keyboard=True)
                 await update.message.reply_text(
-                    "💸 ¿Deseas colocar costo a la transacción?",
+                    "ðŸ’¸ Â¿Deseas colocar costo a la transacciÃ³n?",
                     reply_markup=reply_markup
                 )
             elif step == 3:
                 respuesta = text.lower().strip()
-                if respuesta in ["✅ sí", "✅ si", "sí", "si", "yes", "s", "y"]:
+                if respuesta in ["âœ… sÃ­", "âœ… si", "sÃ­", "si", "yes", "s", "y"]:
                     data["step"] = 4
                     await update.message.reply_text(
-                        "💰 Ingresa el costo de la transacción:",
+                        "ðŸ’° Ingresa el costo de la transacciÃ³n:",
                         reply_markup=ReplyKeyboardRemove()
                     )
-                elif respuesta in ["❌ no", "no", "n"]:
+                elif respuesta in ["âŒ no", "no", "n"]:
                     data["costo"] = "$ 0"
                     # Continuar a generar el comprobante
                     await generar_qr_daviplata_final(update, data, fecha_manual, send_document, limpiar_sesion_preservando_flags)
                 else:
-                    await update.message.reply_text("⚠️ Por favor responde: Sí o No")
+                    await update.message.reply_text("âš ï¸ Por favor responde: SÃ­ o No")
             elif step == 4 or data.get("fecha_recibida", False):
                 if not data.get("fecha_recibida", False):
                     costo_limpio = text.replace(".", "").replace(",", "").replace("$", "").strip()
                     if not costo_limpio.isdigit():
-                        await update.message.reply_text("⚠️ El costo debe ser numérico. Ejemplo: 500")
+                        await update.message.reply_text("âš ï¸ El costo debe ser numÃ©rico. Ejemplo: 500")
                         return
                     data["costo"] = f"$ {int(costo_limpio):,}".replace(",", ".")
                     # Verificar si necesita pedir fecha manual
@@ -1545,39 +1545,39 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             if step == 0:
                 data["nombre"] = text
                 data["step"] = 1
-                await update.message.reply_text("🔑 Ingresa la llave a enviar:")
+                await update.message.reply_text("ðŸ”‘ Ingresa la llave a enviar:")
             elif step == 1:
                 data["llave"] = text
                 data["step"] = 2
-                await update.message.reply_text("💰 Ingresa la cantidad a enviar:")
+                await update.message.reply_text("ðŸ’° Ingresa la cantidad a enviar:")
             elif step == 2:
                 # Remover puntos y comas si el usuario las incluye
                 valor_limpio = text.replace(".", "").replace(",", "").replace("$", "").strip()
                 if not valor_limpio.isdigit():
-                    await update.message.reply_text("⚠️ La cantidad debe ser solo números, sin puntos ni comas. Ejemplo: 32000")
+                    await update.message.reply_text("âš ï¸ La cantidad debe ser solo nÃºmeros, sin puntos ni comas. Ejemplo: 32000")
                     return
                 data["valor"] = int(valor_limpio)
                 data["step"] = 3
-                await update.message.reply_text("🔢 Ingresa los últimos 4 dígitos de tu cuenta:")
+                await update.message.reply_text("ðŸ”¢ Ingresa los Ãºltimos 4 dÃ­gitos de tu cuenta:")
             elif step == 3:
                 if not text.isdigit() or len(text) != 4:
-                    await update.message.reply_text("⚠️ Deben ser exactamente 4 dígitos.")
+                    await update.message.reply_text("âš ï¸ Deben ser exactamente 4 dÃ­gitos.")
                     return
                 data["ultimos_4"] = text
                 # Generar "desde" con formato DaviPlata - ******ultimos_4
                 data["desde"] = f"DaviPlata - ******{text}"
                 data["step"] = 4
-                await update.message.reply_text("🏦 Selecciona el banco:\n\n• Nequi\n• Dale\n• Davivienda\n\nO escribe el nombre del banco:")
+                await update.message.reply_text("ðŸ¦ Selecciona el banco:\n\nâ€¢ Nequi\nâ€¢ Dale\nâ€¢ Davivienda\n\nO escribe el nombre del banco:")
             elif step == 4 or data.get("fecha_recibida", False):
                 if not data.get("fecha_recibida", False):
                     data["entidad_destino"] = text
                     # Verificar si necesita pedir fecha manual (para TODOS)
                     if await verificar_fecha_manual():
                         return
-                # Verificar que todos los datos estén guardados antes de continuar
+                # Verificar que todos los datos estÃ©n guardados antes de continuar
                 if "valor" not in data or "nombre" not in data or "llave" not in data or "entidad_destino" not in data or "desde" not in data:
                     await update.message.reply_text(
-                        "⚠️ Error: Faltan datos. Por favor, intenta de nuevo.",
+                        "âš ï¸ Error: Faltan datos. Por favor, intenta de nuevo.",
                         parse_mode='Markdown'
                     )
                     limpiar_sesion_preservando_flags()
@@ -1591,7 +1591,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     output_path = generar_comprobante_llaves_daviplata(data, COMPROBANTE_LLAVES_DAVIPLATA_CONFIG)
                     if output_path is None:
                         await update.message.reply_text(
-                            "⚠️ Error al generar el comprobante Llaves DaviPlata.",
+                            "âš ï¸ Error al generar el comprobante Llaves DaviPlata.",
                             parse_mode='Markdown'
                         )
                         limpiar_sesion_preservando_flags()
@@ -1600,18 +1600,18 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     try:
                         if output_path and os.path.exists(output_path):
                             with open(output_path, "rb") as f:
-                                await update.message.reply_photo(photo=f, caption="✅ Comprobante Llaves DaviPlata generado")
+                                await update.message.reply_photo(photo=f, caption="âœ… Comprobante Llaves DaviPlata generado")
                             os.remove(output_path)
                             logger.info(f"Foto enviada exitosamente: {output_path}")
                         else:
-                            await update.message.reply_text("⚠️ Error al enviar el comprobante Llaves DaviPlata.")
+                            await update.message.reply_text("âš ï¸ Error al enviar el comprobante Llaves DaviPlata.")
                     except Exception as e:
                         logger.error(f"Error enviando foto Llaves DaviPlata: {str(e)}")
-                        await update.message.reply_text("⚠️ Error al enviar el comprobante Llaves DaviPlata.")
+                        await update.message.reply_text("âš ï¸ Error al enviar el comprobante Llaves DaviPlata.")
                 except Exception as e:
                     logger.error(f"Error generando Llaves DaviPlata: {str(e)}")
-                    await update.message.reply_text("⚠️ Error al generar el comprobante Llaves DaviPlata.")
-                # Preservar flags antes de eliminar sesión
+                    await update.message.reply_text("âš ï¸ Error al generar el comprobante Llaves DaviPlata.")
+                # Preservar flags antes de eliminar sesiÃ³n
                 fecha_flag = user_data_store.get(user_id, {}).get("fecha_manual", False)
                 referencia_flag = user_data_store.get(user_id, {}).get("referencia_manual", False)
                 del user_data_store[user_id]
@@ -1627,13 +1627,13 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             if step == 0:
                 data["nombre"] = text
                 data["step"] = 1
-                await update.message.reply_text("💰 Ingresa el valor:")
+                await update.message.reply_text("ðŸ’° Ingresa el valor:")
             elif step == 1 or data.get("fecha_recibida", False):
-                # Si viene de fecha_recibida, el valor ya está en data
+                # Si viene de fecha_recibida, el valor ya estÃ¡ en data
                 if not data.get("fecha_recibida", False):
                     if not text.replace("-", "", 1).isdigit():
                         await update.message.reply_text(
-                            "⚠️ El valor debe ser numérico.",
+                            "âš ï¸ El valor debe ser numÃ©rico.",
                             parse_mode='Markdown'
                         )
                         return
@@ -1641,10 +1641,10 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     # Verificar si necesita pedir fecha manual (para TODOS)
                     if await verificar_fecha_manual():
                         return
-                # Verificar que el valor esté guardado antes de continuar
+                # Verificar que el valor estÃ© guardado antes de continuar
                 if "valor" not in data:
                     await update.message.reply_text(
-                        "⚠️ Error: No se encontró el valor. Por favor, intenta de nuevo.",
+                        "âš ï¸ Error: No se encontrÃ³ el valor. Por favor, intenta de nuevo.",
                         parse_mode='Markdown'
                     )
                     limpiar_sesion_preservando_flags()
@@ -1657,14 +1657,14 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 output_path = generar_comprobante(data, COMPROBANTE_NQ_QR_NORMAL_CONFIG)
                 if output_path is None:
                     await update.message.reply_text(
-                        "⚠️ Error al generar el comprobante NQ QR Normal.",
+                        "âš ï¸ Error al generar el comprobante NQ QR Normal.",
                         parse_mode='Markdown'
                     )
                     limpiar_sesion_preservando_flags()
                     return
                 
                 # Enviar comprobante como documento
-                if await send_document(output_path, "✅ Comprobante NQ QR Normal generado"):
+                if await send_document(output_path, "âœ… Comprobante NQ QR Normal generado"):
                     # Generar movimiento negativo
                     data_mov = data.copy()
                     data_mov["nombre"] = data["nombre"].upper()
@@ -1672,31 +1672,31 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     output_path_mov = generar_comprobante(data_mov, MOVIMIENTO_NQ_QR_NORMAL_CONFIG)
                     if output_path_mov is None:
                         await update.message.reply_text(
-                            "⚠️ Error al generar el movimiento NQ QR Normal.",
+                            "âš ï¸ Error al generar el movimiento NQ QR Normal.",
                             parse_mode='Markdown'
                         )
                     else:
-                        await send_document(output_path_mov, "📄 Movimiento NQ QR Normal generado")
+                        await send_document(output_path_mov, "ðŸ“„ Movimiento NQ QR Normal generado")
                 
                 limpiar_sesion_preservando_flags()
         
         # --- COMPROBANTE ANULADO ---
         elif tipo == "comprobante_anulado":
             if step == 0:
-                # Limpiar input del usuario (quitar saltos de línea y espacios extra)
+                # Limpiar input del usuario (quitar saltos de lÃ­nea y espacios extra)
                 text = text.replace('\n', ' ').replace('\r', ' ').strip()
                 text = ' '.join(text.split())
                 data["nombre"] = text
                 data["step"] = 1
-                await update.message.reply_text("💰 Ingresa el valor:")
+                await update.message.reply_text("ðŸ’° Ingresa el valor:")
             elif step == 1:
                 valor_limpio = text.replace(".", "").replace(",", "").replace(" ", "")
                 if not valor_limpio.isdigit():
-                    await update.message.reply_text("⚠️ El valor debe ser numérico.")
+                    await update.message.reply_text("âš ï¸ El valor debe ser numÃ©rico.")
                     return
                 valor = int(valor_limpio)
                 if valor < 1000:
-                    await update.message.reply_text("⚠️ El valor mínimo es $1,000. Intenta de nuevo.")
+                    await update.message.reply_text("âš ï¸ El valor mÃ­nimo es $1,000. Intenta de nuevo.")
                     return
                 data["valor"] = valor
                 # Verificar si necesita pedir fecha manual (para TODOS)
@@ -1707,14 +1707,14 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     data["fecha"] = data["fecha_manual_value"]
                 try:
                     output_path = generar_comprobante_anulado(data, COMPROBANTE_ANULADO_CONFIG)
-                    if output_path and await send_document(output_path, "🚫 ANULADO"):
+                    if output_path and await send_document(output_path, "ðŸš« ANULADO"):
                         pass
                     else:
-                        await update.message.reply_text("⚠️ Error al generar el comprobante anulado.")
+                        await update.message.reply_text("âš ï¸ Error al generar el comprobante anulado.")
                 except Exception as e:
                     logger.error(f"Error generando comprobante anulado: {str(e)}")
-                    await update.message.reply_text("⚠️ Error al generar el comprobante anulado.")
-                # Preservar flags antes de eliminar sesión
+                    await update.message.reply_text("âš ï¸ Error al generar el comprobante anulado.")
+                # Preservar flags antes de eliminar sesiÃ³n
                 fecha_flag = user_data_store.get(user_id, {}).get("fecha_manual", False)
                 referencia_flag = user_data_store.get(user_id, {}).get("referencia_manual", False)
                 del user_data_store[user_id]
@@ -1727,7 +1727,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     except Exception as e:
         logger.error(f"Error en handle_message: {str(e)}")
         await update.message.reply_text(
-            "⚠️ Error al procesar los datos. Intenta de nuevo.",
+            "âš ï¸ Error al procesar los datos. Intenta de nuevo.",
             parse_mode='Markdown'
         )
 
@@ -1738,12 +1738,12 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     user_id = update.effective_user.id
     if not auth_system.is_admin(user_id):
         await update.message.reply_text(
-            "🚫 Solo los administradores pueden usar este comando.",
+            "ðŸš« Solo los administradores pueden usar este comando.",
             parse_mode='Markdown'
         )
         return
     help_text = (
-        "📜 **Comandos de Administrador**\n\n"
+        "ðŸ“œ **Comandos de Administrador**\n\n"
         "/help - Muestra esta ayuda\n"
         "/maintenance - Activa el modo mantenimiento\n"
         "/offmaintenance - Desactiva el modo mantenimiento\n"
@@ -1758,7 +1758,7 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         "/registros - Muestra los registros de uso del bot\n"
         "/eliminarregistro <id_usuario> - Elimina los registros de un usuario\n"
         "/reiniciarregistro - Elimina todos los registros\n"
-        "/stats - Muestra estadísticas del bot"
+        "/stats - Muestra estadÃ­sticas del bot"
     )
     await update.message.reply_text(help_text, parse_mode='Markdown')
 
@@ -1766,14 +1766,14 @@ async def maintenance_command(update: Update, context: ContextTypes.DEFAULT_TYPE
     user_id = update.effective_user.id
     if not auth_system.is_admin(user_id):
         await update.message.reply_text(
-            "🚫 Solo los administradores pueden usar este comando.",
+            "ðŸš« Solo los administradores pueden usar este comando.",
             parse_mode='Markdown'
         )
         return
     global maintenance_mode
     maintenance_mode = True
     await update.message.reply_text(
-        "🔧 Modo mantenimiento activado. Solo admins pueden usar el bot.",
+        "ðŸ”§ Modo mantenimiento activado. Solo admins pueden usar el bot.",
         parse_mode='Markdown'
     )
 
@@ -1781,14 +1781,14 @@ async def off_maintenance_command(update: Update, context: ContextTypes.DEFAULT_
     user_id = update.effective_user.id
     if not auth_system.is_admin(user_id):
         await update.message.reply_text(
-            "🚫 Solo los administradores pueden usar este comando.",
+            "ðŸš« Solo los administradores pueden usar este comando.",
             parse_mode='Markdown'
         )
         return
     global maintenance_mode
     maintenance_mode = False
     await update.message.reply_text(
-        "✅ Modo mantenimiento desactivado.",
+        "âœ… Modo mantenimiento desactivado.",
         parse_mode='Markdown'
     )
 
@@ -1797,13 +1797,13 @@ async def agregar_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     try:
         if not auth_system.is_admin(user_id):
             await update.message.reply_text(
-                "🚫 Solo los administradores pueden usar este comando.",
+                "ðŸš« Solo los administradores pueden usar este comando.",
                 parse_mode='Markdown'
             )
             return
         if not context.args:
             await update.message.reply_text(
-                "❓ Uso: /agregar <id_usuario>",
+                "â“ Uso: /agregar <id_usuario>",
                 parse_mode='Markdown'
             )
             return
@@ -1813,23 +1813,23 @@ async def agregar_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             auth_system.add_user(target_user_id)
             save_data(authorized_users, authorized_groups, logs)
             await update.message.reply_text(
-                f"✅ Usuario {target_user_id} autorizado.",
+                f"âœ… Usuario {target_user_id} autorizado.",
                 parse_mode='Markdown'
             )
         else:
             await update.message.reply_text(
-                f"⚠️ El usuario {target_user_id} ya está autorizado.",
+                f"âš ï¸ El usuario {target_user_id} ya estÃ¡ autorizado.",
                 parse_mode='Markdown'
             )
     except ValueError:
         await update.message.reply_text(
-            "⚠️ ID de usuario inválido.",
+            "âš ï¸ ID de usuario invÃ¡lido.",
             parse_mode='Markdown'
         )
     except Exception as e:
         logger.error(f"Error en agregar_command: {str(e)}")
         await update.message.reply_text(
-            "⚠️ Error al agregar usuario.",
+            "âš ï¸ Error al agregar usuario.",
             parse_mode='Markdown'
         )
 
@@ -1838,13 +1838,13 @@ async def eliminar_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     try:
         if not auth_system.is_admin(user_id):
             await update.message.reply_text(
-                "🚫 Solo los administradores pueden usar este comando.",
+                "ðŸš« Solo los administradores pueden usar este comando.",
                 parse_mode='Markdown'
             )
             return
         if not context.args:
             await update.message.reply_text(
-                "❓ Uso: /eliminar <id_usuario>",
+                "â“ Uso: /eliminar <id_usuario>",
                 parse_mode='Markdown'
             )
             return
@@ -1854,23 +1854,23 @@ async def eliminar_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
                 authorized_users.remove(target_user_id)
                 save_data(authorized_users, authorized_groups, logs)
             await update.message.reply_text(
-                f"✅ Usuario {target_user_id} desautorizado.",
+                f"âœ… Usuario {target_user_id} desautorizado.",
                 parse_mode='Markdown'
             )
         else:
             await update.message.reply_text(
-                f"⚠️ Usuario {target_user_id} no estaba autorizado.",
+                f"âš ï¸ Usuario {target_user_id} no estaba autorizado.",
                 parse_mode='Markdown'
             )
     except ValueError:
         await update.message.reply_text(
-            "⚠️ ID de usuario inválido.",
+            "âš ï¸ ID de usuario invÃ¡lido.",
             parse_mode='Markdown'
         )
     except Exception as e:
         logger.error(f"Error en eliminar_command: {str(e)}")
         await update.message.reply_text(
-            "⚠️ Error al eliminar usuario.",
+            "âš ï¸ Error al eliminar usuario.",
             parse_mode='Markdown'
         )
 
@@ -1879,13 +1879,13 @@ async def agregar_grupo_command(update: Update, context: ContextTypes.DEFAULT_TY
     try:
         if not auth_system.is_admin(user_id):
             await update.message.reply_text(
-                "🚫 Solo los administradores pueden usar este comando.",
+                "ðŸš« Solo los administradores pueden usar este comando.",
                 parse_mode='Markdown'
             )
             return
         if not context.args:
             await update.message.reply_text(
-                "❓ Uso: /agregargrupo <id_grupo>",
+                "â“ Uso: /agregargrupo <id_grupo>",
                 parse_mode='Markdown'
             )
             return
@@ -1895,23 +1895,23 @@ async def agregar_grupo_command(update: Update, context: ContextTypes.DEFAULT_TY
             auth_system.add_group(group_id)
             save_data(authorized_users, authorized_groups, logs)
             await update.message.reply_text(
-                f"✅ Grupo {group_id} autorizado.",
+                f"âœ… Grupo {group_id} autorizado.",
                 parse_mode='Markdown'
             )
         else:
             await update.message.reply_text(
-                f"⚠️ El grupo {group_id} ya está autorizado.",
+                f"âš ï¸ El grupo {group_id} ya estÃ¡ autorizado.",
                 parse_mode='Markdown'
             )
     except ValueError:
         await update.message.reply_text(
-            "⚠️ ID de grupo inválido.",
+            "âš ï¸ ID de grupo invÃ¡lido.",
             parse_mode='Markdown'
         )
     except Exception as e:
         logger.error(f"Error en agregar_grupo_command: {str(e)}")
         await update.message.reply_text(
-            "⚠️ Error al agregar grupo.",
+            "âš ï¸ Error al agregar grupo.",
             parse_mode='Markdown'
         )
 
@@ -1920,19 +1920,19 @@ async def gratis_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     try:
         if not auth_system.is_admin(user_id):
             await update.message.reply_text(
-                "🚫 Solo los administradores pueden usar este comando.",
+                "ðŸš« Solo los administradores pueden usar este comando.",
                 parse_mode='Markdown'
             )
             return
         auth_system.set_gratis_mode(True)
         await update.message.reply_text(
-            "✅ Modo GRATIS activado: Todos pueden usar el bot.",
+            "âœ… Modo GRATIS activado: Todos pueden usar el bot.",
             parse_mode='Markdown'
         )
     except Exception as e:
         logger.error(f"Error en gratis_command: {str(e)}")
         await update.message.reply_text(
-            "⚠️ Error al activar modo gratis.",
+            "âš ï¸ Error al activar modo gratis.",
             parse_mode='Markdown'
         )
 
@@ -1946,7 +1946,7 @@ async def off_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
         # Verificar que sea administrador
         if not auth_system.is_admin(user_id):
             await update.message.reply_text(
-                "🚫 Solo los administradores pueden usar este comando.",
+                "ðŸš« Solo los administradores pueden usar este comando.",
                 parse_mode='Markdown'
             )
             return
@@ -1956,9 +1956,9 @@ async def off_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
             global disabled_groups
             disabled_groups.add(chat_id)
             await update.message.reply_text(
-                "🔒 Bot Apagado\n\n"
-                "💎 Compra tu acceso V.I.P para disfrutar los beneficios\n"
-                f"🛒 Único vendedor: {OWNER}"
+                "ðŸ”’ Bot Apagado\n\n"
+                "ðŸ’Ž Compra tu acceso V.I.P para disfrutar los beneficios\n"
+                f"ðŸ›’ Ãšnico vendedor: {OWNER}"
             )
             logger.info(f"Bot deshabilitado en grupo {chat_id} por admin {user_id}")
             return
@@ -1966,13 +1966,13 @@ async def off_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
         # Si es privado, desactivar el modo gratis
         auth_system.set_gratis_mode(False)
         await update.message.reply_text(
-            "✅ Modo OFF activado: Solo usuarios autorizados.",
+            "âœ… Modo OFF activado: Solo usuarios autorizados.",
             parse_mode='Markdown'
         )
     except Exception as e:
         logger.error(f"Error en off_command: {str(e)}")
         await update.message.reply_text(
-            "⚠️ Error al ejecutar comando /off.",
+            "âš ï¸ Error al ejecutar comando /off.",
             parse_mode='Markdown'
         )
 
@@ -1986,7 +1986,7 @@ async def on_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
         # Verificar que sea administrador
         if not auth_system.is_admin(user_id):
             await update.message.reply_text(
-                "🚫 Solo los administradores pueden usar este comando.",
+                "ðŸš« Solo los administradores pueden usar este comando.",
                 parse_mode='Markdown'
             )
             return
@@ -1997,24 +1997,24 @@ async def on_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
             if chat_id in disabled_groups:
                 disabled_groups.remove(chat_id)
                 await update.message.reply_text(
-                    "🔔 Bot reactivado en este grupo.",
+                    "ðŸ”” Bot reactivado en este grupo.",
                     parse_mode='Markdown'
                 )
                 logger.info(f"Bot reactivado en grupo {chat_id} por usuario {user_id}")
             else:
                 await update.message.reply_text(
-                    "ℹ️ El bot ya está activo en este grupo.",
+                    "â„¹ï¸ El bot ya estÃ¡ activo en este grupo.",
                     parse_mode='Markdown'
                 )
         else:
             await update.message.reply_text(
-                "⚠️ Este comando solo funciona en grupos.",
+                "âš ï¸ Este comando solo funciona en grupos.",
                 parse_mode='Markdown'
             )
     except Exception as e:
         logger.error(f"Error en on_command: {str(e)}")
         await update.message.reply_text(
-            "⚠️ Error al ejecutar comando /on.",
+            "âš ï¸ Error al ejecutar comando /on.",
             parse_mode='Markdown'
         )
 
@@ -2022,26 +2022,26 @@ async def ver_grupos_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
     user_id = update.effective_user.id
     if not auth_system.is_admin(user_id):
         await update.message.reply_text(
-            "🚫 Solo los administradores pueden usar este comando.",
+            "ðŸš« Solo los administradores pueden usar este comando.",
             parse_mode='Markdown'
         )
         return
     try:
         if authorized_groups:
-            groups_list = "\n".join(f"• {gid}" for gid in authorized_groups)
+            groups_list = "\n".join(f"â€¢ {gid}" for gid in authorized_groups)
             await update.message.reply_text(
-                f"🏠 Grupos autorizados:\n{groups_list}",
+                f"ðŸ  Grupos autorizados:\n{groups_list}",
                 parse_mode='Markdown'
             )
         else:
             await update.message.reply_text(
-                "❌ No hay grupos autorizados.",
+                "âŒ No hay grupos autorizados.",
                 parse_mode='Markdown'
             )
     except Exception as e:
         logger.error(f"Error en ver_grupos_command: {str(e)}")
         await update.message.reply_text(
-            "⚠️ Error al mostrar grupos.",
+            "âš ï¸ Error al mostrar grupos.",
             parse_mode='Markdown'
         )
 
@@ -2049,26 +2049,26 @@ async def ver_usuarios_command(update: Update, context: ContextTypes.DEFAULT_TYP
     user_id = update.effective_user.id
     if not auth_system.is_admin(user_id):
         await update.message.reply_text(
-            "🚫 Solo los administradores pueden usar este comando.",
+            "ðŸš« Solo los administradores pueden usar este comando.",
             parse_mode='Markdown'
         )
         return
     try:
         if authorized_users:
-            users_list = "\n".join(f"• {uid}" for uid in authorized_users)
+            users_list = "\n".join(f"â€¢ {uid}" for uid in authorized_users)
             await update.message.reply_text(
-                f"👤 Usuarios autorizados:\n{users_list}",
+                f"ðŸ‘¤ Usuarios autorizados:\n{users_list}",
                 parse_mode='Markdown'
             )
         else:
             await update.message.reply_text(
-                "❌ No hay usuarios autorizados.",
+                "âŒ No hay usuarios autorizados.",
                 parse_mode='Markdown'
             )
     except Exception as e:
         logger.error(f"Error en ver_usuarios_command: {str(e)}")
         await update.message.reply_text(
-            "⚠️ Error al mostrar usuarios.",
+            "âš ï¸ Error al mostrar usuarios.",
             parse_mode='Markdown'
         )
 
@@ -2076,29 +2076,29 @@ async def registros_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     user_id = update.effective_user.id
     if not auth_system.is_admin(user_id):
         await update.message.reply_text(
-            "🚫 Solo los administradores pueden usar este comando.",
+            "ðŸš« Solo los administradores pueden usar este comando.",
             parse_mode='Markdown'
         )
         return
     try:
         if logs:
             logs_list = "\n".join(
-                f"• ID: {log['user_id']} (@{log['username']} / {log['first_name']}) - {log['command']} ({log['timestamp']})"
+                f"â€¢ ID: {log['user_id']} (@{log['username']} / {log['first_name']}) - {log['command']} ({log['timestamp']})"
                 for log in logs
             )
             await update.message.reply_text(
-                f"📋 Registros de uso:\n{logs_list}",
+                f"ðŸ“‹ Registros de uso:\n{logs_list}",
                 parse_mode='Markdown'
             )
         else:
             await update.message.reply_text(
-                "❌ No hay registros de uso.",
+                "âŒ No hay registros de uso.",
                 parse_mode='Markdown'
             )
     except Exception as e:
         logger.error(f"Error en registros_command: {str(e)}")
         await update.message.reply_text(
-            "⚠️ Error al mostrar registros.",
+            "âš ï¸ Error al mostrar registros.",
             parse_mode='Markdown'
         )
 
@@ -2106,14 +2106,14 @@ async def eliminar_registro_command(update: Update, context: ContextTypes.DEFAUL
     user_id = update.effective_user.id
     if not auth_system.is_admin(user_id):
         await update.message.reply_text(
-            "🚫 Solo los administradores pueden usar este comando.",
+            "ðŸš« Solo los administradores pueden usar este comando.",
             parse_mode='Markdown'
         )
         return
     try:
         if not context.args:
             await update.message.reply_text(
-                "❓ Uso: /eliminarregistro <id_usuario>",
+                "â“ Uso: /eliminarregistro <id_usuario>",
                 parse_mode='Markdown'
             )
             return
@@ -2124,23 +2124,23 @@ async def eliminar_registro_command(update: Update, context: ContextTypes.DEFAUL
         save_data(authorized_users, authorized_groups, logs)
         if len(logs) < original_len:
             await update.message.reply_text(
-                f"✅ Registros del usuario {target_user_id} eliminados.",
+                f"âœ… Registros del usuario {target_user_id} eliminados.",
                 parse_mode='Markdown'
             )
         else:
             await update.message.reply_text(
-                f"⚠️ No se encontraron registros para el usuario {target_user_id}.",
+                f"âš ï¸ No se encontraron registros para el usuario {target_user_id}.",
                 parse_mode='Markdown'
             )
     except ValueError:
         await update.message.reply_text(
-            "⚠️ ID de usuario inválido.",
+            "âš ï¸ ID de usuario invÃ¡lido.",
             parse_mode='Markdown'
         )
     except Exception as e:
         logger.error(f"Error en eliminar_registro_command: {str(e)}")
         await update.message.reply_text(
-            "⚠️ Error al eliminar registros.",
+            "âš ï¸ Error al eliminar registros.",
             parse_mode='Markdown'
         )
 
@@ -2148,7 +2148,7 @@ async def reiniciar_registro_command(update: Update, context: ContextTypes.DEFAU
     user_id = update.effective_user.id
     if not auth_system.is_admin(user_id):
         await update.message.reply_text(
-            "🚫 Solo los administradores pueden usar este comando.",
+            "ðŸš« Solo los administradores pueden usar este comando.",
             parse_mode='Markdown'
         )
         return
@@ -2157,13 +2157,13 @@ async def reiniciar_registro_command(update: Update, context: ContextTypes.DEFAU
         logs = []
         save_data(authorized_users, authorized_groups, logs)
         await update.message.reply_text(
-            "✅ Todos los registros han sido eliminados.",
+            "âœ… Todos los registros han sido eliminados.",
             parse_mode='Markdown'
         )
     except Exception as e:
         logger.error(f"Error en reiniciar_registro_command: {str(e)}")
         await update.message.reply_text(
-            "⚠️ Error al reiniciar registros.",
+            "âš ï¸ Error al reiniciar registros.",
             parse_mode='Markdown'
         )
 
@@ -2172,31 +2172,31 @@ async def stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     try:
         if not auth_system.is_admin(user_id):
             await update.message.reply_text(
-                "🚫 Solo los administradores pueden usar este comando.",
+                "ðŸš« Solo los administradores pueden usar este comando.",
                 parse_mode='Markdown'
             )
             return
         stats = auth_system.get_stats()
         message = (
-            f"📊 **Estadísticas del Bot**\n\n"
-            f"👥 Usuarios autorizados: {stats['total_authorized']}\n"
-            f"🆓 Modo gratis: {'Activado' if stats['gratis_mode'] else 'Desactivado'}\n"
-            f"📱 Grupo permitido: {stats['allowed_group']}\n"
-            f"🔧 Modo mantenimiento: {'Activado' if maintenance_mode else 'Desactivado'}\n\n"
+            f"ðŸ“Š **EstadÃ­sticas del Bot**\n\n"
+            f"ðŸ‘¥ Usuarios autorizados: {stats['total_authorized']}\n"
+            f"ðŸ†“ Modo gratis: {'Activado' if stats['gratis_mode'] else 'Desactivado'}\n"
+            f"ðŸ“± Grupo permitido: {stats['allowed_group']}\n"
+            f"ðŸ”§ Modo mantenimiento: {'Activado' if maintenance_mode else 'Desactivado'}\n\n"
         )
         if authorized_users:
-            message += "👤 Usuarios autorizados:\n" + "\n".join(f" • {uid}" for uid in authorized_users)
+            message += "ðŸ‘¤ Usuarios autorizados:\n" + "\n".join(f" â€¢ {uid}" for uid in authorized_users)
         else:
-            message += "❌ No hay usuarios autorizados."
+            message += "âŒ No hay usuarios autorizados."
         if authorized_groups:
-            message += "\n\n🏠 Grupos autorizados:\n" + "\n".join(f" • {gid}" for gid in authorized_groups)
+            message += "\n\nðŸ  Grupos autorizados:\n" + "\n".join(f" â€¢ {gid}" for gid in authorized_groups)
         else:
-            message += "\n\n❌ No hay grupos autorizados."
+            message += "\n\nâŒ No hay grupos autorizados."
         await update.message.reply_text(message, parse_mode='Markdown')
     except Exception as e:
         logger.error(f"Error en stats_command: {str(e)}")
         await update.message.reply_text(
-            "⚠️ Error al obtener estadísticas.",
+            "âš ï¸ Error al obtener estadÃ­sticas.",
             parse_mode='Markdown'
         )
 
@@ -2208,14 +2208,14 @@ async def fmanual_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             user_data_store[user_id] = {}
         user_data_store[user_id]["fecha_manual"] = True
         await update.message.reply_text(
-            "✅ Fecha manual activada\n\n"
-            "📝 Formato: 06 de diciembre de 2025 a las 12:00 a.m.\n\n"
-            "🔄 /Nequiglitch para comenzar"
+            "âœ… Fecha manual activada\n\n"
+            "ðŸ“ Formato: 06 de diciembre de 2025 a las 12:00 a.m.\n\n"
+            "ðŸ”„ /Nequiglitch para comenzar"
         )
     except Exception as e:
         logger.error(f"Error en fmanual_command: {str(e)}")
         await update.message.reply_text(
-            "⚠️ Error al activar fecha manual."
+            "âš ï¸ Error al activar fecha manual."
         )
 
 async def fdesactive_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -2226,14 +2226,14 @@ async def fdesactive_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
             user_data_store[user_id] = {}
         user_data_store[user_id]["fecha_manual"] = False
         await update.message.reply_text(
-            "✅ Modo fecha automática activado\n\n"
-            "📅 La fecha se generará automáticamente con la fecha y hora actual.\n\n"
-            "🔄 Pulsa /Nequiglitch nuevamente para comenzar"
+            "âœ… Modo fecha automÃ¡tica activado\n\n"
+            "ðŸ“… La fecha se generarÃ¡ automÃ¡ticamente con la fecha y hora actual.\n\n"
+            "ðŸ”„ Pulsa /Nequiglitch nuevamente para comenzar"
         )
     except Exception as e:
         logger.error(f"Error en fdesactive_command: {str(e)}")
         await update.message.reply_text(
-            "⚠️ Error al desactivar fecha manual.",
+            "âš ï¸ Error al desactivar fecha manual.",
             parse_mode='Markdown'
         )
 
@@ -2245,16 +2245,16 @@ async def refe_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
             user_data_store[user_id] = {}
         user_data_store[user_id]["referencia_manual"] = True
         await update.message.reply_text(
-            "✅ Modo referencia manual activado\n\n"
-            "🔢 Cuando generes un comprobante de Nequi, se te pedirá que ingreses la referencia manualmente.\n\n"
-            "📝 Solo debes colocar los 8 dígitos. La M se colocará automáticamente.\n\n"
-            "💡 Para desactivar y usar referencia automática, usa /refedesactiva\n\n"
-            "🔄 Pulsa /Nequiglitch nuevamente para comenzar"
+            "âœ… Modo referencia manual activado\n\n"
+            "ðŸ”¢ Cuando generes un comprobante de Nequi, se te pedirÃ¡ que ingreses la referencia manualmente.\n\n"
+            "ðŸ“ Solo debes colocar los 8 dÃ­gitos. La M se colocarÃ¡ automÃ¡ticamente.\n\n"
+            "ðŸ’¡ Para desactivar y usar referencia automÃ¡tica, usa /refedesactiva\n\n"
+            "ðŸ”„ Pulsa /Nequiglitch nuevamente para comenzar"
         )
     except Exception as e:
         logger.error(f"Error en refe_command: {str(e)}")
         await update.message.reply_text(
-            "⚠️ Error al activar referencia manual.",
+            "âš ï¸ Error al activar referencia manual.",
             parse_mode='Markdown'
         )
 
@@ -2266,19 +2266,19 @@ async def refedesactiva_command(update: Update, context: ContextTypes.DEFAULT_TY
             user_data_store[user_id] = {}
         user_data_store[user_id]["referencia_manual"] = False
         await update.message.reply_text(
-            "✅ Modo referencia automática activado\n\n"
-            "🔢 La referencia se generará automáticamente con formato M + 8 dígitos aleatorios.\n\n"
-            "🔄 Pulsa /Nequiglitch nuevamente para comenzar"
+            "âœ… Modo referencia automÃ¡tica activado\n\n"
+            "ðŸ”¢ La referencia se generarÃ¡ automÃ¡ticamente con formato M + 8 dÃ­gitos aleatorios.\n\n"
+            "ðŸ”„ Pulsa /Nequiglitch nuevamente para comenzar"
         )
     except Exception as e:
         logger.error(f"Error en refedesactiva_command: {str(e)}")
         await update.message.reply_text(
-            "⚠️ Error al desactivar referencia manual.",
+            "âš ï¸ Error al desactivar referencia manual.",
             parse_mode='Markdown'
         )
 
 async def masinf_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Muestra información detallada sobre fechas y referencias manuales"""
+    """Muestra informaciÃ³n detallada sobre fechas y referencias manuales"""
     user_id = update.effective_user.id
     chat_id = update.effective_chat.id
     chat_type = update.effective_chat.type
@@ -2289,15 +2289,15 @@ async def masinf_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             return
         
         mensaje_info = (
-            "⚙️ **Comandos:**\n\n"
-            "📅 **Fechas:**\n"
-            "• /fmanual - Activar\n"
-            "• /fdesactive - Desactivar\n"
+            "âš™ï¸ **Comandos:**\n\n"
+            "ðŸ“… **Fechas:**\n"
+            "â€¢ /fmanual - Activar\n"
+            "â€¢ /fdesactive - Desactivar\n"
             "Formato: `06 de diciembre de 2025 a las 12:00 a.m.`\n\n"
-            "🔢 **Referencias (solo Nequi):**\n"
-            "• /refe - Activar\n"
-            "• /refedesactiva - Desactivar\n"
-            "Formato: 8 dígitos (ej: `12345678` → `M12345678`)"
+            "ðŸ”¢ **Referencias (solo Nequi):**\n"
+            "â€¢ /refe - Activar\n"
+            "â€¢ /refedesactiva - Desactivar\n"
+            "Formato: 8 dÃ­gitos (ej: `12345678` â†’ `M12345678`)"
         )
         
         await update.message.reply_text(
@@ -2307,7 +2307,7 @@ async def masinf_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     except Exception as e:
         logger.error(f"Error en masinf_command: {str(e)}")
         await update.message.reply_text(
-            "⚠️ Error al mostrar información.",
+            "âš ï¸ Error al mostrar informaciÃ³n.",
             parse_mode='Markdown'
         )
 
@@ -2319,11 +2319,11 @@ BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
 def main() -> None:
     try:
-        logger.info("Inicializando la aplicación del bot...")
+        logger.info("Inicializando la aplicaciÃ³n del bot...")
         
         if not BOT_TOKEN:
-            logger.error("❌ TELEGRAM_BOT_TOKEN no está configurado en las variables de entorno")
-            raise ValueError("TELEGRAM_BOT_TOKEN no encontrado. Configúralo en el archivo .env")
+            logger.error("âŒ TELEGRAM_BOT_TOKEN no estÃ¡ configurado en las variables de entorno")
+            raise ValueError("TELEGRAM_BOT_TOKEN no encontrado. ConfigÃºralo en el archivo .env")
         
         bot_token = BOT_TOKEN
         app = Application.builder().token(bot_token).job_queue(None).build()
