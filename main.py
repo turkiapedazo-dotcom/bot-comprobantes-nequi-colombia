@@ -1,4 +1,4 @@
-import asyncio
+﻿import asyncio
 import random
 import json
 import logging
@@ -40,11 +40,11 @@ from config import (
 from utils import generar_comprobante, ofuscar_nombre, generar_comprobante_nequi_bc, generar_comprobante_bc_nq_t, generar_comprobante_bc_qr, generar_comprobante_nequi_ahorros, generar_comprobante_ahorros, generar_comprobante_bc_nequi, generar_movimientos_bc_nequi, generar_comprobante_qr_bc, generar_comprobante_anulado, generar_movimiento_ahorros, generar_movimiento_qr_bc, generar_comprobante_llaves_daviplata, generar_comprobante_qr_daviplata
 
 # Configuration
-ADMIN_IDS = [8392856150, 8485045964]  # IDs de los administradores
-ALLOWED_GROUP = -1003349066708  # ID del grupo permitido principal
+ADMIN_IDS = [8465944523, 8485045964]  # IDs de los administradores
+ALLOWED_GROUP = -1003122616445  # ID del grupo permitido principal
 ALLOWED_GROUPS_HARDCODED = [-1003349066708]  # Grupos siempre permitidos
-OWNER = "@sangre_binerojs"
-GROUP_INVITE_LINK = "https://t.me/Nequicolombiafree"  # Link del grupo
+OWNER = "@ROBERTKIMBDO"
+GROUP_INVITE_LINK = "https://t.me/Nequiglitchofficiall"  # Link del grupo
 
 # Archivos para persistencia de datos
 USERS_FILE = "users.json"
@@ -167,10 +167,11 @@ async def nequicol_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         if not auth_system.can_use_bot(user_id, chat_id, chat_type == 'private'):
             if not auth_system.gratis_mode:
                 await update.message.reply_text(
-                    f"👑 Este bot está restringido en el privado para evitar estafas.\n\n"
-                    f"Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER @AxondevUI 👑"
-                    f"",
-                    parse_mode='HTML'
+                    "👑 Este bot está restringido en el privado para evitar estafas.\n\n"
+                    "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @ROBERTKIMBDO\n\n"
+                    "👉 <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
+                    parse_mode="HTML",
+                    disable_web_page_preview=True
                 )
             return
         
@@ -228,17 +229,19 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         # Verificar si el bot está deshabilitado en este grupo
         if chat_id < 0 and chat_id in disabled_groups:
             return  # No responder si el bot está deshabilitado en este grupo
-        
-        # Verificar acceso usando auth_system (incluye modo gratis)
+
+      # Verificar acceso usando auth_system (incluye modo gratis)
         if not auth_system.can_use_bot(user_id, chat_id, chat_type == 'private'):
             if not auth_system.gratis_mode:
                 await update.message.reply_text(
-                    f"👑 Este bot está restringido en el privado para evitar estafas.\n\n"
-                    f"Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER @AxondevUI 👑"
-                    f"",
-                    parse_mode='HTML'
+                "👑 Este bot está restringido en el privado para evitar estafas.\n\n"
+                "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @ROBERTKIMBDO\n\n"
+                "👉 <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
+                parse_mode="HTML",
+                 disable_web_page_preview=True
                 )
-            return
+
+
         
         
         # En grupos: anti-spam con cooldown de 2 segundos
@@ -345,10 +348,11 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         if not auth_system.can_use_bot(user_id, chat_id, chat_type == 'private'):
             if not auth_system.gratis_mode:
                 await update.message.reply_text(
-                    f"👑 Este bot está restringido en el privado para evitar estafas.\n\n"
-                    f"Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER @AxondevUI 👑"
-                    f"",
-                    parse_mode='HTML'
+                    "👑 Este bot está restringido en el privado para evitar estafas.\n\n"
+                    "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @ROBERTKIMBDO\n\n"
+                    "👉 <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
+                    parse_mode="HTML",
+                    disable_web_page_preview=True
                 )
             return
         
@@ -365,10 +369,11 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 # Incluir 'restricted' para admins anónimos y otros casos especiales
                 if member.status not in ['member', 'administrator', 'creator', 'restricted']:
                     await query.message.reply_text(
-                        f"👑 Este bot está restringido en el privado para evitar estafas.\n\n"
-                        f"Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER @AxondevUI 👑"
-                        f"",
-                        parse_mode='HTML'
+                        "👑 Este bot está restringido en el privado para evitar estafas.\n\n"
+                    "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @ROBERTKIMBDO\n\n"
+                    "👉 <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
+                    parse_mode="HTML",
+                    disable_web_page_preview=True
                     )
                     return
             except Exception as e:
@@ -379,10 +384,11 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     pass  # Permitir acceso
                 else:
                     await query.message.reply_text(
-                        f"👑 Este bot está restringido en el privado para evitar estafas.\n\n"
-                        f"Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER @AxondevUI 👑"
-                        f"",
-                        parse_mode='HTML'
+                        "👑 Este bot está restringido en el privado para evitar estafas.\n\n"
+                    "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @ROBERTKIMBDO\n\n"
+                    "👉 <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
+                    parse_mode="HTML",
+                    disable_web_page_preview=True
                     )
                     return
         
@@ -471,10 +477,11 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         if not auth_system.can_use_bot(user_id, chat_id, chat_type == 'private'):
             if not auth_system.gratis_mode:
                 await update.message.reply_text(
-                    f"👑 Este bot está restringido en el privado para evitar estafas.\n\n"
-                    f"Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER @AxondevUI 👑"
-                    f"",
-                    parse_mode='HTML'
+                    "👑 Este bot está restringido en el privado para evitar estafas.\n\n"
+                    "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @ROBERTKIMBDO\n\n"
+                    "👉 <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
+                    parse_mode="HTML",
+                    disable_web_page_preview=True
                 )
             return
         
@@ -491,10 +498,11 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 # Incluir 'restricted' para admins anónimos y otros casos especiales
                 if member.status not in ['member', 'administrator', 'creator', 'restricted']:
                     await update.message.reply_text(
-                        f"👑 Este bot está restringido en el privado para evitar estafas.\n\n"
-                        f"Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER @AxondevUI 👑"
-                        f"",
-                        parse_mode='HTML'
+                        "👑 Este bot está restringido en el privado para evitar estafas.\n\n"
+                    "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @ROBERTKIMBDO\n\n"
+                    "👉 <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
+                    parse_mode="HTML",
+                    disable_web_page_preview=True
                     )
                     return
             except Exception as e:
@@ -505,10 +513,11 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     pass  # Permitir acceso
                 else:
                     await update.message.reply_text(
-                        f"👑 Este bot está restringido en el privado para evitar estafas.\n\n"
-                        f"Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER @AxondevUI 👑"
-                        f"",
-                        parse_mode='HTML'
+                        "👑 Este bot está restringido en el privado para evitar estafas.\n\n"
+                    "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @ROBERTKIMBDO\n\n"
+                    "👉 <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
+                    parse_mode="HTML",
+                    disable_web_page_preview=True
                     )
                     return
         
@@ -2304,12 +2313,17 @@ async def masinf_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 # ------------------------------------------------------------------
 # MAIN
 # ------------------------------------------------------------------
-# Token hardcodeado
-BOT_TOKEN = "7861432876:AAGC0OQrk-7d0ZMl1GKUUGDQcQwq_TCmuV4"
+# Token desde variable de entorno
+BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
 def main() -> None:
     try:
         logger.info("Inicializando la aplicación del bot...")
+        
+        if not BOT_TOKEN:
+            logger.error("❌ TELEGRAM_BOT_TOKEN no está configurado en las variables de entorno")
+            raise ValueError("TELEGRAM_BOT_TOKEN no encontrado. Configúralo en el archivo .env")
+        
         bot_token = BOT_TOKEN
         app = Application.builder().token(bot_token).job_queue(None).build()
         

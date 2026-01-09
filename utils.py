@@ -872,24 +872,19 @@ def traducir_mes(fecha_dt):
 # ====================================================================
 
 def generar_comprobante_bc_nequi(numero: str, valor: str, nombre: str = "") -> str:
-    """Genera el comprobante de BC a Nequi (configuración original)"""
+    """Genera el comprobante de BC a Nequi (plantilla bc_a_nequi.png)"""
     from config import COORDENADAS_NEQUI_BC, FUENTES_NEQUI_BC, RUTAS_NEQUI_BC, COLORES_NEQUI_BC
     
     valor = str(valor).replace("$", "").replace(".", "").replace(",", "").strip()
     numero = numero.strip()
-    nombre = nombre.strip() if nombre else ""
     
     valor_entero = int(valor)
     valor_formateado = f"$ {valor_entero:,}".replace(",", ".")
     
-    # Generar comprobante aleatorio: 00000 + 5 dígitos aleatorios
-    comprobante_aleatorio = "00000" + "".join([str(random.randint(0, 9)) for _ in range(5)])
-    
-    # Generar cuenta de ahorros: * + 4 dígitos diferentes, primer dígito siempre es 4, 8 o 9
-    primer_digito = random.choice(['4', '8', '9'])
-    digitos_disponibles = [d for d in '0123456789' if d != primer_digito]
-    random.shuffle(digitos_disponibles)
-    cuenta_ahorros = "*" + primer_digito + "".join(digitos_disponibles[:3])
+    # Generar comprobante aleatorio: 10 caracteres alfanuméricos
+    import string
+    caracteres = string.ascii_uppercase + string.digits
+    comprobante_aleatorio = ''.join(random.choice(caracteres) for _ in range(10))
     
     plantilla = Image.open(RUTAS_NEQUI_BC['plantilla'])
     if plantilla.mode in ('RGBA', 'LA', 'P'):
@@ -897,13 +892,14 @@ def generar_comprobante_bc_nequi(numero: str, valor: str, nombre: str = "") -> s
     
     draw = ImageDraw.Draw(plantilla)
     
+    # Cargar fuentes
     font_numero = ImageFont.truetype(RUTAS_NEQUI_BC['font'], FUENTES_NEQUI_BC['numero'])
     font_valor = ImageFont.truetype(RUTAS_NEQUI_BC['font'], FUENTES_NEQUI_BC['valor'])
-    font_fecha = ImageFont.truetype('fuentes/opensans_regular.ttf', FUENTES_NEQUI_BC['fecha'])
-    font_nombre = ImageFont.truetype(RUTAS_NEQUI_BC['font'], FUENTES_NEQUI_BC['nombre'])
-    font_comprobante = ImageFont.truetype('fuentes/opensans_regular.ttf', FUENTES_NEQUI_BC['comprobante'])
-    font_cuenta_ahorros = ImageFont.truetype(RUTAS_NEQUI_BC['font'], FUENTES_NEQUI_BC['cuenta_ahorros'])
+    font_fecha = ImageFont.truetype(RUTAS_NEQUI_BC['font'], FUENTES_NEQUI_BC['fecha'])
+    font_comprobante = ImageFont.truetype(RUTAS_NEQUI_BC['font'], FUENTES_NEQUI_BC['comprobante'])
+    font_fecha_esquina = ImageFont.truetype(RUTAS_NEQUI_BC['font'], FUENTES_NEQUI_BC['fecha_esquina'])
     
+    # Fecha y hora Colombia
     colombia = pytz.timezone("America/Bogota")
     fecha_actual = datetime.now(colombia)
     dia = fecha_actual.strftime("%d")
@@ -912,23 +908,27 @@ def generar_comprobante_bc_nequi(numero: str, valor: str, nombre: str = "") -> s
     hora = fecha_actual.strftime("%I:%M %p").lower().replace("am", "a. m.").replace("pm", "p. m.")
     fecha_formateada = f"{dia} {mes} {anio} - {hora}"
     
+    # Hora para esquina
+    hora_esquina = fecha_actual.strftime("%I:%M")
+    
     coordenadas = COORDENADAS_NEQUI_BC
     
+    # Dibujar campos
+    draw.text(coordenadas['fecha_esquina'], hora_esquina, fill=COLORES_NEQUI_BC['fecha_esquina'], font=font_fecha_esquina)
+    draw.text(coordenadas['comprobante'], comprobante_aleatorio, fill=COLORES_NEQUI_BC['comprobante'], font=font_comprobante)
     draw.text(coordenadas['fecha'], fecha_formateada, fill=COLORES_NEQUI_BC['fecha'], font=font_fecha)
     draw.text(coordenadas['valor'], valor_formateado, fill=COLORES_NEQUI_BC['valor'], font=font_valor)
     draw.text(coordenadas['numero'], numero, fill=COLORES_NEQUI_BC['numero'], font=font_numero)
-    draw.text(coordenadas['comprobante'], comprobante_aleatorio, fill=COLORES_NEQUI_BC['comprobante'], font=font_comprobante)
-    draw.text(coordenadas['cuenta_ahorros'], cuenta_ahorros, fill=COLORES_NEQUI_BC['cuenta_ahorros'], font=font_cuenta_ahorros)
     
-    if nombre:
-        font_nombre_ajustado, _ = ajustar_texto_ancho(
-            draw, nombre, RUTAS_NEQUI_BC['font'], FUENTES_NEQUI_BC['nombre'],
-            ancho_maximo=400, tamano_minimo=14
-        )
-        draw.text(coordenadas['nombre'], nombre, fill=(255, 255, 255), font=font_nombre_ajustado)
+    # Redimensionar si es muy grande (máximo 1920px en el lado más largo)
+    max_dimension = 1920
+    if plantilla.size[0] > max_dimension or plantilla.size[1] > max_dimension:
+        ratio = min(max_dimension / plantilla.size[0], max_dimension / plantilla.size[1])
+        new_size = (int(plantilla.size[0] * ratio), int(plantilla.size[1] * ratio))
+        plantilla = plantilla.resize(new_size, Image.Resampling.LANCZOS)
     
-    output_path = 'comprobante_bc_nequi_generado.jpg'
-    plantilla.save(output_path, format='JPEG', quality=95, optimize=False)
+    output_path = f'gen_{uuid.uuid4().hex}.jpg'
+    plantilla.save(output_path, format='JPEG', quality=85, optimize=True)
     logger.info(f"Comprobante BC a Nequi generado: {numero} - ${valor_entero:,.0f}")
     return output_path
 

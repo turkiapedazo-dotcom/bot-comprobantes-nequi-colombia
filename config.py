@@ -255,16 +255,21 @@ COMPROBANTE_AHORROS2_CONFIG = {
     "font": "fuentes/cibfontsans_regular.ttf",
 }
 
-# ✅ Configuración para comprobante BC a NQ y T (del proyecto app)
+# ✅ Configuración para comprobante BC a Nequi Transfer (bcnd.jpg)
 COMPROBANTE_BC_NQ_T_CONFIG = {
     "template": "img/bcnd.jpg",
     "output": "comprobante_bc_nq_t_generado.png",
     "styles": {
-        "numero_cuenta": {"size": 46, "color": "#FFFFFF", "pos": (96, 2052), "font": "fuentes/opensans_semibold.ttf"},
-        "valor": {"size": 62, "color": "#FFFFFF", "pos": (144, 1628), "font": "fuentes/cibfontsans_regular.ttf"},
-        "fecha": {"size": 45, "color": "#FFFFFF", "pos": (325, 545), "font": "fuentes/opensans_semibold.ttf"},
+        "nombre": {"size": 20, "color": "#2e2b33", "pos": (43, 513), "font": "fuentes/Manrope-Medium.ttf"},
+        "valor1": {"size": 20, "color": "#2e2b33", "pos": (43, 590)},
+        "hora_esquina": {"size": 22, "color": "#FFFFFF", "pos": (19, 13)},
+        "fecha": {"size": 20, "color": "#2e2b33", "pos": (43, 664)},
+        "banco": {"size": 20, "color": "#2e2b33", "pos": (43, 735), "font": "fuentes/Manrope-Medium.ttf"},
+        "cuenta": {"size": 20, "color": "#2e2b33", "pos": (43, 811), "font": "fuentes/Manrope-Medium.ttf"},
+        "referencia": {"size": 20, "color": "#2e2b33", "pos": (44, 885)},
+        "disponible": {"size": 20, "color": "#2e2b33", "pos": (43, 963)},
     },
-    "font": "fuentes/cibfontsans_regular.ttf",
+    "font": "fuentes/Manrope-Medium.ttf"
 }
 
 # ✅ Configuración para comprobante QR BC (nueva plantilla qr_bancolombia_bre-b.png)
@@ -297,36 +302,31 @@ COLORES_BC = {
 
 # ✅ Configuración original para comprobante BC a Nequi
 COORDENADAS_NEQUI_BC = {
-    'hora': (20, 14),
-    'fecha': (211, 268),
-    'valor': (48, 690),
-    'numero': (50, 845),
-    'comprobante': (314, 234),
-    'cuenta_ahorros': (50, 1035),
-    'nombre': (50, 1010),
+    'comprobante': (2300, 2375),
+    'fecha_esquina': (80, 190),
+    'valor': (350, 6190),
+    'fecha': (1300, 2570),
+    'numero': (360, 7760),
 }
 
 FUENTES_NEQUI_BC = {
-    'hora': 18,
-    'numero': 20,
-    'valor': 22,
-    'fecha': 16,
-    'nombre': 18,
-    'comprobante': 17,
-    'cuenta_ahorros': 20,
+    'numero': 160,
+    'valor': 180,
+    'fecha': 140,
+    'comprobante': 130,
+    'fecha_esquina': 140,
 }
 
 COLORES_NEQUI_BC = {
-    'hora': (255, 255, 255),
     'numero': (255, 255, 255),
     'valor': (255, 255, 255),
-    'fecha': (160, 160, 160),
-    'comprobante': (160, 160, 160),
-    'cuenta_ahorros': (255, 255, 255),
+    'fecha': (255, 255, 255),
+    'comprobante': (255, 255, 255),
+    'fecha_esquina': (255, 255, 255),
 }
 
 RUTAS_NEQUI_BC = {
-    'plantilla': 'img/bc_a_nequi.jpg',
+    'plantilla': 'img/bc_a_nequi.png',
     'font': 'fuentes/cibfontsans_bold.ttf',
 }
 
