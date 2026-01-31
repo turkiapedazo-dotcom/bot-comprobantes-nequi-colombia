@@ -4,15 +4,19 @@ import random
 import json
 import logging
 import os
+import re
 from datetime import datetime
 from uuid import uuid4
 from dotenv import load_dotenv
+from io import BytesIO
 
 # Cargar variables de entorno
 load_dotenv()
 
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import Application, CommandHandler, MessageHandler, CallbackQueryHandler, ContextTypes, filters
+from PIL import Image
+from pyzbar.pyzbar import decode
 
 from auth_system import AuthSystem
 from config import (
@@ -138,6 +142,89 @@ for user_id in authorized_users:
     auth_system.add_user(user_id)
 for group_id in authorized_groups:
     auth_system.add_group(group_id)
+
+# ------------------------------------------------------------------
+# FUNCIONES PARA LEER QR
+# ------------------------------------------------------------------
+def parse_emv(data: str) -> dict:
+    """Parsea datos EMV del QR"""
+    i = 0
+    result = {}
+    while i < len(data):
+        tag = data[i:i+2]
+        i += 2
+        if i >= len(data):
+            break
+        len_str = data[i:i+2]
+        i += 2
+        if i >= len(data):
+            break
+        try:
+            length = int(len_str)
+        except ValueError:
+            logger.error(f"Invalid length in EMV data: {len_str}")
+            break
+        value = data[i:i+length]
+        i += length
+        result[tag] = value
+    return result
+
+async def leer_qr_nequi(photo_bytes: bytes) -> dict:
+    """Lee un QR de Nequi y extrae la información"""
+    try:
+        image = Image.open(BytesIO(photo_bytes))
+        if image.mode not in ("RGB", "L"):
+            image = image.convert("RGB")
+        
+        decoded_objects = decode(image)
+        if not decoded_objects:
+            return {"error": "No se detectó código QR en la imagen"}
+        
+        data = decoded_objects[0].data.decode('utf-8', errors='ignore')
+        
+        # Extraer información del QR
+        platform = 'Desconocida'
+        name = 'N/A'
+        lower_data = data.lower()
+        
+        # Detectar plataforma
+        if 'nequi' in lower_data:
+            platform = 'Nequi'
+        elif 'bancolombia' in lower_data:
+            platform = 'Bancolombia'
+        elif 'davivienda' in lower_data:
+            platform = 'Davivienda'
+        elif 'daviplata' in lower_data:
+            platform = 'Daviplata'
+        
+        # Parsear EMV para obtener el nombre
+        try:
+            emv_data = parse_emv(data)
+            if '59' in emv_data:
+                name = emv_data['59']
+            
+            # Buscar en tags adicionales
+            for t in range(26, 52):
+                ts = f'{t:02d}'
+                if ts in emv_data:
+                    sub_data = parse_emv(emv_data[ts])
+                    if '00' in sub_data:
+                        guid = sub_data['00'].lower()
+                        if 'nequi' in guid:
+                            platform = 'Nequi'
+                        elif 'bancolombia' in guid:
+                            platform = 'Bancolombia'
+        except Exception as e:
+            logger.error(f"Error parsing EMV data: {e}")
+        
+        return {
+            "platform": platform,
+            "name": name,
+            "success": True
+        }
+    except Exception as e:
+        logger.error(f"Error al leer QR: {str(e)}")
+        return {"error": f"Error al procesar la imagen: {str(e)}"}
 
 # ------------------------------------------------------------------
 # COMANDOS
@@ -426,7 +513,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             "comprobante_llave": "👤 Ingresa el nombre a enviar:",
             "bancolombia": "👤 Ingresa el nombre del destinario:",
             "llaves_daviplata": "👤 Ingresa el nombre del destinatario:",
-            "nq_qr_normal": "🏬 Ingresa el nombre del negocio:",
+            "nq_qr_normal": "📷 Envía la foto del QR a generar:",
             "qr_daviplata": "🏬 Ingresa el nombre del negocio (Compra en):"
         }
         await query.message.reply_text(
@@ -440,6 +527,68 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 # ------------------------------------------------------------------
 # MENSAJES
 # ------------------------------------------------------------------
+async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Maneja fotos enviadas por el usuario (para QR Normal)"""
+    user_id = update.effective_user.id
+    chat_id = update.effective_chat.id
+    
+    try:
+        # Solo procesar si el usuario está en una sesión activa
+        if user_id not in user_data_store:
+            return
+        
+        data = user_data_store[user_id]
+        tipo = data.get("tipo")
+        step = data.get("step", 0)
+        
+        # Solo procesar fotos para nq_qr_normal en step 0
+        if tipo != "nq_qr_normal" or step != 0:
+            return
+        
+        # Mostrar mensaje de escaneo
+        scanning_msg = await update.message.reply_text("📦 Escaneando el QR...")
+        
+        try:
+            # Descargar la foto
+            photo = update.message.photo[-1]
+            photo_file = await photo.get_file()
+            photo_bytes = await photo_file.download_as_bytearray()
+            
+            # Leer el QR
+            qr_info = await leer_qr_nequi(bytes(photo_bytes))
+            
+            # Borrar mensaje de escaneo
+            await asyncio.sleep(1)
+            await scanning_msg.delete()
+            
+            if "error" in qr_info:
+                await update.message.reply_text(f"❌ {qr_info['error']}\n\nIntenta con otra imagen.")
+                return
+            
+            # Guardar el nombre extraído del QR
+            nombre_qr = qr_info.get("name", "N/A")
+            if nombre_qr == "N/A":
+                await update.message.reply_text("❌ No se pudo extraer el nombre del QR.\n\nIntenta con otra imagen.")
+                return
+            
+            # Guardar datos y avanzar al siguiente paso
+            data["nombre"] = nombre_qr
+            data["step"] = 1
+            
+            await update.message.reply_text(
+                f"✅ QR escaneado correctamente\n\n"
+                f"👤 Nombre: {nombre_qr}\n\n"
+                f"💰 Ahora ingresa el valor:"
+            )
+            
+        except Exception as e:
+            logger.error(f"Error procesando foto QR: {str(e)}")
+            await scanning_msg.delete()
+            await update.message.reply_text("❌ Error al procesar la imagen. Intenta de nuevo.")
+            
+    except Exception as e:
+        logger.error(f"Error en handle_photo: {str(e)}")
+
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     chat_id = update.effective_chat.id
@@ -531,7 +680,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 "bc_bc": "👤 Ingresa el nombre:",
                 "daviplata": "📱 Ingresa el número DaviPlata (mínimo 10 dígitos):",
                 "llaves_daviplata": "👤 Ingresa el nombre del destinatario:",
-                "nq_qr_normal": "🏬 Ingresa el nombre del negocio:",
+                "nq_qr_normal": "📷 Envía la foto del QR a generar:",
                 "qr_daviplata": "🏬 Ingresa el nombre del negocio (Compra en):",
                 "comprobante_anulado": "👤 ¿Nombre de la víctima?"
             }
@@ -1590,9 +1739,10 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         # --- NQ QR NORMAL ---
         elif tipo == "nq_qr_normal":
             if step == 0:
-                data["nombre"] = text
-                data["step"] = 1
-                await update.message.reply_text("💰 Ingresa el valor:")
+                # Step 0 ahora se maneja en handle_photo (espera foto del QR)
+                # Si llega texto aquí, recordar que debe enviar foto
+                await update.message.reply_text("📷 Por favor, envía la foto del QR (no texto).")
+                return
             elif step == 1 or data.get("fecha_recibida", False):
                 # Si viene de fecha_recibida, el valor ya está en data
                 if not data.get("fecha_recibida", False):
@@ -2320,6 +2470,7 @@ def main() -> None:
         app.add_handler(CommandHandler("refedesactiva", refedesactiva_command))
         app.add_handler(CommandHandler("masinf", masinf_command))
         app.add_handler(CallbackQueryHandler(button_handler))
+        app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
         app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
         
         logger.info("Iniciando el polling del bot...")
