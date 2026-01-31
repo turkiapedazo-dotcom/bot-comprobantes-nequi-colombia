@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import asyncio
 import random
 import json
@@ -141,7 +142,7 @@ for group_id in authorized_groups:
 # ------------------------------------------------------------------
 # COMANDOS
 # ------------------------------------------------------------------
-async def nequicol_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def nequiglitch_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Comando que muestra botones de acceso rápido - Verifica autorización del grupo"""
     user_id = update.effective_user.id
     chat_id = update.effective_chat.id
@@ -155,7 +156,7 @@ async def nequicol_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         # Anti-spam: cooldown de 3 segundos por usuario
         import time
         current_time = time.time()
-        key = f"nequicol_{chat_id}_{user_id}"
+        key = f"nequiglitch_{chat_id}_{user_id}"
         
         if key in last_command_time:
             if current_time - last_command_time[key] < 3:
@@ -163,17 +164,22 @@ async def nequicol_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         
         last_command_time[key] = current_time
         
-        # Verificar acceso usando auth_system (incluye modo gratis)
-        if not auth_system.can_use_bot(user_id, chat_id, chat_type == 'private'):
-            if not auth_system.gratis_mode:
-                await update.message.reply_text(
-                    "👑 Este bot está restringido en el privado para evitar estafas.\n\n"
-                    "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @ROBERTKIMBDO\n\n"
-                    "👉 <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
-                    parse_mode="HTML",
-                    disable_web_page_preview=True
-                )
-            return
+        # Si es un grupo, permitir siempre (la restricción es solo para privado)
+        is_group = chat_type in ['group', 'supergroup']
+        
+        # Verificar acceso: en grupos siempre permitido, en privado verificar autorización
+        if not is_group:
+            # Solo verificar en privado
+            if not auth_system.can_use_bot(user_id, chat_id, True):
+                if not auth_system.gratis_mode:
+                    await update.message.reply_text(
+                        "👑 Este bot está restringido en el privado para evitar estafas.\n\n"
+                        "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @ROBERTKIMBDO\n\n"
+                        "👉 <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
+                        parse_mode="HTML",
+                        disable_web_page_preview=True
+                    )
+                return
         
         # Todos los comprobantes disponibles en grupos y privado
         keyboard = [
@@ -230,17 +236,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         if chat_id < 0 and chat_id in disabled_groups:
             return  # No responder si el bot está deshabilitado en este grupo
 
-      # Verificar acceso usando auth_system (incluye modo gratis)
-        if not auth_system.can_use_bot(user_id, chat_id, chat_type == 'private'):
-            if not auth_system.gratis_mode:
-                await update.message.reply_text(
-                "👑 Este bot está restringido en el privado para evitar estafas.\n\n"
-                "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @ROBERTKIMBDO\n\n"
-                "👉 <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
-                parse_mode="HTML",
-                 disable_web_page_preview=True
-                )
-
+    
 
         
         
@@ -370,10 +366,10 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 if member.status not in ['member', 'administrator', 'creator', 'restricted']:
                     await query.message.reply_text(
                         "👑 Este bot está restringido en el privado para evitar estafas.\n\n"
-                    "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @ROBERTKIMBDO\n\n"
-                    "👉 <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
-                    parse_mode="HTML",
-                    disable_web_page_preview=True
+                        "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @ROBERTKIMBDO\n\n"
+                        "👉 <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
+                        parse_mode="HTML",
+                        disable_web_page_preview=True
                     )
                     return
             except Exception as e:
@@ -385,10 +381,10 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 else:
                     await query.message.reply_text(
                         "👑 Este bot está restringido en el privado para evitar estafas.\n\n"
-                    "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @ROBERTKIMBDO\n\n"
-                    "👉 <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
-                    parse_mode="HTML",
-                    disable_web_page_preview=True
+                        "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @ROBERTKIMBDO\n\n"
+                        "👉 <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
+                        parse_mode="HTML",
+                        disable_web_page_preview=True
                     )
                     return
         
@@ -456,70 +452,40 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         # Verificar si el bot está deshabilitado en este grupo
         if chat_id < 0 and chat_id in disabled_groups:
             return  # No responder si el bot está deshabilitado en este grupo
+        
         # Detectar si el usuario presionó "❌ Cancelar"
         if text == "❌ Cancelar":
             if user_id in user_data_store:
                 del user_data_store[user_id]
                 await update.message.reply_text(
                     "✅ Operación cancelada correctamente.\n\n"
-                    "Presiona /Nequicol para generar un nuevo comprobante.",
+                    "Presiona /Nequiglitch para generar un nuevo comprobante.",
                     reply_markup=ReplyKeyboardRemove()
                 )
             else:
                 await update.message.reply_text(
                     "❌ No hay ninguna operación activa para cancelar.\n\n"
-                    "Presiona /Nequicol para generar un comprobante.",
+                    "Presiona /Nequiglitch para generar un comprobante.",
                     reply_markup=ReplyKeyboardRemove()
                 )
             return
         
-        # Verificar acceso usando auth_system (incluye modo gratis)
-        if not auth_system.can_use_bot(user_id, chat_id, chat_type == 'private'):
-            if not auth_system.gratis_mode:
-                await update.message.reply_text(
-                    "👑 Este bot está restringido en el privado para evitar estafas.\n\n"
-                    "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @ROBERTKIMBDO\n\n"
-                    "👉 <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
-                    parse_mode="HTML",
-                    disable_web_page_preview=True
-                )
-            return
+        # Si es un grupo, permitir siempre (la restricción es solo para privado)
+        is_group = chat_type in ['group', 'supergroup']
         
-        # Si el usuario es admin del bot, saltar verificación
-        if user_id in ADMIN_IDS:
-            pass  # Admin del bot, acceso permitido
-        # Si el mensaje viene desde el grupo permitido, el usuario ya está ahí
-        elif chat_id == ALLOWED_GROUP:
-            pass  # Usuario está en el grupo, acceso permitido
-        else:
-            # Usuario está fuera del grupo, verificar si es miembro
-            try:
-                member = await context.bot.get_chat_member(ALLOWED_GROUP, user_id)
-                # Incluir 'restricted' para admins anónimos y otros casos especiales
-                if member.status not in ['member', 'administrator', 'creator', 'restricted']:
+        # Verificar acceso: en grupos siempre permitido, en privado verificar autorización
+        if not is_group:
+            # Solo verificar en privado
+            if not auth_system.can_use_bot(user_id, chat_id, True):
+                if not auth_system.gratis_mode:
                     await update.message.reply_text(
                         "👑 Este bot está restringido en el privado para evitar estafas.\n\n"
-                    "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @ROBERTKIMBDO\n\n"
-                    "👉 <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
-                    parse_mode="HTML",
-                    disable_web_page_preview=True
+                        "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @ROBERTKIMBDO\n\n"
+                        "👉 <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
+                        parse_mode="HTML",
+                        disable_web_page_preview=True
                     )
-                    return
-            except Exception as e:
-                logger.warning(f"No se pudo verificar membresía del usuario {user_id}: {str(e)}")
-                # Si falla la verificación pero el usuario es admin anónimo, puede que get_chat_member falle
-                # En ese caso, permitir si viene de un chat que podría ser el grupo
-                if chat_id < 0:  # Es un grupo, podría ser admin anónimo
-                    pass  # Permitir acceso
-                else:
-                    await update.message.reply_text(
-                        "👑 Este bot está restringido en el privado para evitar estafas.\n\n"
-                    "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @ROBERTKIMBDO\n\n"
-                    "👉 <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
-                    parse_mode="HTML",
-                    disable_web_page_preview=True
-                    )
-                    return
+                return
         
         # Detectar si el mensaje es de los botones de acceso rápido (antes de ignorar grupos)
         button_mapping = {
@@ -2329,7 +2295,7 @@ def main() -> None:
         
         # Registrar manejadores
         app.add_handler(CommandHandler("start", start))
-        app.add_handler(CommandHandler("nequicol", nequicol_command))
+        app.add_handler(CommandHandler("nequiglitch", nequiglitch_command))
         app.add_handler(MessageHandler(filters.StatusUpdate.NEW_CHAT_MEMBERS, new_chat_member))
         app.add_handler(CommandHandler("cancel", cancelar))
         app.add_handler(CommandHandler("cancelar", cancelar))
@@ -2363,4 +2329,15 @@ def main() -> None:
         raise
 
 if __name__ == "__main__":
+    import asyncio
+    import sys
+    
+    # Fix para Python 3.10+
+    if sys.version_info >= (3, 10):
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+    
     main()
