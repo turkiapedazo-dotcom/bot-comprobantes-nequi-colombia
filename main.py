@@ -41,11 +41,11 @@ from config import (
 from utils import generar_comprobante, ofuscar_nombre, generar_comprobante_nequi_bc, generar_comprobante_bc_nq_t, generar_comprobante_bc_qr, generar_comprobante_nequi_ahorros, generar_comprobante_ahorros, generar_comprobante_bc_nequi, generar_movimientos_bc_nequi, generar_comprobante_qr_bc, generar_comprobante_anulado, generar_movimiento_ahorros, generar_movimiento_qr_bc, generar_comprobante_llaves_daviplata, generar_comprobante_qr_daviplata
 
 # Configuration
-ADMIN_IDS = [8465944523, 8485045964]  # IDs de los administradores
+ADMIN_IDS = [8485045964]  # IDs de los administradores
 ALLOWED_GROUP = -1003122616445  # ID del grupo permitido principal
 ALLOWED_GROUPS_HARDCODED = [-1003349066708]  # Grupos siempre permitidos
-OWNER = "@ROBERTKIMBDO"
-GROUP_INVITE_LINK = "https://t.me/Nequiglitchofficiall"  # Link del grupo
+OWNER = "@Axondevui"
+GROUP_INVITE_LINK = "https://t.me/Nequicolofficiall"  # Link del grupo
 
 # Archivos para persistencia de datos
 USERS_FILE = "users.json"
@@ -142,7 +142,7 @@ for group_id in authorized_groups:
 # ------------------------------------------------------------------
 # COMANDOS
 # ------------------------------------------------------------------
-async def nequiglitch_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def nequicol_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Comando que muestra botones de acceso rápido - Verifica autorización del grupo"""
     user_id = update.effective_user.id
     chat_id = update.effective_chat.id
@@ -156,7 +156,7 @@ async def nequiglitch_command(update: Update, context: ContextTypes.DEFAULT_TYPE
         # Anti-spam: cooldown de 3 segundos por usuario
         import time
         current_time = time.time()
-        key = f"nequiglitch_{chat_id}_{user_id}"
+        key = f"nequicol_{chat_id}_{user_id}"
         
         if key in last_command_time:
             if current_time - last_command_time[key] < 3:
@@ -174,8 +174,8 @@ async def nequiglitch_command(update: Update, context: ContextTypes.DEFAULT_TYPE
                 if not auth_system.gratis_mode:
                     await update.message.reply_text(
                         "👑 Este bot está restringido en el privado para evitar estafas.\n\n"
-                        "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @ROBERTKIMBDO\n\n"
-                        "👉 <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
+                        "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @Axondevui\n\n"
+                        "👉 <a href='https://t.me/Nequicolofficiall'>Grupo Oficial</a>",
                         parse_mode="HTML",
                         disable_web_page_preview=True
                     )
@@ -345,8 +345,8 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             if not auth_system.gratis_mode:
                 await update.message.reply_text(
                     "👑 Este bot está restringido en el privado para evitar estafas.\n\n"
-                    "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @ROBERTKIMBDO\n\n"
-                    "👉 <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
+                    "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @Axondevui\n\n"
+                    "👉 <a href='https://t.me/Nequicolofficiall'>Grupo Oficial</a>",
                     parse_mode="HTML",
                     disable_web_page_preview=True
                 )
@@ -366,8 +366,8 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 if member.status not in ['member', 'administrator', 'creator', 'restricted']:
                     await query.message.reply_text(
                         "👑 Este bot está restringido en el privado para evitar estafas.\n\n"
-                        "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @ROBERTKIMBDO\n\n"
-                        "👉 <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
+                        "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @Axondevui\n\n"
+                        "👉 <a href='https://t.me/Nequicolofficiall'>Grupo Oficial</a>",
                         parse_mode="HTML",
                         disable_web_page_preview=True
                     )
@@ -381,8 +381,8 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 else:
                     await query.message.reply_text(
                         "👑 Este bot está restringido en el privado para evitar estafas.\n\n"
-                        "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @ROBERTKIMBDO\n\n"
-                        "👉 <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
+                        "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @Axondevui\n\n"
+                        "👉 <a href='https://t.me/Nequicolofficiall'>Grupo Oficial</a>",
                         parse_mode="HTML",
                         disable_web_page_preview=True
                     )
@@ -459,13 +459,13 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 del user_data_store[user_id]
                 await update.message.reply_text(
                     "✅ Operación cancelada correctamente.\n\n"
-                    "Presiona /Nequiglitch para generar un nuevo comprobante.",
+                    "Presiona /Nequicol para generar un nuevo comprobante.",
                     reply_markup=ReplyKeyboardRemove()
                 )
             else:
                 await update.message.reply_text(
                     "❌ No hay ninguna operación activa para cancelar.\n\n"
-                    "Presiona /Nequiglitch para generar un comprobante.",
+                    "Presiona /Nequicol para generar un comprobante.",
                     reply_markup=ReplyKeyboardRemove()
                 )
             return
@@ -480,8 +480,8 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 if not auth_system.gratis_mode:
                     await update.message.reply_text(
                         "👑 Este bot está restringido en el privado para evitar estafas.\n\n"
-                        "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @ROBERTKIMBDO\n\n"
-                        "👉 <a href='https://t.me/Nequiglitchofficiall'>Grupo Oficial</a>",
+                        "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @Axondevui\n\n"
+                        "👉 <a href='https://t.me/Nequicolofficiall'>Grupo Oficial</a>",
                         parse_mode="HTML",
                         disable_web_page_preview=True
                     )
@@ -2295,7 +2295,7 @@ def main() -> None:
         
         # Registrar manejadores
         app.add_handler(CommandHandler("start", start))
-        app.add_handler(CommandHandler("nequiglitch", nequiglitch_command))
+        app.add_handler(CommandHandler("nequicol", nequicol_command))
         app.add_handler(MessageHandler(filters.StatusUpdate.NEW_CHAT_MEMBERS, new_chat_member))
         app.add_handler(CommandHandler("cancel", cancelar))
         app.add_handler(CommandHandler("cancelar", cancelar))
