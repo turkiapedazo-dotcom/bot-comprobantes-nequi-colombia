@@ -59,7 +59,7 @@ def is_group_authorized(chat_id):
     authorized_groups = {ALLOWED_GROUP} | set(ALLOWED_GROUPS_HARDCODED)
     return chat_id in authorized_groups
 OWNER = "@Axondevui"
-GROUP_INVITE_LINK = "https://t.me/Nequicolofficiall"  # Link del grupo
+GROUP_INVITE_LINK = "https://t.me/Nequicolombiafreee"  # Link del grupo oficial
 
 # Archivos para persistencia de datos
 USERS_FILE = "users.json"
