@@ -2457,17 +2457,14 @@ async def masinf_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 # ------------------------------------------------------------------
 # MAIN
 # ------------------------------------------------------------------
-# Token desde variable de entorno
-BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+# Token directo del bot
+BOT_TOKEN = "8523224723:AAGLZjQ15c8u6lVyppZBnGN8NyS5j_XHuDM"
 
 def main() -> None:
     try:
         logger.info("Inicializando la aplicación del bot...")
         
-        if not BOT_TOKEN:
-            logger.error("❌ TELEGRAM_BOT_TOKEN no está configurado en las variables de entorno")
-            raise ValueError("TELEGRAM_BOT_TOKEN no encontrado. Configúralo en el archivo .env")
-        
+        # Token ya está definido directamente
         bot_token = BOT_TOKEN
         app = Application.builder().token(bot_token).job_queue(None).build()
         
