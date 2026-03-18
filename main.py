@@ -46,8 +46,8 @@ from utils import generar_comprobante, ofuscar_nombre, generar_comprobante_nequi
 
 # Configuration
 ADMIN_IDS = [8485045964]  # IDs de los administradores
-ALLOWED_GROUP = -1003122616445  # ID del grupo permitido principal
-ALLOWED_GROUPS_HARDCODED = [-1003349066708]  # Grupos siempre permitidos
+ALLOWED_GROUP = -1003733305221  # ID del grupo permitido principal
+ALLOWED_GROUPS_HARDCODED = [-1003733305221]  # Grupos siempre permitidos
 
 # Función para verificar si un grupo está autorizado
 def is_group_authorized(chat_id):
