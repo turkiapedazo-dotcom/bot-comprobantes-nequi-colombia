@@ -48,6 +48,16 @@ from utils import generar_comprobante, ofuscar_nombre, generar_comprobante_nequi
 ADMIN_IDS = [8485045964]  # IDs de los administradores
 ALLOWED_GROUP = -1003122616445  # ID del grupo permitido principal
 ALLOWED_GROUPS_HARDCODED = [-1003349066708]  # Grupos siempre permitidos
+
+# Función para verificar si un grupo está autorizado
+def is_group_authorized(chat_id):
+    """Verifica si un grupo está autorizado para usar el bot"""
+    if chat_id > 0:  # Chat privado, siempre permitido
+        return True
+    
+    # Verificar grupos autorizados
+    authorized_groups = {ALLOWED_GROUP} | set(ALLOWED_GROUPS_HARDCODED)
+    return chat_id in authorized_groups
 OWNER = "@Axondevui"
 GROUP_INVITE_LINK = "https://t.me/Nequicolofficiall"  # Link del grupo
 
@@ -237,6 +247,16 @@ async def nequicol_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     user_name = update.effective_user.first_name or update.effective_user.username or "Usuario"
     
     try:
+        # VERIFICACIÓN ESTRICTA: Solo grupos autorizados
+        if not is_group_authorized(chat_id):
+            await update.message.reply_text(
+                "🚫 Este bot no está autorizado en este grupo.\n\n"
+                f"👑 Contacta al owner: {OWNER}\n"
+                f"📱 Grupo oficial: {GROUP_INVITE_LINK}",
+                disable_web_page_preview=True
+            )
+            return
+        
         # Verificar si el bot está deshabilitado en este grupo
         if chat_id < 0 and chat_id in disabled_groups:
             return  # No responder si el bot está deshabilitado en este grupo
@@ -270,15 +290,35 @@ async def nequicol_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         
         # Todos los comprobantes disponibles en grupos y privado
         keyboard = [
-            ["💸 Nequi", "🔄 BRE-B"],
-            ["📱 QR Comprobante", "🔑 LLAVES"],
-            ["🏦 Nequi a Bancolombia"],
-            ["🏦 QR BC", "💳 BC a Nequi"],
-            ["🏛️ BC a BC", "🔵 DaviPlata"],
-            ["📱 QR DaviPlata", "💳 Llaves DaviPlata"],
-            ["📲 NQ QR NORMAL"],
-            ["✅ Anulado"],
-            ["❌ Cancelar"]
+            [
+                InlineKeyboardButton("💰 Nequi", callback_data="comprobante1"),
+                InlineKeyboardButton("🔄 BRE-B", callback_data="comprobante4")
+            ],
+            [
+                InlineKeyboardButton("📱 QR Comprobante", callback_data="comprobante_qr"),
+                InlineKeyboardButton("🔑 LLAVES", callback_data="comprobante_llave")
+            ],
+            [
+                InlineKeyboardButton("🏦 Nequi a Bancolombia", callback_data="bancolombia")
+            ],
+            [
+                InlineKeyboardButton("🏦 QR BC", callback_data="qr_bc"),
+                InlineKeyboardButton("💳 BC a Nequi", callback_data="bc_nequi")
+            ],
+            [
+                InlineKeyboardButton("🏛️ BC a BC", callback_data="bc_bc"),
+                InlineKeyboardButton("🔵 DaviPlata", callback_data="daviplata")
+            ],
+            [
+                InlineKeyboardButton("📱 QR DaviPlata", callback_data="qr_daviplata"),
+                InlineKeyboardButton("💳 Llaves DaviPlata", callback_data="llaves_daviplata")
+            ],
+            [
+                InlineKeyboardButton("📲 NQ QR NORMAL", callback_data="nq_qr_normal")
+            ],
+            [
+                InlineKeyboardButton("✅ Anulado", callback_data="comprobante_anulado")
+            ]
         ]
         mensaje_comandos = (
             f"👋 Hola {user_name}!\n\n"
@@ -287,7 +327,7 @@ async def nequicol_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             f"ℹ️ Para conocer funciones de fechas y referencias manuales, pulsa /masinf"
         )
         
-        reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True, one_time_keyboard=True)
+        reply_markup = InlineKeyboardMarkup(keyboard)
         
         await update.message.reply_text(
             mensaje_comandos,
@@ -299,6 +339,23 @@ async def nequicol_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 async def new_chat_member(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Se ejecuta cuando el bot es agregado a un grupo"""
     try:
+        chat_id = update.effective_chat.id
+        
+        # VERIFICACIÓN ESTRICTA: Solo grupos autorizados
+        if not is_group_authorized(chat_id):
+            await update.message.reply_text(
+                "🚫 Este bot no está autorizado en este grupo.\n\n"
+                f"👑 Para usar el bot, contacta al owner: {OWNER}\n"
+                f"� Grupo oficcial: {GROUP_INVITE_LINK}",
+                disable_web_page_preview=True
+            )
+            # Salir del grupo no autorizado
+            try:
+                await update.get_bot().leave_chat(chat_id)
+            except:
+                pass
+            return
+        
         for member in update.message.new_chat_members:
             if member.id == context.bot.id:
                 # El bot fue agregado al grupo
@@ -319,6 +376,17 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     username = update.effective_user.username
     
     try:
+        # VERIFICACIÓN ESTRICTA: Solo grupos autorizados
+        if not is_group_authorized(chat_id):
+            if chat_type in ['group', 'supergroup']:
+                await update.message.reply_text(
+                    "🚫 Este bot no está autorizado en este grupo.\n\n"
+                    f"👑 Contacta al owner: {OWNER}\n"
+                    f"📱 Grupo oficial: {GROUP_INVITE_LINK}",
+                    disable_web_page_preview=True
+                )
+            return
+        
         # Verificar si el bot está deshabilitado en este grupo
         if chat_id < 0 and chat_id in disabled_groups:
             return  # No responder si el bot está deshabilitado en este grupo
@@ -400,7 +468,12 @@ async def cancelar(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 # ------------------------------------------------------------------
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
-    await query.answer()
+    try:
+        await query.answer()
+    except Exception as e:
+        logger.warning(f"Error al responder callback query: {str(e)}")
+        # Continuar aunque falle el answer
+    
     try:
         user_id = query.from_user.id
         chat_id = query.message.chat.id
@@ -408,17 +481,19 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         username = query.from_user.username
         first_name = query.from_user.first_name
         
+        # VERIFICACIÓN ESTRICTA: Solo grupos autorizados
+        if not is_group_authorized(chat_id):
+            await query.message.reply_text(
+                "🚫 Este bot no está autorizado en este grupo.\n\n"
+                f"👑 Contacta al owner: {OWNER}\n"
+                f"📱 Grupo oficial: {GROUP_INVITE_LINK}",
+                disable_web_page_preview=True
+            )
+            return
+        
         # Verificar si el bot está deshabilitado en este grupo
         if chat_id < 0 and chat_id in disabled_groups:
             return  # No responder si el bot está deshabilitado en este grupo
-        
-        # Si se ejecuta en grupo, ignorar
-        if chat_type in ['group', 'supergroup']:
-            await query.message.reply_text(
-                f"👋 @{username}, usa el bot en privado.",
-                parse_mode='Markdown'
-            )
-            return
         
         # Actualizar información de admins
         if user_id in ADMIN_IDS:
@@ -427,30 +502,15 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 'username': username or 'N/A',
                 'first_name': first_name or 'N/A'
             }
-        # Verificar acceso usando auth_system (incluye modo gratis)
-        if not auth_system.can_use_bot(user_id, chat_id, chat_type == 'private'):
-            if not auth_system.gratis_mode:
-                await update.message.reply_text(
-                    "👑 Este bot está restringido en el privado para evitar estafas.\n\n"
-                    "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @Axondevui\n\n"
-                    "👉 <a href='https://t.me/Nequicolofficiall'>Grupo Oficial</a>",
-                    parse_mode="HTML",
-                    disable_web_page_preview=True
-                )
-            return
         
-        # Si el usuario es admin del bot, saltar verificación
-        if user_id in ADMIN_IDS:
-            pass  # Admin del bot, acceso permitido
-        # Si el mensaje viene desde el grupo permitido, el usuario ya está ahí
-        elif chat_id == ALLOWED_GROUP:
-            pass  # Usuario está en el grupo, acceso permitido
-        else:
-            # Usuario está fuera del grupo, verificar si es miembro
-            try:
-                member = await context.bot.get_chat_member(ALLOWED_GROUP, user_id)
-                # Incluir 'restricted' para admins anónimos y otros casos especiales
-                if member.status not in ['member', 'administrator', 'creator', 'restricted']:
+        # Si es un grupo, permitir siempre (la restricción es solo para privado)
+        is_group = chat_type in ['group', 'supergroup']
+        
+        # Verificar acceso: en grupos siempre permitido, en privado verificar autorización
+        if not is_group:
+            # Solo verificar en privado
+            if not auth_system.can_use_bot(user_id, chat_id, True):
+                if not auth_system.gratis_mode:
                     await query.message.reply_text(
                         "👑 Este bot está restringido en el privado para evitar estafas.\n\n"
                         "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @Axondevui\n\n"
@@ -458,22 +518,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                         parse_mode="HTML",
                         disable_web_page_preview=True
                     )
-                    return
-            except Exception as e:
-                logger.warning(f"No se pudo verificar membresía del usuario {user_id}: {str(e)}")
-                # Si falla la verificación pero el usuario es admin anónimo, puede que get_chat_member falle
-                # En ese caso, permitir si viene de un chat que podría ser el grupo
-                if chat_id < 0:  # Es un grupo, podría ser admin anónimo
-                    pass  # Permitir acceso
-                else:
-                    await query.message.reply_text(
-                        "👑 Este bot está restringido en el privado para evitar estafas.\n\n"
-                        "Si deseas usarlo gratuitamente sin pagar nada, mándale un mensaje al OWNER 👑 @Axondevui\n\n"
-                        "👉 <a href='https://t.me/Nequicolofficiall'>Grupo Oficial</a>",
-                        parse_mode="HTML",
-                        disable_web_page_preview=True
-                    )
-                    return
+                return
         
         # Verificar modo mantenimiento
         global maintenance_mode
@@ -490,13 +535,26 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         # Preservar flags de configuración (fecha_manual, referencia_manual) si existen
         fecha_manual_flag = user_data_store.get(user_id, {}).get("fecha_manual", False)
         referencia_manual_flag = user_data_store.get(user_id, {}).get("referencia_manual", False)
-        user_data_store[user_id] = {
-            "step": 0, 
-            "tipo": tipo, 
-            "session_id": str(uuid4()),
-            "fecha_manual": fecha_manual_flag,
-            "referencia_manual": referencia_manual_flag
-        }
+        
+        # Para QR BC, auto-rellenar el punto de venta con "QR" y empezar en step 1
+        if tipo == "qr_bc":
+            user_data_store[user_id] = {
+                "step": 1,  # Empezar en step 1 (pedir a quién envías)
+                "tipo": tipo, 
+                "session_id": str(uuid4()),
+                "fecha_manual": fecha_manual_flag,
+                "referencia_manual": referencia_manual_flag,
+                "punto_venta": "QR"  # Auto-rellenar con "QR"
+            }
+        else:
+            user_data_store[user_id] = {
+                "step": 0, 
+                "tipo": tipo, 
+                "session_id": str(uuid4()),
+                "fecha_manual": fecha_manual_flag,
+                "referencia_manual": referencia_manual_flag
+            }
+        
         # Registrar uso
         logs.append({
             'user_id': user_id,
@@ -506,16 +564,23 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         })
         save_data(authorized_users, authorized_groups, logs)
+        
         prompts = {
-            "comprobante1": "👤 Ingresa el nombre completo:",
+            "comprobante1": "👤 Ingresa el nombre del destinatario:",
             "comprobante4": "👤 Ingresa el nombre a enviar:",
-            "comprobante_qr": "🏬 Nombre del negocio:",
+            "comprobante_qr": "🏬 Ingresa el nombre del negocio:",
             "comprobante_llave": "👤 Ingresa el nombre a enviar:",
             "bancolombia": "👤 Ingresa el nombre del destinario:",
+            "qr_bc": "👤 Ingresa a quién envías:",
+            "bc_nequi": "📱 Ingresa el número Nequi (10 dígitos):",
+            "bc_bc": "👤 Ingresa el nombre:",
+            "daviplata": "📱 Ingresa el número DaviPlata (mínimo 10 dígitos):",
             "llaves_daviplata": "👤 Ingresa el nombre del destinatario:",
             "nq_qr_normal": "📷 Envía la foto del QR a generar:",
-            "qr_daviplata": "🏬 Ingresa el nombre del negocio (Compra en):"
+            "qr_daviplata": "🏬 Ingresa el nombre del negocio (Compra en):",
+            "comprobante_anulado": "👤 ¿Nombre de la víctima?"
         }
+        
         await query.message.reply_text(
             prompts.get(tipo, "🔍 Por favor, inicia ingresando los datos requeridos:"),
             parse_mode='Markdown'
@@ -598,6 +663,20 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     first_name = update.effective_user.first_name
     
     try:
+        # VERIFICACIÓN ESTRICTA: Solo grupos autorizados
+        if not is_group_authorized(chat_id):
+            # En grupos no autorizados, solo responder si es admin
+            if user_id not in ADMIN_IDS:
+                return  # Ignorar completamente
+            else:
+                await update.message.reply_text(
+                    "🚫 Este bot no está autorizado en este grupo.\n\n"
+                    f"👑 Contacta al owner: {OWNER}\n"
+                    f"📱 Grupo oficial: {GROUP_INVITE_LINK}",
+                    disable_web_page_preview=True
+                )
+                return
+        
         # Verificar si el bot está deshabilitado en este grupo
         if chat_id < 0 and chat_id in disabled_groups:
             return  # No responder si el bot está deshabilitado en este grupo
@@ -636,64 +715,15 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     )
                 return
         
-        # Detectar si el mensaje es de los botones de acceso rápido (antes de ignorar grupos)
-        button_mapping = {
-            "💸 Nequi": "comprobante1",
-            "🔄 BRE-B": "comprobante4",
-            "📱 QR Comprobante": "comprobante_qr",
-            "🔑 LLAVES": "comprobante_llave",
-            "🏦 Nequi a Bancolombia": "bancolombia",
-            "🏦 QR BC": "qr_bc",
-            "💳 BC a Nequi": "bc_nequi",
-            "🏛️ BC a BC": "bc_bc",
-            "🔵 DaviPlata": "daviplata",
-            "📱 QR DaviPlata": "qr_daviplata",
-            "💳 Llaves DaviPlata": "llaves_daviplata",
-            "📲 NQ QR NORMAL": "nq_qr_normal",
-            "✅ Anulado": "comprobante_anulado"
-        }
-        
-        # Permitir todos los comprobantes en grupos y privado
-        if text in button_mapping:
-            tipo = button_mapping[text]
-            
-            # Preservar flags de configuración (fecha_manual, referencia_manual) si existen
-            fecha_manual_flag = user_data_store.get(user_id, {}).get("fecha_manual", False)
-            referencia_manual_flag = user_data_store.get(user_id, {}).get("referencia_manual", False)
-            user_data_store[user_id] = {
-                "step": 0, 
-                "tipo": tipo, 
-                "session_id": str(uuid4()),
-                "fecha_manual": fecha_manual_flag,
-                "referencia_manual": referencia_manual_flag
-            }
-            
-            # Cerrar el teclado de acceso rápido
-            prompts = {
-                "comprobante1": "👤 Ingresa el nombre del destinatario:",
-                "comprobante4": "👤 Ingresa el nombre a enviar:",
-                "comprobante_qr": "🏬 Nombre del negocio:",
-                "comprobante_llave": "👤 Ingresa el nombre a enviar:",
-                "bancolombia": "👤 Ingresa el nombre del destinario:",
-                "qr_bc": "🏬 Ingresa el punto de venta:",
-                "bc_nequi": "📱 Ingresa el número Nequi (10 dígitos):",
-                "bc_bc": "👤 Ingresa el nombre:",
-                "daviplata": "📱 Ingresa el número DaviPlata (mínimo 10 dígitos):",
-                "llaves_daviplata": "👤 Ingresa el nombre del destinatario:",
-                "nq_qr_normal": "📷 Envía la foto del QR a generar:",
-                "qr_daviplata": "🏬 Ingresa el nombre del negocio (Compra en):",
-                "comprobante_anulado": "👤 ¿Nombre de la víctima?"
-            }
-            await update.message.reply_text(
-                prompts.get(tipo, "🔍 Por favor, inicia ingresando los datos requeridos:"),
-                reply_markup=ReplyKeyboardRemove()
-            )
-            return
-        
         # En grupos: solo responder si el usuario tiene una sesión activa
         if chat_type in ['group', 'supergroup']:
             if user_id not in user_data_store:
                 return  # Ignorar mensajes aleatorios en grupos
+        
+        # En privado: también verificar sesión activa
+        if chat_type == 'private':
+            if user_id not in user_data_store:
+                return  # No responde si el usuario no está en una sesión activa
         
         # Actualizar información de admins
         if user_id in ADMIN_IDS:
@@ -713,8 +743,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             )
             return
         
-        if user_id not in user_data_store:
-            return  # No responde si el usuario no está en una sesión activa
         # Registrar uso
         logs.append({
             'user_id': user_id,

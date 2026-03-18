@@ -1,14 +1,16 @@
 # Usar Python 3.11 slim como base
+# Updated: 2026-01-31 - Added libzbar0 support
 FROM python:3.11-slim
 
 # Establecer directorio de trabajo
 WORKDIR /app
 
-# Instalar dependencias del sistema necesarias para Pillow
+# Instalar dependencias del sistema necesarias para Pillow y zbar
 RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     zlib1g-dev \
     libfreetype6-dev \
+    libzbar0 \
     && rm -rf /var/lib/apt/lists/*
 
 # Copiar requirements primero para aprovechar cache de Docker
