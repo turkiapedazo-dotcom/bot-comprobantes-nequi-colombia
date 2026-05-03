@@ -317,6 +317,9 @@ async def nequicol_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
                 InlineKeyboardButton("📲 NQ QR NORMAL", callback_data="nq_qr_normal")
             ],
             [
+                InlineKeyboardButton("💎 Comprobantes con Calidad", callback_data="comprobantes_calidad")
+            ],
+            [
                 InlineKeyboardButton("✅ Anulado", callback_data="comprobante_anulado")
             ]
         ]
@@ -578,8 +581,39 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             "llaves_daviplata": "👤 Ingresa el nombre del destinatario:",
             "nq_qr_normal": "📷 Envía la foto del QR a generar:",
             "qr_daviplata": "🏬 Ingresa el nombre del negocio (Compra en):",
-            "comprobante_anulado": "👤 ¿Nombre de la víctima?"
+            "comprobante_anulado": "👤 ¿Nombre de la víctima?",
+            "comprobantes_calidad": "",  # Special case - shows sub-menu
+            "html_nequi_nequi": "👤 Ingresa el nombre del destinatario:",
+            "html_llave_breb": "👤 Ingresa el nombre a enviar:",
+            "html_bancolombia": "👤 Ingresa el nombre del destinatario:",
+            "html_envio_recibido": "👤 Ingresa el nombre del destinatario:",
+            "html_qr_voucher": "🏬 Ingresa el nombre del negocio:"
         }
+        
+        # Handle special case for comprobantes_calidad - show sub-menu
+        if tipo == "comprobantes_calidad":
+            html_keyboard = [
+                [
+                    InlineKeyboardButton("💰 Nequi a Nequi Alta Calidad", callback_data="html_nequi_nequi"),
+                    InlineKeyboardButton("🔑 Llave BRE-B Alta Calidad", callback_data="html_llave_breb")
+                ],
+                [
+                    InlineKeyboardButton("🏦 Bancolombia Alta Calidad", callback_data="html_bancolombia"),
+                    InlineKeyboardButton("📨 Envío Recibido Alta Calidad", callback_data="html_envio_recibido")
+                ],
+                [
+                    InlineKeyboardButton("📱 QR Voucher Pago Alta Calidad", callback_data="html_qr_voucher")
+                ]
+            ]
+            html_reply_markup = InlineKeyboardMarkup(html_keyboard)
+            await query.message.reply_text(
+                "💎 Comprobantes con Calidad\n\n"
+                "✨ Selecciona el tipo de comprobante de alta calidad:\n\n"
+                "🚀 **Optimizado y rápido** - Usa templates HTML originales",
+                reply_markup=html_reply_markup,
+                parse_mode='Markdown'
+            )
+            return
         
         await query.message.reply_text(
             prompts.get(tipo, "🔍 Por favor, inicia ingresando los datos requeridos:"),
@@ -588,6 +622,256 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     except Exception as e:
         logger.error(f"Error en button_handler: {str(e)}")
         await query.message.reply_text("⚠️ Error al procesar la selección. Intenta de nuevo.", parse_mode='Markdown')
+
+# ------------------------------------------------------------------
+# HTML COMPROBANTES FUNCTIONS
+# ------------------------------------------------------------------
+def generar_comprobante_html_nequi_nequi(data):
+    """Genera comprobante de alta calidad Nequi a Nequi usando template HTML correcto"""
+    return generar_comprobante_html_correcto("nequi_nequi", data)
+
+def generar_comprobante_html_qr_voucher(data):
+    """Genera comprobante de alta calidad QR Voucher usando template HTML correcto"""
+    return generar_comprobante_html_correcto("qr_voucher", data)
+
+def generar_comprobante_html_llave_breb(data):
+    """Genera comprobante de alta calidad Llave BRE-B usando template HTML correcto"""
+    return generar_comprobante_html_correcto("llave_breb", data)
+
+def generar_comprobante_html_bancolombia(data):
+    """Genera comprobante de alta calidad Bancolombia usando template HTML correcto"""
+    return generar_comprobante_html_correcto("bancolombia", data)
+
+def generar_comprobante_html_envio_recibido(data):
+    """Genera comprobante de alta calidad Envío Recibido usando template HTML correcto"""
+    return generar_comprobante_html_correcto("envio_recibido", data)
+
+def generar_comprobante_html_generico(template_name, data):
+    """Genera comprobante de alta calidad genérico y lo convierte a imagen"""
+    try:
+        import os
+        from datetime import datetime
+        import random
+        import subprocess
+        
+        # Mapear template names a archivos
+        template_map = {
+            "llave_breb": "vouchers_html/2_llave_breb (2).html",
+            "bancolombia": "vouchers_html/4_bancolombia (2).html", 
+            "envio_recibido": "vouchers_html/5_envio_recibido (2).html"
+        }
+        
+        template_path = template_map.get(template_name)
+        if not template_path or not os.path.exists(template_path):
+            logger.error(f"Template no encontrado: {template_path}")
+            return None
+            
+        with open(template_path, 'r', encoding='utf-8') as f:
+            html_content = f.read()
+        
+        # Obtener datos básicos
+        nombre = data.get("nombre", "Usuario")
+        numero = data.get("numero", "3001234567")
+        valor = data.get("valor", 150000)
+        cuenta = data.get("cuenta", "12345678901")  # Para Bancolombia
+        
+        # Generar referencia
+        referencia = data.get("referencia", f"M{random.randint(10000000, 99999999)}")
+        
+        # Reemplazar TODOS los placeholders en el JavaScript
+        html_content = html_content.replace("const recipient = 'Juan Carlos Pérez';", f"const recipient = '{nombre}';")
+        html_content = html_content.replace("const amount = '150000';", f"const amount = '{valor}';")
+        
+        # Para envio_recibido: reemplazar numeronequi
+        if template_name == "envio_recibido" and "const numeronequi = '3001234567';" in html_content:
+            html_content = html_content.replace("const numeronequi = '3001234567';", f"const numeronequi = '{numero}';")
+        
+        # Para bancolombia: reemplazar número de cuenta si existe
+        if template_name == "bancolombia":
+            # Buscar patrones de cuenta en el JavaScript
+            if "const cuenta = " in html_content:
+                html_content = html_content.replace("const cuenta = '12345678901';", f"const cuenta = '{cuenta}';")
+            # También buscar otros patrones posibles
+            html_content = html_content.replace("12345678901", cuenta)
+        
+        # Reemplazar la referencia si está hardcodeada
+        if "generarReferencia()" in html_content:
+            html_content = html_content.replace("const refer = generarReferencia();", f"const refer = '{referencia}';")
+        
+        # También reemplazar directamente en el HTML si hay valores hardcodeados
+        html_content = html_content.replace("Juan Carlos Pérez", nombre)
+        if template_name == "envio_recibido":
+            html_content = html_content.replace("3001234567", numero)
+        html_content = html_content.replace("150000", str(valor))
+        
+        # Guardar archivo temporal
+        temp_html = f"temp_{template_name}_{random.randint(1000, 9999)}.html"
+        with open(temp_html, 'w', encoding='utf-8') as f:
+            f.write(html_content)
+        
+        # Convertir a imagen
+        output_filename = f"{template_name}_calidad_{random.randint(1000, 9999)}.png"
+        
+        # Intentar conversión a imagen
+        if convert_html_to_image(temp_html, output_filename):
+            try:
+                os.remove(temp_html)
+            except:
+                pass
+            return output_filename
+        
+        # Si falla la conversión, devolver error
+        try:
+            os.remove(temp_html)
+        except:
+            pass
+        return None
+        
+    except Exception as e:
+        logger.error(f"Error generando comprobante de alta calidad {template_name}: {str(e)}")
+        return None
+
+def convert_html_to_image_optimized(html_file, output_file):
+    """Convierte HTML a imagen de manera optimizada y rápida"""
+    import subprocess
+    import os
+    
+    try:
+        # Configuración ultra-optimizada para velocidad
+        result = subprocess.run([
+            'wkhtmltoimage', 
+            '--width', '414',
+            '--quality', '90',
+            '--format', 'png',
+            '--javascript-delay', '1000',  # Solo 1 segundo
+            '--load-error-handling', 'ignore',
+            '--enable-local-file-access',
+            '--disable-plugins',
+            '--disable-smart-width',
+            html_file, 
+            output_file
+        ], capture_output=True, text=True, timeout=10)  # Timeout de solo 10 segundos
+        
+        if result.returncode == 0 and os.path.exists(output_file):
+            file_size = os.path.getsize(output_file)
+            if file_size > 3000:  # Mínimo 3KB
+                logger.info(f"Comprobante convertido rápidamente: {output_file}")
+                return True
+            else:
+                logger.warning(f"Imagen muy pequeña: {file_size} bytes")
+                try:
+                    os.remove(output_file)
+                except:
+                    pass
+        else:
+            logger.error(f"Error wkhtmltoimage: {result.stderr}")
+            
+    except Exception as e:
+        logger.error(f"Error en conversión: {str(e)}")
+    
+    return False
+
+def generar_comprobante_html_correcto(template_name, data):
+    """Genera comprobante usando el HTML template correcto y optimizado"""
+    try:
+        import os
+        from datetime import datetime
+        import random
+        
+        # Mapeo de templates
+        template_map = {
+            "nequi_nequi": "vouchers_html/1_nequi_a_nequi (2).html",
+            "llave_breb": "vouchers_html/2_llave_breb (2).html", 
+            "bancolombia": "vouchers_html/4_bancolombia (2).html",
+            "envio_recibido": "vouchers_html/5_envio_recibido (2).html",
+            "qr_voucher": "vouchers_html/6_qr_vouch_pago_qr (2).html"
+        }
+        
+        template_path = template_map.get(template_name)
+        if not template_path or not os.path.exists(template_path):
+            logger.error(f"Template no encontrado: {template_path}")
+            return None
+            
+        with open(template_path, 'r', encoding='utf-8') as f:
+            html_content = f.read()
+        
+        # Procesar datos según el tipo
+        if template_name == "nequi_nequi":
+            nombre = data.get("nombre", "Usuario")
+            numero = data.get("numero", "3001234567")
+            valor = data.get("valor", 150000)
+            
+            # Reemplazar variables JavaScript
+            html_content = html_content.replace("const recipient = 'Juan Carlos Pérez';", f"const recipient = '{nombre}';")
+            html_content = html_content.replace("const numeronequi = '3001234567';", f"const numeronequi = '{numero}';")
+            html_content = html_content.replace("const amount = '150000';", f"const amount = '{valor}';")
+            
+        elif template_name == "qr_voucher":
+            negocio = data.get("negocio", "Tienda Ejemplo")
+            valor = data.get("valor", 150000)
+            
+            # Reemplazar variables JavaScript
+            html_content = html_content.replace("const amount = '150000';", f"const amount = '{valor}';")
+            html_content = html_content.replace("document.getElementById('recipient-value').textContent = 'Tienda Ejemplo';", 
+                                              f"document.getElementById('recipient-value').textContent = '{negocio}';")
+            
+        elif template_name == "llave_breb":
+            nombre = data.get("nombre", "Usuario")
+            numero = data.get("numero", "3001234567")
+            valor = data.get("valor", 150000)
+            
+            html_content = html_content.replace("const recipient = 'Juan Carlos Pérez';", f"const recipient = '{nombre}';")
+            html_content = html_content.replace("const sender = '3001234567';", f"const sender = '{numero}';")
+            html_content = html_content.replace("const amount = '150000';", f"const amount = '{valor}';")
+            
+        elif template_name == "bancolombia":
+            nombre = data.get("nombre", "Usuario")
+            cantidad = data.get("cantidad", 150000)
+            numero_cuenta = data.get("numero_cuenta", "12345678901")
+            
+            html_content = html_content.replace("const recipient = 'Juan Carlos Pérez';", f"const recipient = '{nombre}';")
+            html_content = html_content.replace("const amount = '150000';", f"const amount = '{cantidad}';")
+            html_content = html_content.replace("const accountNumber = '12345678901';", f"const accountNumber = '{numero_cuenta}';")
+            
+        elif template_name == "envio_recibido":
+            nombre = data.get("nombre", "Usuario")
+            cantidad = data.get("cantidad", 150000)
+            numero_nequi = data.get("numero_nequi", "3001234567")
+            
+            html_content = html_content.replace("const recipient = 'Juan Carlos Pérez';", f"const recipient = '{nombre}';")
+            html_content = html_content.replace("const amount = '150000';", f"const amount = '{cantidad}';")
+            html_content = html_content.replace("const numeronequi = '3001234567';", f"const numeronequi = '{numero_nequi}';")
+        
+        # Generar referencia
+        referencia = data.get("referencia", f"M{random.randint(10000000, 99999999)}")
+        if "generarReferencia()" in html_content:
+            html_content = html_content.replace("const refer = generarReferencia();", f"const refer = '{referencia}';")
+        
+        # Guardar archivo temporal
+        temp_html = f"temp_{template_name}_{random.randint(1000, 9999)}.html"
+        with open(temp_html, 'w', encoding='utf-8') as f:
+            f.write(html_content)
+        
+        # Convertir a imagen con función optimizada
+        output_filename = f"{template_name}_calidad_{random.randint(1000, 9999)}.png"
+        
+        if convert_html_to_image_optimized(temp_html, output_filename):
+            try:
+                os.remove(temp_html)
+            except:
+                pass
+            return output_filename
+        
+        # Limpiar si falla
+        try:
+            os.remove(temp_html)
+        except:
+            pass
+        return None
+        
+    except Exception as e:
+        logger.error(f"Error generando comprobante {template_name}: {str(e)}")
+        return None
 
 # ------------------------------------------------------------------
 # MENSAJES
@@ -1867,6 +2151,145 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                         user_data_store[user_id]["fecha_manual"] = True
                     if referencia_flag:
                         user_data_store[user_id]["referencia_manual"] = True
+        
+        # --- HTML COMPROBANTES ---
+        # HTML Nequi a Nequi
+        elif tipo == "html_nequi_nequi":
+            if step == 0:
+                data["nombre"] = text
+                data["step"] = 1
+                await update.message.reply_text("📱 Ingresa el número de teléfono (solo dígitos):")
+            elif step == 1:
+                if not text.isdigit():
+                    await update.message.reply_text("⚠️ El número debe contener solo dígitos.")
+                    return
+                data["numero"] = text
+                data["step"] = 2
+                await update.message.reply_text("💰 Ingresa el valor:")
+            elif step == 2:
+                if not text.replace("-", "", 1).isdigit():
+                    await update.message.reply_text("⚠️ El valor debe ser numérico.")
+                    return
+                data["valor"] = int(text)
+                try:
+                    output_path = generar_comprobante_html_nequi_nequi(data)
+                    if output_path and await send_document(output_path, "💎 Comprobante Nequi a Nequi de Alta Calidad generado"):
+                        pass
+                    else:
+                        await update.message.reply_text("⚠️ Error al generar el comprobante de alta calidad.")
+                except Exception as e:
+                    logger.error(f"Error generando comprobante Nequi a Nequi: {str(e)}")
+                    await update.message.reply_text("⚠️ Error al generar el comprobante de alta calidad.")
+                limpiar_sesion_preservando_flags()
+        
+        # HTML Llave BRE-B
+        elif tipo == "html_llave_breb":
+            if step == 0:
+                data["nombre"] = text
+                data["step"] = 1
+                await update.message.reply_text("📱 Ingresa el número de teléfono:")
+            elif step == 1:
+                if not text.isdigit():
+                    await update.message.reply_text("⚠️ El número debe contener solo dígitos.")
+                    return
+                data["numero"] = text
+                data["step"] = 2
+                await update.message.reply_text("💰 Ingresa el valor:")
+            elif step == 2:
+                if not text.replace("-", "", 1).isdigit():
+                    await update.message.reply_text("⚠️ El valor debe ser numérico.")
+                    return
+                data["valor"] = int(text)
+                try:
+                    output_path = generar_comprobante_html_llave_breb(data)
+                    if output_path and await send_document(output_path, "💎 Comprobante Llave BRE-B de Alta Calidad generado"):
+                        pass
+                    else:
+                        await update.message.reply_text("⚠️ Error al generar el comprobante de alta calidad.")
+                except Exception as e:
+                    logger.error(f"Error generando comprobante Llave BRE-B: {str(e)}")
+                    await update.message.reply_text("⚠️ Error al generar el comprobante de alta calidad.")
+                limpiar_sesion_preservando_flags()
+        
+        # HTML Bancolombia
+        elif tipo == "html_bancolombia":
+            if step == 0:
+                data["nombre"] = text
+                data["step"] = 1
+                await update.message.reply_text("💰 Ingresa la cantidad:")
+            elif step == 1:
+                if not text.replace("-", "", 1).isdigit():
+                    await update.message.reply_text("⚠️ La cantidad debe ser numérica.")
+                    return
+                data["valor"] = int(text)
+                data["step"] = 2
+                await update.message.reply_text("🏦 Ingresa el número de cuenta:")
+            elif step == 2:
+                if not text.isdigit() or len(text) < 11:
+                    await update.message.reply_text("⚠️ El número de cuenta debe ser **11 dígitos**.")
+                    return
+                data["numero_cuenta"] = text
+                try:
+                    output_path = generar_comprobante_html_bancolombia(data)
+                    if output_path and await send_document(output_path, "💎 Comprobante Bancolombia de Alta Calidad generado"):
+                        pass
+                    else:
+                        await update.message.reply_text("⚠️ Error al generar el comprobante de alta calidad.")
+                except Exception as e:
+                    logger.error(f"Error generando comprobante Bancolombia: {str(e)}")
+                    await update.message.reply_text("⚠️ Error al generar el comprobante de alta calidad.")
+                limpiar_sesion_preservando_flags()
+        
+        # HTML Envío Recibido
+        elif tipo == "html_envio_recibido":
+            if step == 0:
+                data["nombre"] = text
+                data["step"] = 1
+                await update.message.reply_text("💰 Ingresa la cantidad:")
+            elif step == 1:
+                if not text.replace("-", "", 1).isdigit():
+                    await update.message.reply_text("⚠️ La cantidad debe ser numérica.")
+                    return
+                data["valor"] = int(text)
+                data["step"] = 2
+                await update.message.reply_text("📱 Ingresa el número Nequi (10 dígitos):")
+            elif step == 2:
+                if not text.isdigit() or len(text) != 10:
+                    await update.message.reply_text("⚠️ El número Nequi debe tener exactamente 10 dígitos.")
+                    return
+                data["numero_nequi"] = text
+                try:
+                    output_path = generar_comprobante_html_envio_recibido(data)
+                    if output_path and await send_document(output_path, "💎 Comprobante Envío Recibido de Alta Calidad generado"):
+                        pass
+                    else:
+                        await update.message.reply_text("⚠️ Error al generar el comprobante de alta calidad.")
+                except Exception as e:
+                    logger.error(f"Error generando comprobante Envío Recibido: {str(e)}")
+                    await update.message.reply_text("⚠️ Error al generar el comprobante de alta calidad.")
+                limpiar_sesion_preservando_flags()
+        
+        # HTML QR Voucher
+        elif tipo == "html_qr_voucher":
+            if step == 0:
+                data["negocio"] = text
+                data["step"] = 1
+                await update.message.reply_text("💰 Ingresa el valor:")
+            elif step == 1:
+                if not text.replace("-", "", 1).isdigit():
+                    await update.message.reply_text("⚠️ El valor debe ser numérico.")
+                    return
+                data["valor"] = int(text)
+                try:
+                    output_path = generar_comprobante_html_qr_voucher(data)
+                    if output_path and await send_document(output_path, "💎 Comprobante QR Voucher de Alta Calidad generado"):
+                        pass
+                    else:
+                        await update.message.reply_text("⚠️ Error al generar el comprobante de alta calidad.")
+                except Exception as e:
+                    logger.error(f"Error generando comprobante QR Voucher: {str(e)}")
+                    await update.message.reply_text("⚠️ Error al generar el comprobante de alta calidad.")
+                limpiar_sesion_preservando_flags()
     except Exception as e:
         logger.error(f"Error en handle_message: {str(e)}")
         await update.message.reply_text(
